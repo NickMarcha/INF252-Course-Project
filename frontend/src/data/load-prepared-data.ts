@@ -5,10 +5,12 @@
 
 import type { PreparedDataWithMetadata } from './prepared-data-types.js';
 
+const base = import.meta.env.BASE_URL ?? '/';
+
 export async function loadPreparedData<T>(
   filename: string
 ): Promise<PreparedDataWithMetadata<T>> {
-  const url = `/prepared-data/${filename}`;
+  const url = `${base}prepared-data/${filename}`;
   const res = await fetch(url);
   if (!res.ok) {
     throw new Error(`Failed to load ${filename}: ${res.status}`);
