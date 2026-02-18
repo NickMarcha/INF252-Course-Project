@@ -21,6 +21,12 @@ This installs frontend dependencies automatically. Then run the commands below.
 
 ### Commands
 
+Sync prepared data into the frontend (run after the pipeline produces `prepared-data/`):
+
+```bash
+npm run prepare:data
+```
+
 Download Oslo Bysykkel trip data into `raw-data/`:
 
 ```bash
@@ -50,3 +56,9 @@ Preview the production build locally:
 ```bash
 npm run preview
 ```
+
+### Pages
+
+- `/` – Home (Astro example)
+- `/data-test` – D3 chart of average trip time by month (reads from `prepared-data/`)
+- `/course-info` – Course project information (renders `Course-Project-Information.md` with Tailwind Typography)
