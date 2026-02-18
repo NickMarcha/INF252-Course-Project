@@ -21,6 +21,12 @@ Download Oslo Bysykkel trip data into `raw-data/`:
 npm run download
 ```
 
+Download only one month (e.g. 2024-01):
+
+```bash
+npm run download -- 2024-01
+```
+
 Start the frontend dev server:
 
 ```bash
