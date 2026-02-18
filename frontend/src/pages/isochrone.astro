@@ -21,10 +21,10 @@ import 'leaflet/dist/leaflet.css';
 				</select>
 			</div>
 			<div class="flex flex-wrap gap-4 text-sm text-slate-600 dark:text-slate-400">
-				<span class="flex items-center gap-2"><span class="w-6 h-0.5 rounded" style="background:#22c55e"></span> 5 min</span>
-				<span class="flex items-center gap-2"><span class="w-6 h-0.5 rounded" style="background:#eab308"></span> 10 min</span>
-				<span class="flex items-center gap-2"><span class="w-6 h-0.5 rounded" style="background:#f97316"></span> 15 min</span>
-				<span class="flex items-center gap-2"><span class="w-6 h-0.5 rounded" style="background:#ef4444"></span> 20 min</span>
+				<span class="flex items-center gap-2"><span class="w-4 h-4 rounded opacity-70" style="background:#22c55e"></span> 5 min</span>
+				<span class="flex items-center gap-2"><span class="w-4 h-4 rounded opacity-70" style="background:#eab308"></span> 10 min</span>
+				<span class="flex items-center gap-2"><span class="w-4 h-4 rounded opacity-70" style="background:#f97316"></span> 15 min</span>
+				<span class="flex items-center gap-2"><span class="w-4 h-4 rounded opacity-70" style="background:#ef4444"></span> 20 min</span>
 			</div>
 		</div>
 
@@ -56,7 +56,7 @@ import 'leaflet/dist/leaflet.css';
 	const STATION_DOT_RADIUS = 6;
 
 	let map: L.Map | null = null;
-	let layers: L.GeoJSON[] = [];
+	let layers: L.Polygon[] = [];
 	let stationDotsLayer: L.LayerGroup | null = null;
 
 	async function init() {
@@ -105,10 +105,17 @@ import 'leaflet/dist/leaflet.css';
 				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			}).addTo(map);
 
-			// Station dots layer (all stations as clickable circles)
+			// Custom panes for z-index order (bottom to top): polygons 350, station markers 450, selected marker 600 default
+			map.createPane('polygonsPane');
+			map.getPane('polygonsPane')!.style.zIndex = '350';
+			map.createPane('stationMarkersPane');
+			map.getPane('stationMarkersPane')!.style.zIndex = '450';
+
+			const polygonsLayer = L.layerGroup().addTo(map);
 			stationDotsLayer = L.layerGroup().addTo(map);
 			for (const s of data.stations) {
 				const circle = L.circleMarker([s.lat, s.lon], {
+					pane: 'stationMarkersPane',
 					radius: STATION_DOT_RADIUS,
 					fillColor: '#3b82f6',
 					fillOpacity: 0.7,
@@ -123,13 +130,12 @@ import 'leaflet/dist/leaflet.css';
 				circle.addTo(stationDotsLayer);
 			}
 
-			// Selected station marker (highlight)
 			const selectedLayer = L.layerGroup().addTo(map);
 
 			function showStation(id: string) {
 				// Clear previous isochrones
 				for (const layer of layers) {
-					map?.removeLayer(layer);
+					polygonsLayer.removeLayer(layer);
 				}
 				layers = [];
 
@@ -145,27 +151,46 @@ import 'leaflet/dist/leaflet.css';
 					.bindPopup(station.name)
 					.addTo(selectedLayer);
 
-				// Add isochrone polygons: stroke only (no fill) so all bands are visible
+				// Add isochrone polygons with fill; each outer band has the next-smaller band as hole
 				const polys = data.isochrones[id];
 				if (!polys) return;
 
+				// GeoJSON ring [[lon,lat],...] -> Leaflet [lat,lon][], remove duplicate close point
+				function ringToLatLngs(ring: number[][]): [number, number][] {
+					const pts = ring.map(([lon, lat]) => [lat, lon] as [number, number]);
+					if (pts.length > 1 && pts[0][0] === pts[pts.length - 1][0] && pts[0][1] === pts[pts.length - 1][1]) {
+						pts.pop();
+					}
+					return pts;
+				}
+
 				const order = ['5', '10', '15', '20'];
-				for (const band of order) {
+				for (let i = 0; i < order.length; i++) {
+					const band = order[i];
 					const poly = polys[band];
 					if (!poly?.coordinates?.[0]) continue;
-					const geoJson = {
-						type: 'Polygon' as const,
-						coordinates: poly.coordinates,
-					};
-					const layer = L.geoJSON(geoJson, {
-						style: {
-							fill: false,
-							color: BAND_COLORS[band] ?? '#94a3b8',
-							weight: 2.5,
-						},
+
+					const outerRing = ringToLatLngs(poly.coordinates[0]);
+					if (outerRing.length < 3) continue;
+
+					// 5 min: no hole; 10 min: 5 as hole; 15 min: 10 as hole; 20 min: 15 as hole
+					const innerBand = order[i - 1];
+					const innerPoly = innerBand ? polys[innerBand] : null;
+					const innerRing = innerPoly?.coordinates?.[0] ? ringToLatLngs(innerPoly.coordinates[0]) : null;
+
+					const latlngs: [number, number][][] = innerRing && innerRing.length >= 3
+						? [outerRing, innerRing]
+						: [outerRing];
+
+					const polygon = L.polygon(latlngs, {
+						pane: 'polygonsPane',
+						fillColor: BAND_COLORS[band] ?? '#94a3b8',
+						fillOpacity: 0.4,
+						color: BAND_COLORS[band] ?? '#94a3b8',
+						weight: 2,
 					});
-					layer.addTo(map!);
-					layers.push(layer);
+					polygon.addTo(polygonsLayer);
+					layers.push(polygon);
 				}
 
 				// Station info panel
