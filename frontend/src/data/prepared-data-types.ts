@@ -25,10 +25,25 @@ export interface AvgTripTimeByMonthRow {
   trip_count: number;
 }
 
+/** Dataset info from df.info() - structured for export */
+export interface DatasetInfo {
+  n_rows: number;
+  n_columns: number;
+  columns: Array<{ name: string; dtype: string; non_null: number }>;
+  memory_mb: number;
+}
+
+/** Summary stats from df.describe() - numeric columns */
+export type SummaryStats = Record<string, Record<string, number>>;
+
 /** EDA summary from L12_Oslo_Bysykkel_EDA.ipynb */
 export interface EdaSummaryStats {
   n_trips: number;
   n_months: number;
+  /** Structured dataset info (columns, dtypes, memory) */
+  dataset_info?: DatasetInfo;
+  /** Numeric columns describe output (count, mean, std, min, 25%, 50%, 75%, max) */
+  summary_stats?: SummaryStats;
   duration_stats: {
     mean_min: number;
     median_min: number;

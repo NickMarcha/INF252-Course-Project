@@ -1,0 +1,2167 @@
+{
+  "last_execution": {
+    "timestamp": "2026-02-18T19:18:43.563957",
+    "os": "Windows-11-10.0.26200-SP0",
+    "cpu_count": 32,
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "ram_gb": 31.1,
+    "ram_used_pct": 83.9,
+    "duration_seconds": 151
+  },
+  "data": {
+    "n_trips": 10034294,
+    "n_months": 80,
+    "dataset_info": {
+      "n_rows": 10034294,
+      "n_columns": 11,
+      "columns": [
+        {
+          "name": "year",
+          "dtype": "int64",
+          "non_null": 10034294
+        },
+        {
+          "name": "month",
+          "dtype": "int64",
+          "non_null": 10034294
+        },
+        {
+          "name": "duration",
+          "dtype": "int64",
+          "non_null": 10034294
+        },
+        {
+          "name": "start_station_id",
+          "dtype": "str",
+          "non_null": 10034294
+        },
+        {
+          "name": "start_station_name",
+          "dtype": "str",
+          "non_null": 10034294
+        },
+        {
+          "name": "end_station_id",
+          "dtype": "str",
+          "non_null": 10034294
+        },
+        {
+          "name": "end_station_name",
+          "dtype": "str",
+          "non_null": 10034294
+        },
+        {
+          "name": "start_lat",
+          "dtype": "float64",
+          "non_null": 10034294
+        },
+        {
+          "name": "start_lon",
+          "dtype": "float64",
+          "non_null": 10034294
+        },
+        {
+          "name": "end_lat",
+          "dtype": "float64",
+          "non_null": 10034294
+        },
+        {
+          "name": "end_lon",
+          "dtype": "float64",
+          "non_null": 10034294
+        }
+      ],
+      "memory_mb": 2809.929549
+    },
+    "summary_stats": {
+      "year": {
+        "count": 10034294.0,
+        "mean": 2021.5254303890238,
+        "std": 2.0462036365412026,
+        "min": 2019.0,
+        "25%": 2020.0,
+        "50%": 2021.0,
+        "75%": 2023.0,
+        "max": 2026.0
+      },
+      "month": {
+        "count": 10034294.0,
+        "mean": 7.128003026421191,
+        "std": 2.2845518839653023,
+        "min": 1.0,
+        "25%": 5.0,
+        "50%": 7.0,
+        "75%": 9.0,
+        "max": 12.0
+      },
+      "duration": {
+        "count": 10034294.0,
+        "mean": 771.7394314936357,
+        "std": 3934.200004740347,
+        "min": 61.0,
+        "25%": 349.0,
+        "50%": 544.0,
+        "75%": 849.0,
+        "max": 8685730.0
+      },
+      "start_lat": {
+        "count": 10034294.0,
+        "mean": 59.921116213865346,
+        "std": 0.010190431221028935,
+        "min": 59.898126,
+        "25%": 59.91320242563816,
+        "50%": 59.9200421,
+        "75%": 59.927605868377185,
+        "max": 59.9534114
+      },
+      "start_lon": {
+        "count": 10034294.0,
+        "mean": 10.745713557602592,
+        "std": 0.02367114710637902,
+        "min": 10.651118,
+        "25%": 10.730476,
+        "50%": 10.749958763650312,
+        "75%": 10.7615858,
+        "max": 10.81431433498766
+      },
+      "end_lat": {
+        "count": 10034294.0,
+        "mean": 59.91882637214974,
+        "std": 0.00912351852933509,
+        "min": 59.898126,
+        "25%": 59.9121109,
+        "50%": 59.9172088,
+        "75%": 59.9246852,
+        "max": 59.9534114
+      },
+      "end_lon": {
+        "count": 10034294.0,
+        "mean": 10.74461195188672,
+        "std": 0.02262376573878849,
+        "min": 10.651118,
+        "25%": 10.73121932213806,
+        "50%": 10.749929,
+        "75%": 10.760121127577955,
+        "max": 10.81431433498766
+      }
+    },
+    "duration_stats": {
+      "mean_min": 12.862323858227263,
+      "median_min": 9.066666666666666,
+      "std_min": 65.5700000790058,
+      "skewness": 1158.5824883360174,
+      "kurtosis": 2387060.754961703
+    },
+    "avg_by_month": [
+      {
+        "year": 2019,
+        "month": 4,
+        "avg_duration_min": 15.091938450325172,
+        "trip_count": 254277
+      },
+      {
+        "year": 2019,
+        "month": 5,
+        "avg_duration_min": 13.170777928815442,
+        "trip_count": 327365
+      },
+      {
+        "year": 2019,
+        "month": 6,
+        "avg_duration_min": 14.482416921671225,
+        "trip_count": 332347
+      },
+      {
+        "year": 2019,
+        "month": 7,
+        "avg_duration_min": 14.674077404866392,
+        "trip_count": 323580
+      },
+      {
+        "year": 2019,
+        "month": 8,
+        "avg_duration_min": 13.555125871359321,
+        "trip_count": 399376
+      },
+      {
+        "year": 2019,
+        "month": 9,
+        "avg_duration_min": 12.024162041978535,
+        "trip_count": 300741
+      },
+      {
+        "year": 2019,
+        "month": 10,
+        "avg_duration_min": 10.374090650647066,
+        "trip_count": 201087
+      },
+      {
+        "year": 2019,
+        "month": 11,
+        "avg_duration_min": 10.12787062861297,
+        "trip_count": 95374
+      },
+      {
+        "year": 2019,
+        "month": 12,
+        "avg_duration_min": 9.152442942942944,
+        "trip_count": 11100
+      },
+      {
+        "year": 2020,
+        "month": 3,
+        "avg_duration_min": 17.290592407175637,
+        "trip_count": 29563
+      },
+      {
+        "year": 2020,
+        "month": 4,
+        "avg_duration_min": 15.86962406837607,
+        "trip_count": 121875
+      },
+      {
+        "year": 2020,
+        "month": 5,
+        "avg_duration_min": 13.54532582202369,
+        "trip_count": 210882
+      },
+      {
+        "year": 2020,
+        "month": 6,
+        "avg_duration_min": 15.134356796293002,
+        "trip_count": 297959
+      },
+      {
+        "year": 2020,
+        "month": 7,
+        "avg_duration_min": 12.826263939748733,
+        "trip_count": 200715
+      },
+      {
+        "year": 2020,
+        "month": 8,
+        "avg_duration_min": 13.462532212387769,
+        "trip_count": 292848
+      },
+      {
+        "year": 2020,
+        "month": 9,
+        "avg_duration_min": 11.662734129386525,
+        "trip_count": 251072
+      },
+      {
+        "year": 2020,
+        "month": 10,
+        "avg_duration_min": 10.88222074547181,
+        "trip_count": 162519
+      },
+      {
+        "year": 2020,
+        "month": 11,
+        "avg_duration_min": 10.971180063216353,
+        "trip_count": 90272
+      },
+      {
+        "year": 2020,
+        "month": 12,
+        "avg_duration_min": 11.445359287943187,
+        "trip_count": 38349
+      },
+      {
+        "year": 2021,
+        "month": 1,
+        "avg_duration_min": 11.52285348280104,
+        "trip_count": 36039
+      },
+      {
+        "year": 2021,
+        "month": 2,
+        "avg_duration_min": 11.614526153962235,
+        "trip_count": 35342
+      },
+      {
+        "year": 2021,
+        "month": 3,
+        "avg_duration_min": 13.524961368482863,
+        "trip_count": 64714
+      },
+      {
+        "year": 2021,
+        "month": 4,
+        "avg_duration_min": 13.856826437241345,
+        "trip_count": 122509
+      },
+      {
+        "year": 2021,
+        "month": 5,
+        "avg_duration_min": 13.332760011524057,
+        "trip_count": 144625
+      },
+      {
+        "year": 2021,
+        "month": 6,
+        "avg_duration_min": 12.983303337859505,
+        "trip_count": 217255
+      },
+      {
+        "year": 2021,
+        "month": 7,
+        "avg_duration_min": 13.834302985943678,
+        "trip_count": 162584
+      },
+      {
+        "year": 2021,
+        "month": 8,
+        "avg_duration_min": 13.103128750302599,
+        "trip_count": 194151
+      },
+      {
+        "year": 2021,
+        "month": 9,
+        "avg_duration_min": 11.549028622053804,
+        "trip_count": 190005
+      },
+      {
+        "year": 2021,
+        "month": 10,
+        "avg_duration_min": 10.736365840595235,
+        "trip_count": 138164
+      },
+      {
+        "year": 2021,
+        "month": 11,
+        "avg_duration_min": 10.327122649477362,
+        "trip_count": 98666
+      },
+      {
+        "year": 2021,
+        "month": 12,
+        "avg_duration_min": 11.238373823593783,
+        "trip_count": 15230
+      },
+      {
+        "year": 2022,
+        "month": 1,
+        "avg_duration_min": 11.165245805696449,
+        "trip_count": 15378
+      },
+      {
+        "year": 2022,
+        "month": 2,
+        "avg_duration_min": 10.859748284187912,
+        "trip_count": 17533
+      },
+      {
+        "year": 2022,
+        "month": 3,
+        "avg_duration_min": 11.315892037920158,
+        "trip_count": 40471
+      },
+      {
+        "year": 2022,
+        "month": 4,
+        "avg_duration_min": 12.356027337501818,
+        "trip_count": 116909
+      },
+      {
+        "year": 2022,
+        "month": 5,
+        "avg_duration_min": 12.179349830209018,
+        "trip_count": 164516
+      },
+      {
+        "year": 2022,
+        "month": 6,
+        "avg_duration_min": 13.326929439493009,
+        "trip_count": 195454
+      },
+      {
+        "year": 2022,
+        "month": 7,
+        "avg_duration_min": 14.555724460686127,
+        "trip_count": 159261
+      },
+      {
+        "year": 2022,
+        "month": 8,
+        "avg_duration_min": 13.764399460449294,
+        "trip_count": 207333
+      },
+      {
+        "year": 2022,
+        "month": 9,
+        "avg_duration_min": 11.427823728827184,
+        "trip_count": 165877
+      },
+      {
+        "year": 2022,
+        "month": 10,
+        "avg_duration_min": 10.82575950437627,
+        "trip_count": 116271
+      },
+      {
+        "year": 2022,
+        "month": 11,
+        "avg_duration_min": 10.160807326649604,
+        "trip_count": 70719
+      },
+      {
+        "year": 2022,
+        "month": 12,
+        "avg_duration_min": 10.523658432708688,
+        "trip_count": 16436
+      },
+      {
+        "year": 2023,
+        "month": 1,
+        "avg_duration_min": 9.999672099442657,
+        "trip_count": 18959
+      },
+      {
+        "year": 2023,
+        "month": 2,
+        "avg_duration_min": 10.217638092070619,
+        "trip_count": 24054
+      },
+      {
+        "year": 2023,
+        "month": 3,
+        "avg_duration_min": 10.107874304719306,
+        "trip_count": 29065
+      },
+      {
+        "year": 2023,
+        "month": 4,
+        "avg_duration_min": 12.435808149927382,
+        "trip_count": 71608
+      },
+      {
+        "year": 2023,
+        "month": 5,
+        "avg_duration_min": 12.982029289523213,
+        "trip_count": 153024
+      },
+      {
+        "year": 2023,
+        "month": 6,
+        "avg_duration_min": 13.562539549841455,
+        "trip_count": 192584
+      },
+      {
+        "year": 2023,
+        "month": 7,
+        "avg_duration_min": 14.557354691063903,
+        "trip_count": 131381
+      },
+      {
+        "year": 2023,
+        "month": 8,
+        "avg_duration_min": 13.263795150388317,
+        "trip_count": 172110
+      },
+      {
+        "year": 2023,
+        "month": 9,
+        "avg_duration_min": 11.93861606064996,
+        "trip_count": 151866
+      },
+      {
+        "year": 2023,
+        "month": 10,
+        "avg_duration_min": 10.678527238535235,
+        "trip_count": 112555
+      },
+      {
+        "year": 2023,
+        "month": 11,
+        "avg_duration_min": 9.530120285219246,
+        "trip_count": 50020
+      },
+      {
+        "year": 2023,
+        "month": 12,
+        "avg_duration_min": 9.880685649623574,
+        "trip_count": 14434
+      },
+      {
+        "year": 2024,
+        "month": 1,
+        "avg_duration_min": 11.023194543863836,
+        "trip_count": 8382
+      },
+      {
+        "year": 2024,
+        "month": 2,
+        "avg_duration_min": 10.126914143508918,
+        "trip_count": 12055
+      },
+      {
+        "year": 2024,
+        "month": 3,
+        "avg_duration_min": 11.107839040172554,
+        "trip_count": 22254
+      },
+      {
+        "year": 2024,
+        "month": 4,
+        "avg_duration_min": 12.00309516905411,
+        "trip_count": 86215
+      },
+      {
+        "year": 2024,
+        "month": 5,
+        "avg_duration_min": 14.120248763239802,
+        "trip_count": 170068
+      },
+      {
+        "year": 2024,
+        "month": 6,
+        "avg_duration_min": 13.171110721307837,
+        "trip_count": 168176
+      },
+      {
+        "year": 2024,
+        "month": 7,
+        "avg_duration_min": 14.842342001550673,
+        "trip_count": 124247
+      },
+      {
+        "year": 2024,
+        "month": 8,
+        "avg_duration_min": 14.034926386401944,
+        "trip_count": 177594
+      },
+      {
+        "year": 2024,
+        "month": 9,
+        "avg_duration_min": 12.118794379065495,
+        "trip_count": 147686
+      },
+      {
+        "year": 2024,
+        "month": 10,
+        "avg_duration_min": 10.716722868590953,
+        "trip_count": 119213
+      },
+      {
+        "year": 2024,
+        "month": 11,
+        "avg_duration_min": 10.14570755999728,
+        "trip_count": 78448
+      },
+      {
+        "year": 2024,
+        "month": 12,
+        "avg_duration_min": 10.327458306073023,
+        "trip_count": 29041
+      },
+      {
+        "year": 2025,
+        "month": 1,
+        "avg_duration_min": 10.643173990020923,
+        "trip_count": 10355
+      },
+      {
+        "year": 2025,
+        "month": 2,
+        "avg_duration_min": 9.965364415170692,
+        "trip_count": 15486
+      },
+      {
+        "year": 2025,
+        "month": 3,
+        "avg_duration_min": 11.777791346824843,
+        "trip_count": 42990
+      },
+      {
+        "year": 2025,
+        "month": 4,
+        "avg_duration_min": 12.605693814835567,
+        "trip_count": 98165
+      },
+      {
+        "year": 2025,
+        "month": 5,
+        "avg_duration_min": 12.642103729197727,
+        "trip_count": 143534
+      },
+      {
+        "year": 2025,
+        "month": 6,
+        "avg_duration_min": 12.969114171423715,
+        "trip_count": 149077
+      },
+      {
+        "year": 2025,
+        "month": 7,
+        "avg_duration_min": 15.10112753718766,
+        "trip_count": 145568
+      },
+      {
+        "year": 2025,
+        "month": 8,
+        "avg_duration_min": 13.84220880688528,
+        "trip_count": 176415
+      },
+      {
+        "year": 2025,
+        "month": 9,
+        "avg_duration_min": 11.771953627711634,
+        "trip_count": 138416
+      },
+      {
+        "year": 2025,
+        "month": 10,
+        "avg_duration_min": 10.841467607929003,
+        "trip_count": 105957
+      },
+      {
+        "year": 2025,
+        "month": 11,
+        "avg_duration_min": 10.265783614149797,
+        "trip_count": 63624
+      },
+      {
+        "year": 2025,
+        "month": 12,
+        "avg_duration_min": 10.104154544560162,
+        "trip_count": 23717
+      },
+      {
+        "year": 2026,
+        "month": 1,
+        "avg_duration_min": 9.62634122502172,
+        "trip_count": 9208
+      }
+    ],
+    "null_counts_per_column": {
+      "year": 0,
+      "month": 0,
+      "duration": 0,
+      "start_station_id": 0,
+      "start_station_name": 0,
+      "end_station_id": 0,
+      "end_station_name": 0,
+      "start_lat": 0,
+      "start_lon": 0,
+      "end_lat": 0,
+      "end_lon": 0
+    },
+    "station_trip_counts": [
+      {
+        "station_name": "Alexander Kiellands Plass",
+        "trip_count": 132928
+      },
+      {
+        "station_name": "Ringnes Park",
+        "trip_count": 124875
+      },
+      {
+        "station_name": "Olaf Ryes plass",
+        "trip_count": 120790
+      },
+      {
+        "station_name": "Helga Helgesens plass",
+        "trip_count": 110901
+      },
+      {
+        "station_name": "Torggata",
+        "trip_count": 100788
+      },
+      {
+        "station_name": "Tjuvholmen",
+        "trip_count": 100314
+      },
+      {
+        "station_name": "Sukkerbiten",
+        "trip_count": 99409
+      },
+      {
+        "station_name": "Bislett Stadion",
+        "trip_count": 99351
+      },
+      {
+        "station_name": "T\u00f8yen skole",
+        "trip_count": 98594
+      },
+      {
+        "station_name": "Kirkeristen",
+        "trip_count": 88352
+      },
+      {
+        "station_name": "Schous plass",
+        "trip_count": 85017
+      },
+      {
+        "station_name": "Jernbanetorget",
+        "trip_count": 84608
+      },
+      {
+        "station_name": "Birkelunden",
+        "trip_count": 80162
+      },
+      {
+        "station_name": "Botanisk Hage s\u00f8r",
+        "trip_count": 80090
+      },
+      {
+        "station_name": "Bislettgata",
+        "trip_count": 79107
+      },
+      {
+        "station_name": "Majorstuen",
+        "trip_count": 78216
+      },
+      {
+        "station_name": "Jakob kirke",
+        "trip_count": 76670
+      },
+      {
+        "station_name": "Marcus Thranes gate",
+        "trip_count": 76407
+      },
+      {
+        "station_name": "Sofienbergparken nordvest",
+        "trip_count": 75262
+      },
+      {
+        "station_name": "AHO",
+        "trip_count": 73986
+      },
+      {
+        "station_name": "Fagerheimgata",
+        "trip_count": 71294
+      },
+      {
+        "station_name": "Sofienbergparken nord",
+        "trip_count": 70604
+      },
+      {
+        "station_name": "Jess Carlsens gate",
+        "trip_count": 68479
+      },
+      {
+        "station_name": "Bogstadveien",
+        "trip_count": 67439
+      },
+      {
+        "station_name": "Kv\u00e6rnerbyen",
+        "trip_count": 66662
+      },
+      {
+        "station_name": "St. Olavs gate",
+        "trip_count": 65293
+      },
+      {
+        "station_name": "Vulkan",
+        "trip_count": 65018
+      },
+      {
+        "station_name": "R\u00e5dhusbrygge 4",
+        "trip_count": 64885
+      },
+      {
+        "station_name": "Storo Storsenter",
+        "trip_count": 63741
+      },
+      {
+        "station_name": "Bjerregaards gate",
+        "trip_count": 62731
+      },
+      {
+        "station_name": "Stavangergata",
+        "trip_count": 61856
+      },
+      {
+        "station_name": "Bj\u00f8rvika",
+        "trip_count": 61381
+      },
+      {
+        "station_name": "Fredensborg",
+        "trip_count": 60174
+      },
+      {
+        "station_name": "Saga Kino",
+        "trip_count": 57046
+      },
+      {
+        "station_name": "Sommerfrydhagen",
+        "trip_count": 56645
+      },
+      {
+        "station_name": "BI Nydalen",
+        "trip_count": 56146
+      },
+      {
+        "station_name": "Majorstua skole",
+        "trip_count": 56067
+      },
+      {
+        "station_name": "Lille Grensen",
+        "trip_count": 55983
+      },
+      {
+        "station_name": "Oscars gate",
+        "trip_count": 55820
+      },
+      {
+        "station_name": "Sentrum Scene",
+        "trip_count": 55004
+      },
+      {
+        "station_name": "Bentsebrugata",
+        "trip_count": 54987
+      },
+      {
+        "station_name": "Landstads gate",
+        "trip_count": 54847
+      },
+      {
+        "station_name": "Lakkegata",
+        "trip_count": 54817
+      },
+      {
+        "station_name": "Gr\u00f8nlands torg",
+        "trip_count": 53565
+      },
+      {
+        "station_name": "Dokkveien",
+        "trip_count": 53225
+      },
+      {
+        "station_name": "Oslo Hospital",
+        "trip_count": 53156
+      },
+      {
+        "station_name": "Frogner plass",
+        "trip_count": 52900
+      },
+      {
+        "station_name": "Gimle Kino",
+        "trip_count": 52808
+      },
+      {
+        "station_name": "Thomas Heftyes plass",
+        "trip_count": 52579
+      },
+      {
+        "station_name": "Bj\u00f8lsen Studentby",
+        "trip_count": 52063
+      },
+      {
+        "station_name": "Frognerstranda",
+        "trip_count": 51112
+      },
+      {
+        "station_name": "Skillebekk",
+        "trip_count": 51048
+      },
+      {
+        "station_name": "Henrik Ibsens gate",
+        "trip_count": 50860
+      },
+      {
+        "station_name": "M\u00f8lleparken",
+        "trip_count": 50010
+      },
+      {
+        "station_name": "S\u00f8ndre gate",
+        "trip_count": 49901
+      },
+      {
+        "station_name": "Carl Berners plass s\u00f8r",
+        "trip_count": 49854
+      },
+      {
+        "station_name": "V\u00e5r Frelsers gravlund s\u00f8r",
+        "trip_count": 49803
+      },
+      {
+        "station_name": "Uranienborgveien",
+        "trip_count": 49022
+      },
+      {
+        "station_name": "Arkitekt Rivertz Plass",
+        "trip_count": 48621
+      },
+      {
+        "station_name": "Sj\u00f8siden ved trappen",
+        "trip_count": 48619
+      },
+      {
+        "station_name": "Huitfeldts gate",
+        "trip_count": 48466
+      },
+      {
+        "station_name": "Akersgata",
+        "trip_count": 47987
+      },
+      {
+        "station_name": "Jens Bjelkes Gate",
+        "trip_count": 47401
+      },
+      {
+        "station_name": "Vippetangen vest",
+        "trip_count": 46012
+      },
+      {
+        "station_name": "Edvard Storms gate",
+        "trip_count": 45597
+      },
+      {
+        "station_name": "Ullev\u00e5l sykehus",
+        "trip_count": 44458
+      },
+      {
+        "station_name": "Sagene bussholdeplass",
+        "trip_count": 44122
+      },
+      {
+        "station_name": "Schous plass trikkestopp",
+        "trip_count": 44011
+      },
+      {
+        "station_name": "Sofienbergparken s\u00f8r",
+        "trip_count": 43954
+      },
+      {
+        "station_name": "Stensparken",
+        "trip_count": 43927
+      },
+      {
+        "station_name": "Lilleborgbanen",
+        "trip_count": 43348
+      },
+      {
+        "station_name": "Bankplassen",
+        "trip_count": 42747
+      },
+      {
+        "station_name": "Vaterlandsparken",
+        "trip_count": 42742
+      },
+      {
+        "station_name": "Studenterlunden",
+        "trip_count": 42417
+      },
+      {
+        "station_name": "Hans Nielsen Hauges plass",
+        "trip_count": 42344
+      },
+      {
+        "station_name": "Sofienberggata",
+        "trip_count": 42216
+      },
+      {
+        "station_name": "Galgeberg",
+        "trip_count": 42111
+      },
+      {
+        "station_name": "Gr\u00fcnerhagen Nord",
+        "trip_count": 42077
+      },
+      {
+        "station_name": "Filipstadveien",
+        "trip_count": 41833
+      },
+      {
+        "station_name": "Hallings gate",
+        "trip_count": 41703
+      },
+      {
+        "station_name": "Oslo Handelsgymnasium",
+        "trip_count": 41577
+      },
+      {
+        "station_name": "Elisenberg",
+        "trip_count": 41379
+      },
+      {
+        "station_name": "Frogner Stadion",
+        "trip_count": 40779
+      },
+      {
+        "station_name": "Lindern",
+        "trip_count": 40565
+      },
+      {
+        "station_name": "Bjerregaardsgate \u00d8st",
+        "trip_count": 40498
+      },
+      {
+        "station_name": "Fram-g\u00e5rden",
+        "trip_count": 40455
+      },
+      {
+        "station_name": "Slottsparken \u00d8st",
+        "trip_count": 40226
+      },
+      {
+        "station_name": "Dyvekes bru",
+        "trip_count": 40066
+      },
+      {
+        "station_name": "Jordalgata",
+        "trip_count": 39429
+      },
+      {
+        "station_name": "Hammersborg Torg",
+        "trip_count": 39194
+      },
+      {
+        "station_name": "St. Hanshaugen park vest",
+        "trip_count": 38978
+      },
+      {
+        "station_name": "Parkveien",
+        "trip_count": 38807
+      },
+      {
+        "station_name": "Bj\u00f8lsendumpa",
+        "trip_count": 38185
+      },
+      {
+        "station_name": "Rostockgata",
+        "trip_count": 38143
+      },
+      {
+        "station_name": "Pal\u00e9haven",
+        "trip_count": 38141
+      },
+      {
+        "station_name": "L\u00f8renveien",
+        "trip_count": 37803
+      },
+      {
+        "station_name": "Georg Morgenstiernes hus",
+        "trip_count": 37674
+      },
+      {
+        "station_name": "Nordre gate",
+        "trip_count": 37349
+      },
+      {
+        "station_name": "Myral\u00f8kka \u00d8st",
+        "trip_count": 37305
+      },
+      {
+        "station_name": "Skovveien",
+        "trip_count": 37212
+      },
+      {
+        "station_name": "Kontraskj\u00e6ret",
+        "trip_count": 37155
+      },
+      {
+        "station_name": "Annette Thommessens Plass",
+        "trip_count": 36875
+      },
+      {
+        "station_name": "Professor Aschehougs plass",
+        "trip_count": 36738
+      },
+      {
+        "station_name": "Briskeby",
+        "trip_count": 36675
+      },
+      {
+        "station_name": "Jenny Braatens Plass",
+        "trip_count": 36404
+      },
+      {
+        "station_name": "Chr. Michelsens Gate",
+        "trip_count": 36297
+      },
+      {
+        "station_name": "Spikersuppa \u00d8st",
+        "trip_count": 35942
+      },
+      {
+        "station_name": "Ensj\u00f8 T-bane",
+        "trip_count": 35931
+      },
+      {
+        "station_name": "V\u00e5r Frelsers gravlund",
+        "trip_count": 35317
+      },
+      {
+        "station_name": "D\u00e6lenenggata",
+        "trip_count": 34847
+      },
+      {
+        "station_name": "Hall\u00e9nparken",
+        "trip_count": 34464
+      },
+      {
+        "station_name": "Linaaes gate",
+        "trip_count": 34390
+      },
+      {
+        "station_name": "Sk\u00f8yen",
+        "trip_count": 34243
+      },
+      {
+        "station_name": "Sj\u00f8siden 1 ved trappen",
+        "trip_count": 34102
+      },
+      {
+        "station_name": "Vestkanttorvet",
+        "trip_count": 34073
+      },
+      {
+        "station_name": "Spikersuppa Vest",
+        "trip_count": 33628
+      },
+      {
+        "station_name": "Trondheimsveien",
+        "trip_count": 33437
+      },
+      {
+        "station_name": "Torshovparken vest",
+        "trip_count": 33194
+      },
+      {
+        "station_name": "Mandalls gate",
+        "trip_count": 33020
+      },
+      {
+        "station_name": "Fred Olsens gate",
+        "trip_count": 32987
+      },
+      {
+        "station_name": "Sognsveien",
+        "trip_count": 32795
+      },
+      {
+        "station_name": "Munkegata",
+        "trip_count": 32669
+      },
+      {
+        "station_name": "Arendalsgata",
+        "trip_count": 32488
+      },
+      {
+        "station_name": "Kirkegata 15",
+        "trip_count": 32392
+      },
+      {
+        "station_name": "Rusel\u00f8kkg\u00e5rden",
+        "trip_count": 32386
+      },
+      {
+        "station_name": "Studentparlamentet",
+        "trip_count": 32111
+      },
+      {
+        "station_name": "Oslo Plaza",
+        "trip_count": 32007
+      },
+      {
+        "station_name": "Over R\u00e5dhusgata",
+        "trip_count": 31927
+      },
+      {
+        "station_name": "Uelands gate",
+        "trip_count": 31864
+      },
+      {
+        "station_name": "Sinsen T-bane",
+        "trip_count": 31609
+      },
+      {
+        "station_name": "Marienlystparken",
+        "trip_count": 31596
+      },
+      {
+        "station_name": "Pilestredet 63",
+        "trip_count": 31526
+      },
+      {
+        "station_name": "OsloMet",
+        "trip_count": 31290
+      },
+      {
+        "station_name": "Schives gate",
+        "trip_count": 31257
+      },
+      {
+        "station_name": "Jens Bjelkes gate",
+        "trip_count": 31044
+      },
+      {
+        "station_name": "The Hub",
+        "trip_count": 30575
+      },
+      {
+        "station_name": "Stensgata",
+        "trip_count": 30308
+      },
+      {
+        "station_name": "Uranienborgparken",
+        "trip_count": 30301
+      },
+      {
+        "station_name": "Skr\u00e5ninga",
+        "trip_count": 30262
+      },
+      {
+        "station_name": "Munkegata trikkestopp",
+        "trip_count": 30180
+      },
+      {
+        "station_name": "Frognerveien",
+        "trip_count": 30111
+      },
+      {
+        "station_name": "Norsk Folkemuseum",
+        "trip_count": 30098
+      },
+      {
+        "station_name": "Bj\u00f8lsen m\u00f8lle",
+        "trip_count": 30055
+      },
+      {
+        "station_name": "Trelastgata",
+        "trip_count": 29993
+      },
+      {
+        "station_name": "Henrik Wergelands all\u00e9",
+        "trip_count": 29884
+      },
+      {
+        "station_name": "7 Juni Plassen",
+        "trip_count": 29575
+      },
+      {
+        "station_name": "St. Hanshaugen",
+        "trip_count": 29429
+      },
+      {
+        "station_name": "Sirkustomta",
+        "trip_count": 29376
+      },
+      {
+        "station_name": "R\u00e5dhusgata",
+        "trip_count": 29173
+      },
+      {
+        "station_name": "Suhms gate",
+        "trip_count": 29114
+      },
+      {
+        "station_name": "Salt",
+        "trip_count": 28656
+      },
+      {
+        "station_name": "Aker Brygge",
+        "trip_count": 28532
+      },
+      {
+        "station_name": "Hydroparken",
+        "trip_count": 28494
+      },
+      {
+        "station_name": "Forskningsveien",
+        "trip_count": 28442
+      },
+      {
+        "station_name": "St. Hanshaugen park s\u00f8r",
+        "trip_count": 28248
+      },
+      {
+        "station_name": "Hasle Torg",
+        "trip_count": 28223
+      },
+      {
+        "station_name": "Akerselvallmenningen",
+        "trip_count": 27800
+      },
+      {
+        "station_name": "K\u00f8benhavngata busstopp",
+        "trip_count": 27799
+      },
+      {
+        "station_name": "Botanisk hage s\u00f8r-vest",
+        "trip_count": 27784
+      },
+      {
+        "station_name": "T\u00f8yenbekken",
+        "trip_count": 27688
+      },
+      {
+        "station_name": "Hausmanns gate",
+        "trip_count": 27682
+      },
+      {
+        "station_name": "Sotahj\u00f8rnet",
+        "trip_count": 27664
+      },
+      {
+        "station_name": "T\u00f8yenparken",
+        "trip_count": 27511
+      },
+      {
+        "station_name": "Krebs' gate",
+        "trip_count": 27447
+      },
+      {
+        "station_name": "Botanisk Hage vest",
+        "trip_count": 27387
+      },
+      {
+        "station_name": "Anker Hotel",
+        "trip_count": 27270
+      },
+      {
+        "station_name": "Ila",
+        "trip_count": 27219
+      },
+      {
+        "station_name": "John Colletts plass",
+        "trip_count": 27156
+      },
+      {
+        "station_name": "Fysikkbygningen",
+        "trip_count": 26814
+      },
+      {
+        "station_name": "Colbj\u00f8rnsens gate",
+        "trip_count": 26208
+      },
+      {
+        "station_name": "Huk",
+        "trip_count": 26100
+      },
+      {
+        "station_name": "Majorstuveien",
+        "trip_count": 26097
+      },
+      {
+        "station_name": "Aker Brygge 3 mot Fergene",
+        "trip_count": 25619
+      },
+      {
+        "station_name": "Kirkeveien",
+        "trip_count": 25494
+      },
+      {
+        "station_name": "Hasle",
+        "trip_count": 25372
+      },
+      {
+        "station_name": "Karenlyst all\u00e9",
+        "trip_count": 25275
+      },
+      {
+        "station_name": "Valkyrieplassen",
+        "trip_count": 25206
+      },
+      {
+        "station_name": "Enerhaugen",
+        "trip_count": 25137
+      },
+      {
+        "station_name": "Colosseum Kino",
+        "trip_count": 24904
+      },
+      {
+        "station_name": "Hausmanns bru",
+        "trip_count": 24799
+      },
+      {
+        "station_name": "Brugata",
+        "trip_count": 24550
+      },
+      {
+        "station_name": "Fyrstikktorget",
+        "trip_count": 24474
+      },
+      {
+        "station_name": "Biskop Gunnerus' gate",
+        "trip_count": 24332
+      },
+      {
+        "station_name": "Riddervoldplass",
+        "trip_count": 24311
+      },
+      {
+        "station_name": "Idioten",
+        "trip_count": 24018
+      },
+      {
+        "station_name": "Kampen park \u00d8st",
+        "trip_count": 23775
+      },
+      {
+        "station_name": "Ullev\u00e5lsveien",
+        "trip_count": 23757
+      },
+      {
+        "station_name": "Adamstuen",
+        "trip_count": 23332
+      },
+      {
+        "station_name": "Skippergata",
+        "trip_count": 23319
+      },
+      {
+        "station_name": "Frognerbadet",
+        "trip_count": 23245
+      },
+      {
+        "station_name": "Karenslyst all\u00e9",
+        "trip_count": 23242
+      },
+      {
+        "station_name": "St. Hanshaugen park nord",
+        "trip_count": 23180
+      },
+      {
+        "station_name": "Hoffsveien",
+        "trip_count": 23071
+      },
+      {
+        "station_name": "Blindern studentparkering",
+        "trip_count": 22901
+      },
+      {
+        "station_name": "Pilestredet",
+        "trip_count": 22599
+      },
+      {
+        "station_name": "Finnmarksgata",
+        "trip_count": 22563
+      },
+      {
+        "station_name": "Langkaia",
+        "trip_count": 22563
+      },
+      {
+        "station_name": "Colletts gate",
+        "trip_count": 21891
+      },
+      {
+        "station_name": "Holbergs Plass",
+        "trip_count": 21654
+      },
+      {
+        "station_name": "V\u00e5lerenga",
+        "trip_count": 21635
+      },
+      {
+        "station_name": "Tannlegeh\u00f8yskolen",
+        "trip_count": 21617
+      },
+      {
+        "station_name": "Aker Brygge 2 mot R\u00e5dhusplassen",
+        "trip_count": 21612
+      },
+      {
+        "station_name": "Carl Berners plass nord",
+        "trip_count": 21387
+      },
+      {
+        "station_name": "Griffenfeldts gate",
+        "trip_count": 21046
+      },
+      {
+        "station_name": "Thune",
+        "trip_count": 20467
+      },
+      {
+        "station_name": "Bak Niels Treschows hus nord",
+        "trip_count": 20407
+      },
+      {
+        "station_name": "Pilestredet Studenthus",
+        "trip_count": 20383
+      },
+      {
+        "station_name": "Sinsenveien",
+        "trip_count": 20217
+      },
+      {
+        "station_name": "T\u00e5sen Senter",
+        "trip_count": 20129
+      },
+      {
+        "station_name": "Ensj\u00f8veien",
+        "trip_count": 19967
+      },
+      {
+        "station_name": "7. juni-plassen",
+        "trip_count": 19926
+      },
+      {
+        "station_name": "Nylandsveien",
+        "trip_count": 19869
+      },
+      {
+        "station_name": "Badebakken",
+        "trip_count": 19294
+      },
+      {
+        "station_name": "Stjerneplassen",
+        "trip_count": 18956
+      },
+      {
+        "station_name": "Torshovdalen \u00f8st",
+        "trip_count": 18949
+      },
+      {
+        "station_name": "Vippetangen \u00f8st",
+        "trip_count": 18900
+      },
+      {
+        "station_name": "Hesselbergs Gate",
+        "trip_count": 18632
+      },
+      {
+        "station_name": "Gunerius",
+        "trip_count": 18468
+      },
+      {
+        "station_name": "Holbergs plass",
+        "trip_count": 18354
+      },
+      {
+        "station_name": "M\u00f8llergata",
+        "trip_count": 18000
+      },
+      {
+        "station_name": "Bak Niels Treschows hus s\u00f8r",
+        "trip_count": 17837
+      },
+      {
+        "station_name": "Universitetsgata",
+        "trip_count": 17629
+      },
+      {
+        "station_name": "Nedre Slottsgate",
+        "trip_count": 17315
+      },
+      {
+        "station_name": "\u00d8kernveien",
+        "trip_count": 17304
+      },
+      {
+        "station_name": "Lille Schous plass",
+        "trip_count": 17295
+      },
+      {
+        "station_name": "Kjeld Stubs gate",
+        "trip_count": 17167
+      },
+      {
+        "station_name": "Munkedamsveien",
+        "trip_count": 17062
+      },
+      {
+        "station_name": "Bygd\u00f8y all\u00e9",
+        "trip_count": 16976
+      },
+      {
+        "station_name": "Frogner Tennisklubb",
+        "trip_count": 16362
+      },
+      {
+        "station_name": "Volvat",
+        "trip_count": 16248
+      },
+      {
+        "station_name": "Lodalen busstopp",
+        "trip_count": 16221
+      },
+      {
+        "station_name": "Drammensveien",
+        "trip_count": 16175
+      },
+      {
+        "station_name": "Meltzers gate",
+        "trip_count": 15850
+      },
+      {
+        "station_name": "Arkaden Nord",
+        "trip_count": 15786
+      },
+      {
+        "station_name": "Sj\u00f8lyst",
+        "trip_count": 15576
+      },
+      {
+        "station_name": "Klingenberggata",
+        "trip_count": 15489
+      },
+      {
+        "station_name": "T\u00e5senl\u00f8kka",
+        "trip_count": 15448
+      },
+      {
+        "station_name": "Friggfeltet",
+        "trip_count": 15328
+      },
+      {
+        "station_name": "Aker Brygge 1 mot Nasjonalmuseet",
+        "trip_count": 15316
+      },
+      {
+        "station_name": "Elgsletta",
+        "trip_count": 15308
+      },
+      {
+        "station_name": "Sj\u00f8siden ved fontenen",
+        "trip_count": 15166
+      },
+      {
+        "station_name": "Dronningens gate",
+        "trip_count": 14603
+      },
+      {
+        "station_name": "Det Teologiske fakultet",
+        "trip_count": 14437
+      },
+      {
+        "station_name": "Marienlyst",
+        "trip_count": 14435
+      },
+      {
+        "station_name": "S\u00f8rvest for Slottsparken",
+        "trip_count": 14374
+      },
+      {
+        "station_name": "Slemdalsveien",
+        "trip_count": 14204
+      },
+      {
+        "station_name": "Domus Athletica",
+        "trip_count": 13380
+      },
+      {
+        "station_name": "Hoff terrasse holdeplass",
+        "trip_count": 13378
+      },
+      {
+        "station_name": "Grenseveien",
+        "trip_count": 13198
+      },
+      {
+        "station_name": "Hedmarksgata",
+        "trip_count": 12894
+      },
+      {
+        "station_name": "Arkaden S\u00f8r",
+        "trip_count": 12799
+      },
+      {
+        "station_name": "B\u00f8kkerveien",
+        "trip_count": 12771
+      },
+      {
+        "station_name": "Huk 2",
+        "trip_count": 12717
+      },
+      {
+        "station_name": "Thereses gate",
+        "trip_count": 12358
+      },
+      {
+        "station_name": "Blindern Studenthus",
+        "trip_count": 12264
+      },
+      {
+        "station_name": "Olav Kyrres plass",
+        "trip_count": 12103
+      },
+      {
+        "station_name": "Stockfleths gate",
+        "trip_count": 11961
+      },
+      {
+        "station_name": "Nydalen",
+        "trip_count": 11942
+      },
+      {
+        "station_name": "Sj\u00f8siden \u00f8st",
+        "trip_count": 11864
+      },
+      {
+        "station_name": "Sj\u00f8siden 2 ved fontenen",
+        "trip_count": 11864
+      },
+      {
+        "station_name": "Monolittveien",
+        "trip_count": 11808
+      },
+      {
+        "station_name": "Anker Hostel",
+        "trip_count": 11560
+      },
+      {
+        "station_name": "HiOA",
+        "trip_count": 11352
+      },
+      {
+        "station_name": "Skarpsnoparken",
+        "trip_count": 11317
+      },
+      {
+        "station_name": "Brynseng T-bane",
+        "trip_count": 10701
+      },
+      {
+        "station_name": "Tiedemannsparken",
+        "trip_count": 10635
+      },
+      {
+        "station_name": "Tordenskiolds gate",
+        "trip_count": 10331
+      },
+      {
+        "station_name": "HasleLinje",
+        "trip_count": 10299
+      },
+      {
+        "station_name": "Sk\u00f8yen Stasjon",
+        "trip_count": 10205
+      },
+      {
+        "station_name": "L\u00f8renporten",
+        "trip_count": 10154
+      },
+      {
+        "station_name": "Fr\u00f8en T-bane",
+        "trip_count": 10061
+      },
+      {
+        "station_name": "Mailundveien",
+        "trip_count": 9952
+      },
+      {
+        "station_name": "Diakonhjemmet",
+        "trip_count": 9934
+      },
+      {
+        "station_name": "Storgata",
+        "trip_count": 9798
+      },
+      {
+        "station_name": "Ullev\u00e5lsall\u00e9en",
+        "trip_count": 9765
+      },
+      {
+        "station_name": "Huk 1",
+        "trip_count": 9114
+      },
+      {
+        "station_name": "Rolf Wickstr\u00f8ms vei",
+        "trip_count": 8983
+      },
+      {
+        "station_name": "Bernt Ankers gate",
+        "trip_count": 8959
+      },
+      {
+        "station_name": "Via Vika",
+        "trip_count": 8824
+      },
+      {
+        "station_name": "Majorstuen T-bane",
+        "trip_count": 8560
+      },
+      {
+        "station_name": "Nybrua holdeplass",
+        "trip_count": 8384
+      },
+      {
+        "station_name": "Borgenveien",
+        "trip_count": 7967
+      },
+      {
+        "station_name": "Maritimt Museum",
+        "trip_count": 7833
+      },
+      {
+        "station_name": "Leirfallsgata",
+        "trip_count": 7770
+      },
+      {
+        "station_name": "\u00d8kern Portal",
+        "trip_count": 7273
+      },
+      {
+        "station_name": "Furulund",
+        "trip_count": 6871
+      },
+      {
+        "station_name": "Egertorget",
+        "trip_count": 6633
+      },
+      {
+        "station_name": "Sogn Studentby",
+        "trip_count": 5925
+      },
+      {
+        "station_name": "Blindern T-Bane",
+        "trip_count": 5629
+      },
+      {
+        "station_name": "Stortingstunellen",
+        "trip_count": 5582
+      },
+      {
+        "station_name": "Olav Vs gate",
+        "trip_count": 5555
+      },
+      {
+        "station_name": "Jarlsborgveien",
+        "trip_count": 5269
+      },
+      {
+        "station_name": "Ulven Torg",
+        "trip_count": 5173
+      },
+      {
+        "station_name": "Kv\u00e6rnerveien",
+        "trip_count": 4711
+      },
+      {
+        "station_name": "Gaustad T-bane",
+        "trip_count": 4645
+      },
+      {
+        "station_name": "Vestre Aker Kirke",
+        "trip_count": 4562
+      },
+      {
+        "station_name": "Krohgst\u00f8tten hospital",
+        "trip_count": 4042
+      },
+      {
+        "station_name": "Colletts gate 31",
+        "trip_count": 3920
+      },
+      {
+        "station_name": "Vaterlandsparken II",
+        "trip_count": 3375
+      },
+      {
+        "station_name": "Ensj\u00f8 T-Bane",
+        "trip_count": 3333
+      },
+      {
+        "station_name": "Sj\u00f8siden vest",
+        "trip_count": 3120
+      },
+      {
+        "station_name": "\u00d8kern T-bane",
+        "trip_count": 2845
+      },
+      {
+        "station_name": "Valle Vision",
+        "trip_count": 2769
+      },
+      {
+        "station_name": "Schwensens gate",
+        "trip_count": 2556
+      },
+      {
+        "station_name": "NRK",
+        "trip_count": 2483
+      },
+      {
+        "station_name": "Goethe Institut",
+        "trip_count": 2164
+      },
+      {
+        "station_name": "Bryn Brannstasjon",
+        "trip_count": 1769
+      },
+      {
+        "station_name": "Bryn T-Bane",
+        "trip_count": 1495
+      },
+      {
+        "station_name": "Aker Brygge 1",
+        "trip_count": 1453
+      },
+      {
+        "station_name": "Stortingstunnelen",
+        "trip_count": 1388
+      },
+      {
+        "station_name": "Majorstuen t-bane",
+        "trip_count": 1319
+      },
+      {
+        "station_name": "Blindern vgs",
+        "trip_count": 1095
+      },
+      {
+        "station_name": "Makrellbekken T",
+        "trip_count": 836
+      },
+      {
+        "station_name": "Bryn T-bane",
+        "trip_count": 467
+      },
+      {
+        "station_name": "\u00d8stbanehallen",
+        "trip_count": 52
+      },
+      {
+        "station_name": "Diriks gate",
+        "trip_count": 33
+      },
+      {
+        "station_name": "Legevakten",
+        "trip_count": 17
+      },
+      {
+        "station_name": "Aker Brygge 1 Nasjonalmuseet",
+        "trip_count": 2
+      }
+    ],
+    "duration_distribution": [
+      {
+        "bin_min": 0,
+        "count": 0
+      },
+      {
+        "bin_min": 1,
+        "count": 197077
+      },
+      {
+        "bin_min": 2,
+        "count": 360875
+      },
+      {
+        "bin_min": 3,
+        "count": 567913
+      },
+      {
+        "bin_min": 4,
+        "count": 726323
+      },
+      {
+        "bin_min": 5,
+        "count": 800738
+      },
+      {
+        "bin_min": 6,
+        "count": 812322
+      },
+      {
+        "bin_min": 7,
+        "count": 777736
+      },
+      {
+        "bin_min": 8,
+        "count": 717622
+      },
+      {
+        "bin_min": 9,
+        "count": 648510
+      },
+      {
+        "bin_min": 10,
+        "count": 575474
+      },
+      {
+        "bin_min": 11,
+        "count": 499239
+      },
+      {
+        "bin_min": 12,
+        "count": 426670
+      },
+      {
+        "bin_min": 13,
+        "count": 363764
+      },
+      {
+        "bin_min": 14,
+        "count": 307872
+      },
+      {
+        "bin_min": 15,
+        "count": 259897
+      },
+      {
+        "bin_min": 16,
+        "count": 219290
+      },
+      {
+        "bin_min": 17,
+        "count": 185490
+      },
+      {
+        "bin_min": 18,
+        "count": 157013
+      },
+      {
+        "bin_min": 19,
+        "count": 133139
+      },
+      {
+        "bin_min": 20,
+        "count": 113653
+      },
+      {
+        "bin_min": 21,
+        "count": 98472
+      },
+      {
+        "bin_min": 22,
+        "count": 85681
+      },
+      {
+        "bin_min": 23,
+        "count": 74184
+      },
+      {
+        "bin_min": 24,
+        "count": 65867
+      },
+      {
+        "bin_min": 25,
+        "count": 58423
+      },
+      {
+        "bin_min": 26,
+        "count": 52001
+      },
+      {
+        "bin_min": 27,
+        "count": 46623
+      },
+      {
+        "bin_min": 28,
+        "count": 41944
+      },
+      {
+        "bin_min": 29,
+        "count": 38376
+      },
+      {
+        "bin_min": 30,
+        "count": 34587
+      },
+      {
+        "bin_min": 31,
+        "count": 31953
+      },
+      {
+        "bin_min": 32,
+        "count": 29107
+      },
+      {
+        "bin_min": 33,
+        "count": 27211
+      },
+      {
+        "bin_min": 34,
+        "count": 25153
+      },
+      {
+        "bin_min": 35,
+        "count": 23211
+      },
+      {
+        "bin_min": 36,
+        "count": 21639
+      },
+      {
+        "bin_min": 37,
+        "count": 20329
+      },
+      {
+        "bin_min": 38,
+        "count": 19222
+      },
+      {
+        "bin_min": 39,
+        "count": 18480
+      },
+      {
+        "bin_min": 40,
+        "count": 17369
+      },
+      {
+        "bin_min": 41,
+        "count": 16645
+      },
+      {
+        "bin_min": 42,
+        "count": 15953
+      },
+      {
+        "bin_min": 43,
+        "count": 15289
+      },
+      {
+        "bin_min": 44,
+        "count": 14614
+      },
+      {
+        "bin_min": 45,
+        "count": 14053
+      },
+      {
+        "bin_min": 46,
+        "count": 13419
+      },
+      {
+        "bin_min": 47,
+        "count": 12972
+      },
+      {
+        "bin_min": 48,
+        "count": 12542
+      },
+      {
+        "bin_min": 49,
+        "count": 12194
+      },
+      {
+        "bin_min": 50,
+        "count": 11937
+      },
+      {
+        "bin_min": 51,
+        "count": 11934
+      },
+      {
+        "bin_min": 52,
+        "count": 12530
+      },
+      {
+        "bin_min": 53,
+        "count": 12715
+      },
+      {
+        "bin_min": 54,
+        "count": 12888
+      },
+      {
+        "bin_min": 55,
+        "count": 12264
+      },
+      {
+        "bin_min": 56,
+        "count": 11531
+      },
+      {
+        "bin_min": 57,
+        "count": 10385
+      },
+      {
+        "bin_min": 58,
+        "count": 9345
+      },
+      {
+        "bin_min": 59,
+        "count": 120635
+      }
+    ]
+  }
+}
