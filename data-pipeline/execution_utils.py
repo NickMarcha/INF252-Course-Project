@@ -9,6 +9,7 @@ whose data is too large to export.
 from datetime import datetime
 import json
 import os
+import sys
 import platform
 import time
 import warnings
@@ -87,7 +88,9 @@ def show_execution_banner(filepath: Path) -> float:
     else:
         print("No previous execution info (file does not exist yet).")
 
-    input("Press Enter to continue, or interrupt kernel (Ctrl+C) to stop...")
+    # Skip interactive prompt when stdin is not a TTY (e.g. nbconvert --execute)
+    if sys.stdin.isatty() and not os.environ.get("CI") and not os.environ.get("NONINTERACTIVE"):
+        input("Press Enter to continue, or interrupt kernel (Ctrl+C) to stop...")
     return time.time()
 
 
