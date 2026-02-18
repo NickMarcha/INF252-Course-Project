@@ -24,3 +24,28 @@ export interface AvgTripTimeByMonthRow {
   avg_trip_seconds: number;
   trip_count: number;
 }
+
+/** EDA summary from L12_Oslo_Bysykkel_EDA.ipynb */
+export interface EdaSummaryStats {
+  n_trips: number;
+  n_months: number;
+  duration_stats: {
+    mean_min: number;
+    median_min: number;
+    std_min: number;
+    skewness: number;
+    kurtosis: number;
+  };
+  avg_by_month: Array<{
+    year: number;
+    month: number;
+    avg_duration_min: number;
+    trip_count: number;
+  }>;
+  /** Raw null counts per column (added in EDA pipeline) */
+  null_counts_per_column?: Record<string, number>;
+  /** All stations sorted by trip count (added in EDA pipeline) */
+  station_trip_counts?: Array<{ station_name: string; trip_count: number }>;
+  /** 1-min bins 0–60 (added in EDA pipeline) */
+  duration_distribution?: Array<{ bin_min: number; count: number }>;
+}

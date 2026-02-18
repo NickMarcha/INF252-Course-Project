@@ -3,84 +3,299 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
-	<div class="p-6 max-w-4xl mx-auto">
-		<h1 class="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">Data Test – Oslo Bysykkel</h1>
-		<p class="text-slate-600 dark:text-slate-400 mb-6">
-			Average trip duration by month (from prepared-data via D3)
+	<div class="p-6 max-w-4xl mx-auto space-y-12">
+		<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Data Test – Oslo Bysykkel</h1>
+		<p class="text-slate-600 dark:text-slate-400">
+			EDA charts from prepared-data (D3 + static figures)
 		</p>
-		<div id="chart-container" class="w-full min-h-[400px]"></div>
-		<p id="chart-status" class="mt-4 text-sm text-slate-500 dark:text-slate-400">Loading…</p>
+
+		<section>
+			<h2 class="text-lg font-semibold mb-2 text-slate-800 dark:text-slate-200">Average Trip Duration by Month</h2>
+			<div id="chart-time-series" class="w-full min-h-[300px]"></div>
+			<p id="status-time-series" class="mt-2 text-sm text-slate-500 dark:text-slate-400">Loading…</p>
+		</section>
+
+		<section>
+			<h2 class="text-lg font-semibold mb-2 text-slate-800 dark:text-slate-200">Duration Distribution (0–60 min)</h2>
+			<div id="chart-duration" class="w-full min-h-[300px]"></div>
+			<p id="status-duration" class="mt-2 text-sm text-slate-500 dark:text-slate-400">Loading…</p>
+		</section>
+
+		<section>
+			<h2 class="text-lg font-semibold mb-2 text-slate-800 dark:text-slate-200">Top 10 Stations by Trip Count</h2>
+			<div id="chart-stations" class="w-full min-h-[300px]"></div>
+			<p id="status-stations" class="mt-2 text-sm text-slate-500 dark:text-slate-400">Loading…</p>
+		</section>
+
+		<section>
+			<h2 class="text-lg font-semibold mb-2 text-slate-800 dark:text-slate-200">Missing Values per Column</h2>
+			<div id="chart-nulls" class="w-full min-h-[200px]"></div>
+			<p id="status-nulls" class="mt-2 text-sm text-slate-500 dark:text-slate-400">Loading…</p>
+		</section>
+
+		<section>
+			<h2 class="text-lg font-semibold mb-2 text-slate-800 dark:text-slate-200">Outlier Detection (Duration)</h2>
+			<p class="text-sm text-slate-500 dark:text-slate-400 mb-2">Exported as image (raw data too large)</p>
+			<div id="outlier-figure" class="w-full"></div>
+		</section>
 	</div>
 </Layout>
 
 <script>
 	import * as d3 from 'd3';
 	import { loadPreparedData } from '../data/load-prepared-data';
-	import type { AvgTripTimeByMonthRow } from '../data/prepared-data-types';
+	import type { EdaSummaryStats } from '../data/prepared-data-types';
 
-	const container = document.getElementById('chart-container');
-	const status = document.getElementById('chart-status');
-	if (!container || !status) throw new Error('Chart container not found');
+	const base = import.meta.env.BASE_URL ?? '/';
+
+	const margin = { top: 20, right: 30, bottom: 50, left: 50 };
+	const chartHeight = 280;
 
 	async function render() {
 		try {
-			const { data } = await loadPreparedData<AvgTripTimeByMonthRow[]>(
-				'avg_trip_time_by_month.json'
-			);
-			if (!data?.length) {
-				status.textContent = 'No data. Run the pipeline and npm run prepare:data.';
+			const { data } = await loadPreparedData<EdaSummaryStats>('eda_summary_stats.json');
+			if (!data) {
+				updateStatus('No data. Run the pipeline and npm run prepare:data.');
 				return;
 			}
 
-			status.textContent = `${data.length} months loaded.`;
+			// Time series: avg_by_month
+			renderTimeSeries(data.avg_by_month ?? []);
 
-			const margin = { top: 20, right: 30, bottom: 40, left: 50 };
-			const width = container.clientWidth - margin.left - margin.right;
-			const height = 400 - margin.top - margin.bottom;
+			// Duration histogram: duration_distribution (1-min bins 0–60)
+			renderDurationHistogram(data.duration_distribution ?? []);
 
-			const svg = d3
-				.select(container)
-				.append('svg')
-				.attr('width', width + margin.left + margin.right)
-				.attr('height', height + margin.top + margin.bottom)
-				.append('g')
-				.attr('transform', `translate(${margin.left},${margin.top})`);
+			// Top 10 stations (hardcoded)
+			const topN = 10;
+			renderStations((data.station_trip_counts ?? []).slice(0, topN));
 
-			const x = d3
-				.scaleBand()
-				.domain(data.map((d) => `${d.year}-${String(d.month).padStart(2, '0')}`))
-				.range([0, width])
-				.padding(0.1);
+			// Missing values: null_counts_per_column
+			renderNullCounts(data.null_counts_per_column ?? {});
 
-			const y = d3
-				.scaleLinear()
-				.domain([0, d3.max(data, (d) => d.avg_trip_seconds) ?? 1200])
-				.nice()
-				.range([height, 0]);
-
-			svg
-				.append('g')
-				.attr('transform', `translate(0,${height})`)
-				.call(d3.axisBottom(x))
-				.selectAll('text')
-				.attr('transform', 'rotate(-45)')
-				.style('text-anchor', 'end');
-
-			svg.append('g').call(d3.axisLeft(y));
-
-			svg
-				.selectAll('rect')
-				.data(data)
-				.join('rect')
-				.attr('x', (d) => x(`${d.year}-${String(d.month).padStart(2, '0')}`) ?? 0)
-				.attr('y', (d) => y(d.avg_trip_seconds))
-				.attr('width', x.bandwidth())
-				.attr('height', (d) => height - y(d.avg_trip_seconds))
-				.attr('fill', 'steelblue')
-				.attr('opacity', 0.8);
+			// Outlier figure (static image)
+			renderOutlierFigure();
 		} catch (err) {
-			status.textContent = `Error: ${err instanceof Error ? err.message : String(err)}`;
+			updateStatus(`Error: ${err instanceof Error ? err.message : String(err)}`);
 		}
+	}
+
+	function updateStatus(msg: string) {
+		for (const id of ['status-time-series', 'status-duration', 'status-stations', 'status-nulls']) {
+			const el = document.getElementById(id);
+			if (el) el.textContent = msg;
+		}
+	}
+
+	function getContainer(id: string): HTMLDivElement {
+		const el = document.getElementById(id);
+		if (!el) throw new Error(`Container ${id} not found`);
+		return el as HTMLDivElement;
+	}
+
+	function renderTimeSeries(rows: Array<{ year: number; month: number; avg_duration_min: number; trip_count: number }>) {
+		const container = getContainer('chart-time-series');
+		const status = getContainer('status-time-series');
+		container.innerHTML = '';
+		if (!rows.length) {
+			status.textContent = 'No time series data.';
+			return;
+		}
+		status.textContent = `${rows.length} months loaded.`;
+
+		const width = container.clientWidth - margin.left - margin.right;
+		const height = chartHeight - margin.top - margin.bottom;
+
+		const svg = d3
+			.select(container)
+			.append('svg')
+			.attr('width', width + margin.left + margin.right)
+			.attr('height', height + margin.top + margin.bottom)
+			.append('g')
+			.attr('transform', `translate(${margin.left},${margin.top})`);
+
+		const labels = rows.map((d) => `${d.year}-${String(d.month).padStart(2, '0')}`);
+		const x = d3.scaleBand().domain(labels).range([0, width]).padding(0.1);
+		const y = d3
+			.scaleLinear()
+			.domain([0, d3.max(rows, (d) => d.avg_duration_min) ?? 20])
+			.nice()
+			.range([height, 0]);
+
+		svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x))
+			.selectAll('text')
+			.attr('transform', 'rotate(-45)')
+			.style('text-anchor', 'end');
+
+		svg.append('g').call(d3.axisLeft(y));
+
+		svg
+			.selectAll('rect')
+			.data(rows)
+			.join('rect')
+			.attr('x', (d) => x(`${d.year}-${String(d.month).padStart(2, '0')}`) ?? 0)
+			.attr('y', (d) => y(d.avg_duration_min))
+			.attr('width', x.bandwidth())
+			.attr('height', (d) => height - y(d.avg_duration_min))
+			.attr('fill', 'steelblue')
+			.attr('opacity', 0.8);
+	}
+
+	function renderDurationHistogram(bins: Array<{ bin_min: number; count: number }>) {
+		const container = getContainer('chart-duration');
+		const status = getContainer('status-duration');
+		container.innerHTML = '';
+		if (!bins.length) {
+			status.textContent = 'No duration distribution data.';
+			return;
+		}
+		status.textContent = `${bins.length} bins (0–60 min).`;
+
+		const width = container.clientWidth - margin.left - margin.right;
+		const height = chartHeight - margin.top - margin.bottom;
+
+		const svg = d3
+			.select(container)
+			.append('svg')
+			.attr('width', width + margin.left + margin.right)
+			.attr('height', height + margin.top + margin.bottom)
+			.append('g')
+			.attr('transform', `translate(${margin.left},${margin.top})`);
+
+		const x = d3.scaleBand()
+			.domain(bins.map((d) => String(d.bin_min)))
+			.range([0, width])
+			.padding(0.1);
+		const y = d3
+			.scaleLinear()
+			.domain([0, d3.max(bins, (d) => d.count) ?? 1])
+			.nice()
+			.range([height, 0]);
+
+		svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x));
+		svg.append('g').call(d3.axisLeft(y));
+
+		svg
+			.selectAll('rect')
+			.data(bins)
+			.join('rect')
+			.attr('x', (d) => x(String(d.bin_min)) ?? 0)
+			.attr('y', (d) => y(d.count))
+			.attr('width', x.bandwidth())
+			.attr('height', (d) => height - y(d.count))
+			.attr('fill', '#2e7d32')
+			.attr('opacity', 0.8);
+	}
+
+	function renderStations(stations: Array<{ station_name: string; trip_count: number }>) {
+		const container = getContainer('chart-stations');
+		const status = getContainer('status-stations');
+		container.innerHTML = '';
+		if (!stations.length) {
+			status.textContent = 'No station data.';
+			return;
+		}
+		status.textContent = `Top ${stations.length} stations.`;
+
+		const width = container.clientWidth - margin.left - margin.right;
+		const height = chartHeight - margin.top - margin.bottom;
+
+		const svg = d3
+			.select(container)
+			.append('svg')
+			.attr('width', width + margin.left + margin.right)
+			.attr('height', height + margin.top + margin.bottom)
+			.append('g')
+			.attr('transform', `translate(${margin.left},${margin.top})`);
+
+		const x = d3.scaleBand()
+			.domain(stations.map((d) => d.station_name))
+			.range([0, width])
+			.padding(0.1);
+		const y = d3
+			.scaleLinear()
+			.domain([0, d3.max(stations, (d) => d.trip_count) ?? 1])
+			.nice()
+			.range([height, 0]);
+
+		svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x))
+			.selectAll('text')
+			.attr('transform', 'rotate(-45)')
+			.style('text-anchor', 'end');
+		svg.append('g').call(d3.axisLeft(y));
+
+		svg
+			.selectAll('rect')
+			.data(stations)
+			.join('rect')
+			.attr('x', (d) => x(d.station_name) ?? 0)
+			.attr('y', (d) => y(d.trip_count))
+			.attr('width', x.bandwidth())
+			.attr('height', (d) => height - y(d.trip_count))
+			.attr('fill', '#1565c0')
+			.attr('opacity', 0.8);
+	}
+
+	function renderNullCounts(nulls: Record<string, number>) {
+		const container = getContainer('chart-nulls');
+		const status = getContainer('status-nulls');
+		container.innerHTML = '';
+		const entries = Object.entries(nulls).filter(([, v]) => v > 0);
+		if (!entries.length) {
+			status.textContent = 'No missing values.';
+			return;
+		}
+		status.textContent = `${entries.length} columns with nulls.`;
+
+		const width = container.clientWidth - margin.left - margin.right;
+		const height = 180 - margin.top - margin.bottom;
+
+		const svg = d3
+			.select(container)
+			.append('svg')
+			.attr('width', width + margin.left + margin.right)
+			.attr('height', height + margin.top + margin.bottom)
+			.append('g')
+			.attr('transform', `translate(${margin.left},${margin.top})`);
+
+		const x = d3.scaleBand()
+			.domain(entries.map(([k]) => k))
+			.range([0, width])
+			.padding(0.1);
+		const y = d3
+			.scaleLinear()
+			.domain([0, d3.max(entries, ([, v]) => v) ?? 1])
+			.nice()
+			.range([height, 0]);
+
+		svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x))
+			.selectAll('text')
+			.attr('transform', 'rotate(-45)')
+			.style('text-anchor', 'end');
+		svg.append('g').call(d3.axisLeft(y));
+
+		svg
+			.selectAll('rect')
+			.data(entries)
+			.join('rect')
+			.attr('x', (d) => x(d[0]) ?? 0)
+			.attr('y', (d) => y(d[1]))
+			.attr('width', x.bandwidth())
+			.attr('height', (d) => height - y(d[1]))
+			.attr('fill', '#c62828')
+			.attr('opacity', 0.8);
+	}
+
+	function renderOutlierFigure() {
+		const container = getContainer('outlier-figure');
+		container.innerHTML = '';
+		const img = document.createElement('img');
+		img.src = `${base}prepared-data/figures/eda_outlier_duration.png`;
+		img.alt = 'Outlier detection (duration)';
+		img.className = 'max-w-full h-auto rounded';
+		img.onerror = () => {
+			container.innerHTML = '<p class="text-sm text-amber-600 dark:text-amber-400">Figure not found. Run the pipeline to generate eda_outlier_duration.png.</p>';
+		};
+		container.appendChild(img);
 	}
 
 	render();

@@ -2,6 +2,8 @@
 Reusable utilities for notebook execution metadata: last run info, system stats,
 duration. Use show_execution_banner() at the top and
 write_with_execution_metadata() when writing output.
+save_figure() exports matplotlib figures to prepared-data/figures/ for charts
+whose data is too large to export.
 """
 
 from datetime import datetime
@@ -112,3 +114,15 @@ def write_with_execution_metadata(
     payload = {"last_execution": info, "data": data}
     with open(filepath, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
+
+
+def save_figure(fig, name: str, prepared_dir: Path, dpi: int = 150) -> Path:
+    """
+    Save a matplotlib figure to prepared_dir/figures/{name}.png with consistent options.
+    Use for charts whose underlying data is too large or impractical to export.
+    """
+    out_dir = Path(prepared_dir) / "figures"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / f"{name}.png"
+    fig.savefig(path, dpi=dpi, bbox_inches="tight")
+    return path
