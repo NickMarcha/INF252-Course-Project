@@ -10,6 +10,6 @@
     "download": "node scripts/download_trips.js",
     "dev": "npm run dev --prefix frontend",
     "build": "npm run prepare:data && npm run build --prefix frontend",
-    "preview": "npm run prepare:data && npm run preview --prefix frontend"
+    "preview": "npm run build && npm run preview --prefix frontend"
   }
 }
