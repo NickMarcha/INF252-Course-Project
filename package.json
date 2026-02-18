@@ -1,6 +1,6 @@
 {
   "name": "inf252-course-project",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "scripts": {
     "postinstall": "npm install --prefix frontend",
