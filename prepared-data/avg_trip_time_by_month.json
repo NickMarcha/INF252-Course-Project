@@ -1,8 +1,493 @@
-[
-  {
-    "year": 2024,
-    "month": 1,
-    "avg_trip_seconds": 661.3916726318301,
-    "trip_count": 8382
-  }
-]
+{
+  "last_execution": {
+    "timestamp": "2026-02-18T16:45:49.815765",
+    "os": "Windows-11-10.0.26200-SP0",
+    "cpu_count": 32,
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "ram_gb": 31.1,
+    "ram_used_pct": 88.7,
+    "duration_seconds": 40
+  },
+  "data": [
+    {
+      "year": 2019,
+      "month": 4,
+      "avg_trip_seconds": 905.5163070195102,
+      "trip_count": 254277
+    },
+    {
+      "year": 2019,
+      "month": 5,
+      "avg_trip_seconds": 790.2466757289264,
+      "trip_count": 327365
+    },
+    {
+      "year": 2019,
+      "month": 6,
+      "avg_trip_seconds": 868.9450153002736,
+      "trip_count": 332347
+    },
+    {
+      "year": 2019,
+      "month": 7,
+      "avg_trip_seconds": 880.4446442919834,
+      "trip_count": 323580
+    },
+    {
+      "year": 2019,
+      "month": 8,
+      "avg_trip_seconds": 813.3075522815592,
+      "trip_count": 399376
+    },
+    {
+      "year": 2019,
+      "month": 9,
+      "avg_trip_seconds": 721.4497225187121,
+      "trip_count": 300741
+    },
+    {
+      "year": 2019,
+      "month": 10,
+      "avg_trip_seconds": 622.445439038824,
+      "trip_count": 201087
+    },
+    {
+      "year": 2019,
+      "month": 11,
+      "avg_trip_seconds": 607.6722377167781,
+      "trip_count": 95374
+    },
+    {
+      "year": 2019,
+      "month": 12,
+      "avg_trip_seconds": 549.1465765765765,
+      "trip_count": 11100
+    },
+    {
+      "year": 2020,
+      "month": 3,
+      "avg_trip_seconds": 1037.4355444305381,
+      "trip_count": 29563
+    },
+    {
+      "year": 2020,
+      "month": 4,
+      "avg_trip_seconds": 952.1774441025641,
+      "trip_count": 121875
+    },
+    {
+      "year": 2020,
+      "month": 5,
+      "avg_trip_seconds": 812.7195493214215,
+      "trip_count": 210882
+    },
+    {
+      "year": 2020,
+      "month": 6,
+      "avg_trip_seconds": 908.0614077775801,
+      "trip_count": 297959
+    },
+    {
+      "year": 2020,
+      "month": 7,
+      "avg_trip_seconds": 769.575836384924,
+      "trip_count": 200715
+    },
+    {
+      "year": 2020,
+      "month": 8,
+      "avg_trip_seconds": 807.7519327432661,
+      "trip_count": 292848
+    },
+    {
+      "year": 2020,
+      "month": 9,
+      "avg_trip_seconds": 699.7640477631915,
+      "trip_count": 251072
+    },
+    {
+      "year": 2020,
+      "month": 10,
+      "avg_trip_seconds": 652.9332447283086,
+      "trip_count": 162519
+    },
+    {
+      "year": 2020,
+      "month": 11,
+      "avg_trip_seconds": 658.2708037929813,
+      "trip_count": 90272
+    },
+    {
+      "year": 2020,
+      "month": 12,
+      "avg_trip_seconds": 686.7215572765913,
+      "trip_count": 38349
+    },
+    {
+      "year": 2021,
+      "month": 1,
+      "avg_trip_seconds": 691.3712089680624,
+      "trip_count": 36039
+    },
+    {
+      "year": 2021,
+      "month": 2,
+      "avg_trip_seconds": 696.8715692377341,
+      "trip_count": 35342
+    },
+    {
+      "year": 2021,
+      "month": 3,
+      "avg_trip_seconds": 811.4976821089717,
+      "trip_count": 64714
+    },
+    {
+      "year": 2021,
+      "month": 4,
+      "avg_trip_seconds": 831.4095862344807,
+      "trip_count": 122509
+    },
+    {
+      "year": 2021,
+      "month": 5,
+      "avg_trip_seconds": 799.9656006914433,
+      "trip_count": 144625
+    },
+    {
+      "year": 2021,
+      "month": 6,
+      "avg_trip_seconds": 778.9982002715702,
+      "trip_count": 217255
+    },
+    {
+      "year": 2021,
+      "month": 7,
+      "avg_trip_seconds": 830.0581791566206,
+      "trip_count": 162584
+    },
+    {
+      "year": 2021,
+      "month": 8,
+      "avg_trip_seconds": 786.187725018156,
+      "trip_count": 194151
+    },
+    {
+      "year": 2021,
+      "month": 9,
+      "avg_trip_seconds": 692.9417173232283,
+      "trip_count": 190005
+    },
+    {
+      "year": 2021,
+      "month": 10,
+      "avg_trip_seconds": 644.181950435714,
+      "trip_count": 138164
+    },
+    {
+      "year": 2021,
+      "month": 11,
+      "avg_trip_seconds": 619.6273589686417,
+      "trip_count": 98666
+    },
+    {
+      "year": 2021,
+      "month": 12,
+      "avg_trip_seconds": 674.3024294156271,
+      "trip_count": 15230
+    },
+    {
+      "year": 2022,
+      "month": 1,
+      "avg_trip_seconds": 669.914748341787,
+      "trip_count": 15378
+    },
+    {
+      "year": 2022,
+      "month": 2,
+      "avg_trip_seconds": 651.5848970512748,
+      "trip_count": 17533
+    },
+    {
+      "year": 2022,
+      "month": 3,
+      "avg_trip_seconds": 678.9535222752094,
+      "trip_count": 40471
+    },
+    {
+      "year": 2022,
+      "month": 4,
+      "avg_trip_seconds": 741.3616402501091,
+      "trip_count": 116909
+    },
+    {
+      "year": 2022,
+      "month": 5,
+      "avg_trip_seconds": 730.7609898125411,
+      "trip_count": 164516
+    },
+    {
+      "year": 2022,
+      "month": 6,
+      "avg_trip_seconds": 799.6157663695806,
+      "trip_count": 195454
+    },
+    {
+      "year": 2022,
+      "month": 7,
+      "avg_trip_seconds": 873.3434676411676,
+      "trip_count": 159261
+    },
+    {
+      "year": 2022,
+      "month": 8,
+      "avg_trip_seconds": 825.8639676269576,
+      "trip_count": 207333
+    },
+    {
+      "year": 2022,
+      "month": 9,
+      "avg_trip_seconds": 685.669423729631,
+      "trip_count": 165877
+    },
+    {
+      "year": 2022,
+      "month": 10,
+      "avg_trip_seconds": 649.5455702625762,
+      "trip_count": 116271
+    },
+    {
+      "year": 2022,
+      "month": 11,
+      "avg_trip_seconds": 609.6484395989762,
+      "trip_count": 70719
+    },
+    {
+      "year": 2022,
+      "month": 12,
+      "avg_trip_seconds": 631.4195059625213,
+      "trip_count": 16436
+    },
+    {
+      "year": 2023,
+      "month": 1,
+      "avg_trip_seconds": 599.9803259665595,
+      "trip_count": 18959
+    },
+    {
+      "year": 2023,
+      "month": 2,
+      "avg_trip_seconds": 613.0582855242371,
+      "trip_count": 24054
+    },
+    {
+      "year": 2023,
+      "month": 3,
+      "avg_trip_seconds": 606.4724582831584,
+      "trip_count": 29065
+    },
+    {
+      "year": 2023,
+      "month": 4,
+      "avg_trip_seconds": 746.148488995643,
+      "trip_count": 71608
+    },
+    {
+      "year": 2023,
+      "month": 5,
+      "avg_trip_seconds": 778.9217573713927,
+      "trip_count": 153024
+    },
+    {
+      "year": 2023,
+      "month": 6,
+      "avg_trip_seconds": 813.7523729904873,
+      "trip_count": 192584
+    },
+    {
+      "year": 2023,
+      "month": 7,
+      "avg_trip_seconds": 873.4412814638342,
+      "trip_count": 131381
+    },
+    {
+      "year": 2023,
+      "month": 8,
+      "avg_trip_seconds": 795.827709023299,
+      "trip_count": 172110
+    },
+    {
+      "year": 2023,
+      "month": 9,
+      "avg_trip_seconds": 716.3169636389975,
+      "trip_count": 151866
+    },
+    {
+      "year": 2023,
+      "month": 10,
+      "avg_trip_seconds": 640.711634312114,
+      "trip_count": 112555
+    },
+    {
+      "year": 2023,
+      "month": 11,
+      "avg_trip_seconds": 571.8072171131547,
+      "trip_count": 50020
+    },
+    {
+      "year": 2023,
+      "month": 12,
+      "avg_trip_seconds": 592.8411389774144,
+      "trip_count": 14434
+    },
+    {
+      "year": 2024,
+      "month": 1,
+      "avg_trip_seconds": 661.3916726318301,
+      "trip_count": 8382
+    },
+    {
+      "year": 2024,
+      "month": 2,
+      "avg_trip_seconds": 607.6148486105351,
+      "trip_count": 12055
+    },
+    {
+      "year": 2024,
+      "month": 3,
+      "avg_trip_seconds": 666.4703424103532,
+      "trip_count": 22254
+    },
+    {
+      "year": 2024,
+      "month": 4,
+      "avg_trip_seconds": 720.1857101432465,
+      "trip_count": 86215
+    },
+    {
+      "year": 2024,
+      "month": 5,
+      "avg_trip_seconds": 847.2149257943881,
+      "trip_count": 170068
+    },
+    {
+      "year": 2024,
+      "month": 6,
+      "avg_trip_seconds": 790.2666432784702,
+      "trip_count": 168176
+    },
+    {
+      "year": 2024,
+      "month": 7,
+      "avg_trip_seconds": 890.5405200930405,
+      "trip_count": 124247
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "avg_trip_seconds": 842.0955831841165,
+      "trip_count": 177594
+    },
+    {
+      "year": 2024,
+      "month": 9,
+      "avg_trip_seconds": 727.1276627439297,
+      "trip_count": 147686
+    },
+    {
+      "year": 2024,
+      "month": 10,
+      "avg_trip_seconds": 643.0033721154572,
+      "trip_count": 119213
+    },
+    {
+      "year": 2024,
+      "month": 11,
+      "avg_trip_seconds": 608.7424535998368,
+      "trip_count": 78448
+    },
+    {
+      "year": 2024,
+      "month": 12,
+      "avg_trip_seconds": 619.6474983643814,
+      "trip_count": 29041
+    },
+    {
+      "year": 2025,
+      "month": 1,
+      "avg_trip_seconds": 638.5904394012555,
+      "trip_count": 10355
+    },
+    {
+      "year": 2025,
+      "month": 2,
+      "avg_trip_seconds": 597.9218649102415,
+      "trip_count": 15486
+    },
+    {
+      "year": 2025,
+      "month": 3,
+      "avg_trip_seconds": 706.6674808094906,
+      "trip_count": 42990
+    },
+    {
+      "year": 2025,
+      "month": 4,
+      "avg_trip_seconds": 756.341628890134,
+      "trip_count": 98165
+    },
+    {
+      "year": 2025,
+      "month": 5,
+      "avg_trip_seconds": 758.5262237518637,
+      "trip_count": 143534
+    },
+    {
+      "year": 2025,
+      "month": 6,
+      "avg_trip_seconds": 778.1468502854229,
+      "trip_count": 149077
+    },
+    {
+      "year": 2025,
+      "month": 7,
+      "avg_trip_seconds": 906.0676522312597,
+      "trip_count": 145568
+    },
+    {
+      "year": 2025,
+      "month": 8,
+      "avg_trip_seconds": 830.5325284131168,
+      "trip_count": 176415
+    },
+    {
+      "year": 2025,
+      "month": 9,
+      "avg_trip_seconds": 706.317217662698,
+      "trip_count": 138416
+    },
+    {
+      "year": 2025,
+      "month": 10,
+      "avg_trip_seconds": 650.4880564757401,
+      "trip_count": 105957
+    },
+    {
+      "year": 2025,
+      "month": 11,
+      "avg_trip_seconds": 615.9470168489878,
+      "trip_count": 63624
+    },
+    {
+      "year": 2025,
+      "month": 12,
+      "avg_trip_seconds": 606.2492726736097,
+      "trip_count": 23717
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "avg_trip_seconds": 577.5804735013032,
+      "trip_count": 9208
+    }
+  ]
+}

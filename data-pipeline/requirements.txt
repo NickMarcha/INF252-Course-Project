@@ -1,0 +1,2 @@
+# Optional: for RAM/CPU details in execution metadata
+psutil>=5.9.0
