@@ -1,5 +1,7 @@
 # INF252 Course Project
 
+**[Live: Data Test](https://NickMarcha.github.io/INF252-Course-Project/data-test/)** – D3 chart of Oslo Bysykkel trip data
+
 ## Get started
 
 Use Node.js 25 (see [.nvmrc](.nvmrc)). From the project root:
