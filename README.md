@@ -4,6 +4,16 @@
 
 **[Live: Data Test](https://NickMarcha.github.io/INF252-Course-Project/data-test/)** – D3 chart of Oslo Bysykkel trip data
 
+## Recommended tools
+
+- **Jupyter (VS Code)** – Run notebooks in VS Code: [Jupyter extension](https://open-vsx.org/extension/ms-toolsai/jupyter)
+- **Node version manager** – Switch Node versions (project uses Node 25):
+  - Windows: [nvm-windows](https://github.com/coreybutler/nvm-windows)
+  - Mac/Linux: [nvm](https://github.com/nvm-sh/nvm)
+- **Python / conda** – Manage Python environments for the data pipeline:
+  - [Anaconda](https://www.anaconda.com/download) (Windows, Mac, Linux)
+  - Arch Linux: [python-conda](https://aur.archlinux.org/packages/python-conda)
+
 ## Get started
 
 Use Node.js 25 (see [.nvmrc](.nvmrc)). From the project root:
