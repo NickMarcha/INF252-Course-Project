@@ -1,0 +1,87 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+	<div class="p-6 max-w-4xl mx-auto">
+		<h1 class="text-2xl font-bold mb-4">Data Test – Oslo Bysykkel</h1>
+		<p class="text-slate-600 mb-6">
+			Average trip duration by month (from prepared-data via D3)
+		</p>
+		<div id="chart-container" class="w-full min-h-[400px]"></div>
+		<p id="chart-status" class="mt-4 text-sm text-slate-500">Loading…</p>
+	</div>
+</Layout>
+
+<script>
+	import * as d3 from 'd3';
+	import { loadPreparedData } from '../data/load-prepared-data';
+	import type { AvgTripTimeByMonthRow } from '../data/prepared-data-types';
+
+	const container = document.getElementById('chart-container');
+	const status = document.getElementById('chart-status');
+	if (!container || !status) throw new Error('Chart container not found');
+
+	async function render() {
+		try {
+			const { data } = await loadPreparedData<AvgTripTimeByMonthRow[]>(
+				'avg_trip_time_by_month.json'
+			);
+			if (!data?.length) {
+				status.textContent = 'No data. Run the pipeline and npm run prepare:data.';
+				return;
+			}
+
+			status.textContent = `${data.length} months loaded.`;
+
+			const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+			const width = container.clientWidth - margin.left - margin.right;
+			const height = 400 - margin.top - margin.bottom;
+
+			const svg = d3
+				.select(container)
+				.append('svg')
+				.attr('width', width + margin.left + margin.right)
+				.attr('height', height + margin.top + margin.bottom)
+				.append('g')
+				.attr('transform', `translate(${margin.left},${margin.top})`);
+
+			const x = d3
+				.scaleBand()
+				.domain(data.map((d) => `${d.year}-${String(d.month).padStart(2, '0')}`))
+				.range([0, width])
+				.padding(0.1);
+
+			const y = d3
+				.scaleLinear()
+				.domain([0, d3.max(data, (d) => d.avg_trip_seconds) ?? 1200])
+				.nice()
+				.range([height, 0]);
+
+			svg
+				.append('g')
+				.attr('transform', `translate(0,${height})`)
+				.call(d3.axisBottom(x))
+				.selectAll('text')
+				.attr('transform', 'rotate(-45)')
+				.style('text-anchor', 'end');
+
+			svg.append('g').call(d3.axisLeft(y));
+
+			svg
+				.selectAll('rect')
+				.data(data)
+				.join('rect')
+				.attr('x', (d) => x(`${d.year}-${String(d.month).padStart(2, '0')}`) ?? 0)
+				.attr('y', (d) => y(d.avg_trip_seconds))
+				.attr('width', x.bandwidth())
+				.attr('height', (d) => height - y(d.avg_trip_seconds))
+				.attr('fill', 'steelblue')
+				.attr('opacity', 0.8);
+		} catch (err) {
+			status.textContent = `Error: ${err instanceof Error ? err.message : String(err)}`;
+		}
+	}
+
+	render();
+</script>

@@ -1,0 +1,18 @@
+---
+import { readFileSync } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { marked } from 'marked';
+import Layout from '../layouts/Layout.astro';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const mdPath = path.resolve(__dirname, '../../../Course-Project-Information.md');
+const raw = readFileSync(mdPath, 'utf-8');
+const html = marked.parse(raw, { async: false }) as string;
+---
+
+<Layout>
+	<article class="prose prose-slate dark:prose-invert max-w-none px-6 py-8">
+		<div set:html={html} />
+	</article>
+</Layout>
