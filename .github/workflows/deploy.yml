@@ -2,7 +2,8 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 permissions:
@@ -21,7 +22,7 @@ jobs:
           build-cmd: npm run build
           out-dir: frontend/dist
           node-version: "22"
-          cache: false
+          cache-dir: frontend/node_modules/.astro
 
   deploy:
     needs: build
