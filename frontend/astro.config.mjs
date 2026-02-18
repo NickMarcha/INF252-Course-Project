@@ -4,5 +4,7 @@ import tailwind from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://NickMarcha.github.io',
+  base: '/INF252-Course-Project/',
   integrations: [tailwind()],
 });
