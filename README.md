@@ -2,7 +2,13 @@
 
 ## Get started
 
-Use Node.js 25 (see [.nvmrc](.nvmrc)). From the project root, install dependencies and run scripts as below.
+Use Node.js 25 (see [.nvmrc](.nvmrc)). From the project root:
+
+```bash
+npm install
+```
+
+This installs frontend dependencies automatically. Then run the commands below.
 
 ### Project structure
 
