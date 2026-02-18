@@ -64,3 +64,17 @@ export interface EdaSummaryStats {
   /** 1-min bins 0–60 (added in EDA pipeline) */
   duration_distribution?: Array<{ bin_min: number; count: number }>;
 }
+
+/** Isochrone data from isochrone_precompute.ipynb */
+export interface IsochroneStation {
+  id: string;
+  name: string;
+  lat: number;
+  lon: number;
+}
+
+export interface IsochronesData {
+  stations: IsochroneStation[];
+  time_bands_min: number[];
+  isochrones: Record<string, Record<string, { type: 'Polygon'; coordinates: number[][][] }>>;
+}
