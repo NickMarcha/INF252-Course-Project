@@ -1,2 +1,8 @@
+# EDA notebook (L12_Oslo_Bysykkel_EDA.ipynb)
+pandas>=2.0
+matplotlib>=3.7
+seaborn>=0.12
+scipy>=1.10
+
 # Optional: for RAM/CPU details in execution metadata
 psutil>=5.9.0

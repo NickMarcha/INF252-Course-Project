@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "postinstall": "npm install --prefix frontend",
+    "conda:create": "conda env create -f data-pipeline/environment.yml",
+    "conda:update": "conda env update -f data-pipeline/environment.yml --prune",
     "prepare:data": "node scripts/sync-prepared-data.js",
     "download": "node scripts/download_trips.js",
     "dev": "npm run dev --prefix frontend",

@@ -33,7 +33,32 @@ This installs frontend dependencies automatically. Then run the commands below.
 | `scripts/` | Root-level automation (e.g. data download) |
 | `raw-data/` | Downloaded Oslo Bysykkel trip data (created by `npm run download`) |
 
+### Data pipeline (conda)
+
+Create the conda environment for notebooks:
+
+```bash
+npm run conda:create
+conda activate inf252-data-pipeline
+```
+
+Update the environment after changes to `data-pipeline/environment.yml`:
+
+```bash
+npm run conda:update
+```
+
 ### Commands
+
+| Command | Description |
+|---------|--------------|
+| `npm run conda:create` | Create conda env from `data-pipeline/environment.yml` |
+| `npm run conda:update` | Update conda env after changes to environment.yml |
+| `npm run prepare:data` | Sync prepared-data to frontend (run after pipeline) |
+| `npm run download` | Download Oslo Bysykkel trip data |
+| `npm run dev` | Start frontend dev server |
+| `npm run build` | Build frontend for production |
+| `npm run preview` | Preview production build |
 
 Sync prepared data into the frontend (run after the pipeline produces `prepared-data/`):
 
