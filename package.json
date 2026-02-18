@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "download": "node scripts/download_trips.js"
+    "download": "node scripts/download_trips.js",
+    "dev": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix frontend",
+    "preview": "npm run preview --prefix frontend"
   }
 }
