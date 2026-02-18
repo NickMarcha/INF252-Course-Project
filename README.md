@@ -61,6 +61,10 @@ Preview the production build locally:
 npm run preview
 ```
 
+### Deployment
+
+Deploy to GitHub Pages by pushing a version tag. See [DEPLOYMENT.md](DEPLOYMENT.md) for setup and release instructions.
+
 ### Pages
 
 - `/` – Home (Astro example)
