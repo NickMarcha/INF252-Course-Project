@@ -1,0 +1,196 @@
+---
+import Layout from '../layouts/Layout.astro';
+import 'leaflet/dist/leaflet.css';
+---
+
+<Layout>
+	<div class="p-6 max-w-6xl mx-auto space-y-4">
+		<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Isochrone Map – Oslo Bysykkel</h1>
+		<p class="text-slate-600 dark:text-slate-400">
+			Travel time from each station (5, 10, 15, 20 min by bike). Click a station dot on the map or use the dropdown.
+		</p>
+
+		<div class="flex flex-col sm:flex-row gap-4 items-start">
+			<div class="flex items-center gap-2">
+				<label for="station-select" class="text-sm font-medium text-slate-700 dark:text-slate-300">Origin:</label>
+				<select
+					id="station-select"
+					class="px-3 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+				>
+					<option value="">— Select station —</option>
+				</select>
+			</div>
+			<div class="flex flex-wrap gap-4 text-sm text-slate-600 dark:text-slate-400">
+				<span class="flex items-center gap-2"><span class="w-6 h-0.5 rounded" style="background:#22c55e"></span> 5 min</span>
+				<span class="flex items-center gap-2"><span class="w-6 h-0.5 rounded" style="background:#eab308"></span> 10 min</span>
+				<span class="flex items-center gap-2"><span class="w-6 h-0.5 rounded" style="background:#f97316"></span> 15 min</span>
+				<span class="flex items-center gap-2"><span class="w-6 h-0.5 rounded" style="background:#ef4444"></span> 20 min</span>
+			</div>
+		</div>
+
+		<div id="map-container" class="w-full h-[500px] rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700"></div>
+		<p id="status" class="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
+
+		<section id="station-info" class="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-4 min-h-[80px] hidden">
+			<h2 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Station info</h2>
+			<div id="station-info-content" class="text-slate-600 dark:text-slate-400 text-sm space-y-1"></div>
+		</section>
+	</div>
+</Layout>
+
+<script>
+	import { loadPreparedData } from '../data/load-prepared-data';
+	import type { IsochronesData, EdaSummaryStats } from '../data/prepared-data-types';
+
+	const base = import.meta.env.BASE_URL ?? '/';
+
+	const BAND_COLORS: Record<string, string> = {
+		'5': '#22c55e',
+		'10': '#eab308',
+		'15': '#f97316',
+		'20': '#ef4444',
+	};
+
+	const OSLO_CENTER: [number, number] = [59.92, 10.75];
+	const DEFAULT_ZOOM = 13;
+	const STATION_DOT_RADIUS = 6;
+
+	let map: L.Map | null = null;
+	let layers: L.GeoJSON[] = [];
+	let stationDotsLayer: L.LayerGroup | null = null;
+
+	async function init() {
+		const statusEl = document.getElementById('status');
+		const selectEl = document.getElementById('station-select') as HTMLSelectElement;
+		const mapEl = document.getElementById('map-container');
+		const infoSection = document.getElementById('station-info');
+		const infoContent = document.getElementById('station-info-content');
+		if (!statusEl || !selectEl || !mapEl || !infoSection || !infoContent) return;
+
+		// Dynamic import so Leaflet loads only on client (avoids Vite/SSR issues)
+		const L = (await import('leaflet')).default;
+
+		try {
+			const { data } = await loadPreparedData<IsochronesData>('isochrones.json');
+			if (!data?.stations?.length || !data?.isochrones) {
+				statusEl.textContent = 'No isochrone data. Run the pipeline (isochrone_precompute.ipynb) and npm run prepare:data.';
+				return;
+			}
+
+			let tripCountByStation: Record<string, number> = {};
+			try {
+				const { data: eda } = await loadPreparedData<EdaSummaryStats>('eda_summary_stats.json');
+				if (eda?.station_trip_counts) {
+					for (const { station_name, trip_count } of eda.station_trip_counts) {
+						tripCountByStation[station_name] = trip_count;
+					}
+				}
+			} catch {
+				// EDA data optional
+			}
+
+			statusEl.textContent = '';
+
+			// Populate station dropdown
+			for (const s of data.stations) {
+				const opt = document.createElement('option');
+				opt.value = s.id;
+				opt.textContent = s.name;
+				selectEl.appendChild(opt);
+			}
+
+			// Init map
+			map = L.map(mapEl).setView(OSLO_CENTER, DEFAULT_ZOOM);
+			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+			}).addTo(map);
+
+			// Station dots layer (all stations as clickable circles)
+			stationDotsLayer = L.layerGroup().addTo(map);
+			for (const s of data.stations) {
+				const circle = L.circleMarker([s.lat, s.lon], {
+					radius: STATION_DOT_RADIUS,
+					fillColor: '#3b82f6',
+					fillOpacity: 0.7,
+					color: '#1e40af',
+					weight: 1.5,
+				});
+				circle.on('click', () => {
+					selectEl.value = s.id;
+					showStation(s.id);
+				});
+				circle.bindTooltip(s.name, { permanent: false, direction: 'top' });
+				circle.addTo(stationDotsLayer);
+			}
+
+			// Selected station marker (highlight)
+			const selectedLayer = L.layerGroup().addTo(map);
+
+			function showStation(id: string) {
+				// Clear previous isochrones
+				for (const layer of layers) {
+					map?.removeLayer(layer);
+				}
+				layers = [];
+
+				const station = data.stations.find((s) => s.id === id);
+				if (!station) return;
+
+				// Center on station
+				map?.setView([station.lat, station.lon], DEFAULT_ZOOM);
+
+				// Update selected marker
+				selectedLayer.clearLayers();
+				L.marker([station.lat, station.lon])
+					.bindPopup(station.name)
+					.addTo(selectedLayer);
+
+				// Add isochrone polygons: stroke only (no fill) so all bands are visible
+				const polys = data.isochrones[id];
+				if (!polys) return;
+
+				const order = ['5', '10', '15', '20'];
+				for (const band of order) {
+					const poly = polys[band];
+					if (!poly?.coordinates?.[0]) continue;
+					const geoJson = {
+						type: 'Polygon' as const,
+						coordinates: poly.coordinates,
+					};
+					const layer = L.geoJSON(geoJson, {
+						style: {
+							fill: false,
+							color: BAND_COLORS[band] ?? '#94a3b8',
+							weight: 2.5,
+						},
+					});
+					layer.addTo(map!);
+					layers.push(layer);
+				}
+
+				// Station info panel
+				infoSection.classList.remove('hidden');
+				const tripCount = tripCountByStation[station.name];
+				infoContent.innerHTML = `
+					<p><strong>${station.name}</strong></p>
+					<p>${tripCount != null ? `Trip count: ${tripCount.toLocaleString()}` : 'N/A'}</p>
+				`;
+			}
+
+			selectEl.addEventListener('change', () => {
+				const id = selectEl.value;
+				if (id) showStation(id);
+			});
+
+			// Select first station by default
+			if (data.stations.length > 0) {
+				selectEl.value = data.stations[0].id;
+				showStation(data.stations[0].id);
+			}
+		} catch (err) {
+			statusEl.textContent = `Failed to load: ${err instanceof Error ? err.message : String(err)}`;
+		}
+	}
+
+	init();
+</script>
