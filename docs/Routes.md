@@ -51,7 +51,7 @@ Location: `data-pipeline/routes_fetch.py`
 - **API model:** Uses **Compute Routes** (one origin → one destination per request), not Compute Route Matrix. Each route pair = one API request. Batch fetches loop over pairs and make one request per pair; there is no batch API that fetches many pairs in a single call.
 - **Cache:** Checks `routes-cache/single/{origin_id}_{dest_id}.json` before each API call. Batch fetches only call the API for pairs not yet cached
 - **Force fetch:** Set `force_fetch=True` or `FORCE_ROUTES_FETCH=1` to bypass cache
-- **Field mask:** Requests `routes.duration`, `routes.distanceMeters`, `routes.polyline`, `routes.viewport`, `routes.legs`, `routes.travelAdvisory`
+- **Field mask:** Minimal for slim format and cost: `routes.duration`, `routes.distanceMeters`, `routes.polyline`. Viewport, legs, and travelAdvisory are omitted to reduce API processing and response size.
 
 ### Cache Format (routes-cache/)
 
@@ -66,7 +66,7 @@ Each cached file contains:
 }
 ```
 
-The full response includes route legs, steps, navigation instructions, and polylines. Size: ~12 KB per route.
+With the minimal field mask, the cached response contains only duration, distanceMeters, and polyline. Size: ~1–3 KB per route (vs ~12 KB with full fields).
 
 ### Export Script (export-routes-to-prepared.js)
 
@@ -76,8 +76,7 @@ Location: `scripts/export-routes-to-prepared.js`
 - **Input:** `routes-cache/single/*.json`
 - **Output:** `prepared-data/routes.json`
 - **Slim format per route:** `origin_id`, `dest_id`, `duration_sec`, `distance_m`, `encodedPolyline`
-- **Size:** ~400 bytes/route (vs ~12 KB in cache)
-- **Multi-leg warning:** Logs a warning if any route has more than one leg (unexpected for station-to-station; would indicate waypoints or API change)
+- **Size:** ~400 bytes/route (vs ~1–3 KB in cache with minimal field mask)
 
 ### Prepared Routes Format
 
@@ -130,7 +129,7 @@ We do **not** send: `routingPreference`, `departureTime`, `routeModifiers`, `com
 - **duration** – Estimated travel time in seconds (e.g. `"184s"`)
 - **distanceMeters** – Route length in metres
 - **polyline** – Encoded polyline for the route geometry
-- **legs** – Route legs with steps, navigation instructions, per-step polylines
+- **legs** – Not requested (omitted for cost; route-level polyline suffices for slim format)
 
 ### Limitations
 
@@ -144,13 +143,17 @@ There is no parameter to request “shortest distance” for BICYCLE mode.
 
 ## Size Considerations
 
-| Format             | Per route  | 85k routes (full matrix) |
-| ------------------ | ---------- | ------------------------ |
-| Full cache         | ~12 KB     | ~1 GB                    |
-| Slim (routes.json) | ~400 bytes | ~25 MB                   |
+| Format               | Per route  | 85k routes (full matrix) |
+| -------------------- | ---------- | ------------------------ |
+| Cache (minimal mask) | ~1–3 KB    | ~85–255 MB               |
+| Slim (routes.json)  | ~400 bytes | ~25 MB                   |
 
 - **routes-cache/** is gitignored; sync it outside git (e.g. rsync, cloud storage) if needed
 - **prepared-data/routes.json** is synced to the frontend and can be committed if size is acceptable
+
+## Cost Optimization
+
+The field mask is trimmed to the minimum required for slim format (`routes.duration`, `routes.distanceMeters`, `routes.polyline`). Omitting `viewport`, `legs`, and `travelAdvisory` reduces server processing and response size, which can lower per-request cost. The main cost lever remains the number of requests; consider fetching only observed station pairs from trip data instead of the full matrix.
 
 ## Deprecated: Medium Format
 
@@ -158,7 +161,7 @@ A **medium format** (`routes_medium.json`) was briefly implemented and then remo
 
 **Why it was removed:** All station-to-station bicycle routes return exactly **one leg** (origin → destination, no waypoints). The medium format added ~20% size and complexity for no benefit. For multi-leg routes we would need intermediate waypoints, which we do not use.
 
-**Do not reintroduce.** If the export script ever logs a multi-leg warning, investigate the API or request shape; do not assume a medium format is the solution.
+**Do not reintroduce.** Legs are no longer requested in the API field mask, so multi-leg detection is not available.
 
 ## Commands
 

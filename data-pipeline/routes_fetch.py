@@ -12,10 +12,7 @@ from pathlib import Path
 import requests
 
 ROUTES_API_URL = "https://routes.googleapis.com/directions/v2:computeRoutes"
-FIELD_MASK = (
-    "routes.duration,routes.distanceMeters,routes.polyline,"
-    "routes.viewport,routes.legs,routes.travelAdvisory"
-)
+FIELD_MASK = "routes.duration,routes.distanceMeters,routes.polyline"
 
 
 def _get_station_coords(
