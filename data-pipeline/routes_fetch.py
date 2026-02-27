@@ -36,7 +36,7 @@ def _cache_path(cache_dir: Path, origin_id: str, dest_id: str) -> Path:
 
 
 def _read_cache(cache_path: Path) -> dict | None:
-    """Read cached result if it exists. Returns None if not found or invalid."""
+    """Read cached result if it exists. Returns None if missing or invalid."""
     if not cache_path.exists():
         return None
     try:
@@ -140,3 +140,37 @@ def fetch_route(
         "cached": False,
         "response": response_data,
     }
+
+
+def fetch_routes_batch(
+    route_pairs: list[tuple[str, str]],
+    stations: list[dict],
+    api_key: str,
+    cache_dir: Path,
+    *,
+    force_fetch: bool | None = None,
+) -> list[dict]:
+    """
+    Fetch multiple bicycle routes. Checks cache for each pair and only calls
+    the API for pairs not yet cached. Results are cached per pair in the same
+    format as fetch_route. The frontend receives a combined routes.json and
+    cannot tell whether routes were fetched singly or in batch.
+
+    Args:
+        route_pairs: List of (origin_id, dest_id) tuples
+        stations: List of station dicts with id, lat, lon
+        api_key: Google Routes API key
+        cache_dir: Directory for cache (e.g. project_root / "routes-cache")
+        force_fetch: If True, bypass cache. If None, reads FORCE_ROUTES_FETCH.
+
+    Returns:
+        List of dicts with keys: origin_id, dest_id, cached, response
+    """
+    results = []
+    for origin_id, dest_id in route_pairs:
+        result = fetch_route(
+            origin_id, dest_id, stations, api_key, cache_dir,
+            force_fetch=force_fetch,
+        )
+        results.append(result)
+    return results
