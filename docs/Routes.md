@@ -103,6 +103,39 @@ Location: `frontend/src/pages/route-test.astro`
 - **Map:** Leaflet with OpenStreetMap tiles, station markers, route polyline, origin/destination markers
 - **Interaction:** Dropdown to select a route; map fits bounds to the selected route and shows trip info (duration, distance)
 
+## Fetch Options and Results
+
+### Request Options We Use
+
+The fetch sends a minimal request body:
+
+| Option | Value | Notes |
+|--------|-------|-------|
+| `origin` | `{ location: { latLng: { latitude, longitude } } }` | Station coordinates |
+| `destination` | Same structure | Station coordinates |
+| `travelMode` | `"BICYCLE"` | Essentials SKU, beta for cycling paths |
+| `units` | `"METRIC"` | Distance in metres |
+
+We do **not** send: `routingPreference`, `departureTime`, `routeModifiers`, `computeAlternativeRoutes`, etc.
+
+### Expected Results
+
+- **Primary route** – One route per request (no alternatives)
+- **duration** – Estimated travel time in seconds (e.g. `"184s"`)
+- **distanceMeters** – Route length in metres
+- **polyline** – Encoded polyline for the route geometry
+- **legs** – Route legs with steps, navigation instructions, per-step polylines
+
+### Limitations
+
+**No shortest-distance option.** The API returns the fastest/most efficient route for bicycles, not the shortest distance. It optimizes for cycling infrastructure (bike lanes, paths) and typical cycling speed. A shorter but busier road may be avoided in favour of a slightly longer but safer/faster path.
+
+There is no parameter to request “shortest distance” for BICYCLE mode.
+
+**Not time-dependent.** Bicycle routes are static. The `routingPreference` options (`TRAFFIC_UNAWARE`, `TRAFFIC_AWARE`, `TRAFFIC_AWARE_OPTIMAL`) apply only to `DRIVE` and `TWO_WHEELER`. For BICYCLE, traffic is irrelevant, so the route and duration do not vary by time of day.
+
+**No historical routes.** Past departure times are only supported for `TRANSIT` (up to 7 days in the past). For BICYCLE, the API always returns the current best route based on the current road network and cycling data.
+
 ## Size Considerations
 
 | Format | Per route | 85k routes (full matrix) |
