@@ -17,6 +17,7 @@ flowchart LR
     subgraph prepared [Prepared Data]
         Export[export-routes-to-prepared.js]
         Routes[prepared-data/routes.json]
+        RoutesMedium[prepared-data/routes_medium.json]
     end
     subgraph frontend [Frontend]
         RT[route-test.astro]
@@ -26,7 +27,9 @@ flowchart LR
     RF --> RC
     RC --> Export
     Export --> Routes
+    Export --> RoutesMedium
     Routes --> RT
+    RoutesMedium --> RT
 ```
 
 ## Data Flow
@@ -34,9 +37,9 @@ flowchart LR
 1. **Stations** – `stations_prepare.ipynb` extracts unique stations with lat/lon and trip summaries → `prepared-data/stations.json`
 2. **Fetch** – `google_routes_test.ipynb` calls `routes_fetch.fetch_route()` to get bicycle routes from the Google Routes API
 3. **Cache** – Full API responses are stored in `routes-cache/single/{origin_id}_{dest_id}.json` (gitignored)
-4. **Export** – `export-routes-to-prepared.js` reads the cache and writes a slim `prepared-data/routes.json`
+4. **Export** – `export-routes-to-prepared.js` reads the cache and writes `prepared-data/routes.json` (slim) and `prepared-data/routes_medium.json` (medium)
 5. **Sync** – `npm run prepare:data` copies prepared-data to the frontend
-6. **Display** – `/route-test/` loads routes and stations, renders the map with Leaflet
+6. **Display** – `/route-test/` loads routes (prefers medium, falls back to slim) and stations, renders the map with Leaflet
 
 ## Components
 
@@ -70,13 +73,16 @@ The full response includes route legs, steps, navigation instructions, and polyl
 
 Location: `scripts/export-routes-to-prepared.js`
 
-- **Purpose:** Convert full cache to a slim format for the frontend. Reads all cached routes (single and batch) and outputs one combined `routes.json`; the frontend cannot tell how each route was fetched
+- **Purpose:** Convert full cache to slim and medium formats for the frontend. Reads all cached routes (single and batch) and outputs both `routes.json` and `routes_medium.json`; the frontend cannot tell how each route was fetched
 - **Input:** `routes-cache/single/*.json`
-- **Output:** `prepared-data/routes.json`
+- **Output:** `prepared-data/routes.json` (slim), `prepared-data/routes_medium.json` (medium)
 - **Slim format per route:** `origin_id`, `dest_id`, `duration_sec`, `distance_m`, `encodedPolyline`
-- **Size:** ~400 bytes per route (vs ~12 KB in cache)
+- **Medium format per route:** `origin_id`, `dest_id`, `duration_sec`, `distance_m`, `start_lat`, `start_lon`, `legs` (each leg: `end_lat`, `end_lon`, `distance_m`, `duration_sec`, `encodedPolyline`). Route origin stored once; legs store only end coordinates (start derived from previous leg or route origin)
+- **Size:** Slim ~400 bytes/route, medium ~480 bytes/route (vs ~12 KB in cache)
 
 ### Prepared Routes Format
+
+**Slim (routes.json):**
 
 ```json
 {
@@ -95,14 +101,45 @@ Location: `scripts/export-routes-to-prepared.js`
 }
 ```
 
+**Medium (routes_medium.json):**
+
+```json
+{
+  "last_export": { "timestamp": "2026-02-27T18:39:07.851Z" },
+  "data": {
+    "routes": [
+      {
+        "origin_id": "377",
+        "dest_id": "381",
+        "duration_sec": 184,
+        "distance_m": 1282,
+        "start_lat": 59.91559,
+        "start_lon": 10.77760,
+        "legs": [
+          {
+            "end_lat": 59.91256,
+            "end_lon": 10.76227,
+            "distance_m": 1282,
+            "duration_sec": 184,
+            "encodedPolyline": "mgulJ__x`ATpCD`@..."
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
 ### Route Test Page
 
 Location: `frontend/src/pages/route-test.astro`
 
 - **URL:** `/route-test/`
-- **Data:** Loads `stations.json` (or `isochrones.json`) and `routes.json`
+- **Data:** Loads `stations.json` (or `isochrones.json`) and `routes_medium.json` (falls back to `routes.json` if absent)
 - **Map:** Leaflet with OpenStreetMap tiles, station markers, route polyline, origin/destination markers
 - **Interaction:** Dropdown to select a route; map fits bounds to the selected route and shows trip info (duration, distance)
+- **Polyline:** Medium format uses legs' encoded polylines; slim uses route-level encodedPolyline
+- **Markers:** Medium uses route `start_lat/start_lon` and last leg `end_lat/end_lon`; slim uses first/last decoded polyline points
 
 ## Fetch Options and Results
 
@@ -142,10 +179,16 @@ There is no parameter to request “shortest distance” for BICYCLE mode.
 | Format | Per route | 85k routes (full matrix) |
 |--------|-----------|---------------------------|
 | Full cache | ~12 KB | ~1 GB |
-| Slim (prepared-data) | ~400 bytes | ~25 MB |
+| Slim (routes.json) | ~400 bytes | ~25 MB |
+| Medium (routes_medium.json) | ~480 bytes | ~35 MB |
 
 - **routes-cache/** is gitignored; sync it outside git (e.g. rsync, cloud storage) if needed
-- **prepared-data/routes.json** is synced to the frontend and can be committed if size is acceptable
+- **prepared-data/routes.json** and **prepared-data/routes_medium.json** are synced to the frontend and can be committed if size is acceptable
+
+### When to use each format
+
+- **Slim** – Minimal size; use when leg-level detail is not needed (e.g. simple route display, A/B tests).
+- **Medium** – Leg-level data (per-leg polylines, distances, durations); use when you need waypoint-level visualization or per-leg analysis. Frontend loads medium first and falls back to slim.
 
 ## Commands
 

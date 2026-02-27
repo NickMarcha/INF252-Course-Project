@@ -97,13 +97,18 @@ import 'leaflet/dist/leaflet.css';
 				return;
 			}
 
-			// Load routes
+			// Load routes (prefer medium, fallback to slim)
 			let routes: RouteData[] = [];
 			try {
-				const { data } = await loadPreparedData<RoutesData>('routes.json');
+				const { data } = await loadPreparedData<RoutesData>('routes_medium.json');
 				routes = data?.routes ?? [];
 			} catch {
-				// routes.json may not exist if no routes fetched yet
+				try {
+					const { data } = await loadPreparedData<RoutesData>('routes.json');
+					routes = data?.routes ?? [];
+				} catch {
+					// routes may not exist if no routes fetched yet
+				}
 			}
 
 			statusEl.textContent =
@@ -169,15 +174,25 @@ import 'leaflet/dist/leaflet.css';
 				const route = routes.find(
 					(r) => r.origin_id === originId && r.dest_id === destId
 				);
-				if (!route?.encodedPolyline) return;
+				if (!route) return;
 
 				const origin = stationById.get(originId);
 				const dest = stationById.get(destId);
 
-				// Decode and draw polyline
-				const latlngs = decodePolyline(route.encodedPolyline).map(
-					([lat, lng]) => [lat, lng] as [number, number]
-				);
+				// Derive polyline: medium = legs, slim = route encodedPolyline
+				let latlngs: [number, number][];
+				if (route.legs?.length) {
+					latlngs = route.legs.flatMap((l) =>
+						decodePolyline(l.encodedPolyline).map(([lat, lng]) => [lat, lng] as [number, number])
+					);
+				} else if (route.encodedPolyline) {
+					latlngs = decodePolyline(route.encodedPolyline).map(
+						([lat, lng]) => [lat, lng] as [number, number]
+					);
+				} else {
+					return;
+				}
+
 				routeLayer = L.polyline(latlngs, {
 					pane: 'routePane',
 					color: '#22c55e',
@@ -188,15 +203,33 @@ import 'leaflet/dist/leaflet.css';
 				// Fit map to route with padding
 				map?.fitBounds(routeLayer.getBounds(), { padding: [30, 30] });
 
-				// Origin/dest markers
-				if (origin) {
-					L.marker([origin.lat, origin.lon], { pane: 'endpointsPane' })
-						.bindPopup(`Origin: ${origin.name}`)
+				// Origin/dest markers: medium = route coords, slim = first/last decoded point
+				const originPoint: [number, number] | null = route.start_lat != null && route.start_lon != null
+					? [route.start_lat, route.start_lon]
+					: latlngs.length > 0
+						? latlngs[0]
+						: null;
+				const destPoint: [number, number] | null = route.legs?.length
+					? (() => {
+							const last = route.legs![route.legs!.length - 1];
+							return last.end_lat != null && last.end_lon != null
+								? [last.end_lat, last.end_lon]
+								: latlngs.length > 0
+									? latlngs[latlngs.length - 1]
+									: null;
+						})()
+					: latlngs.length > 0
+						? latlngs[latlngs.length - 1]
+						: null;
+
+				if (originPoint) {
+					L.marker(originPoint, { pane: 'endpointsPane' })
+						.bindPopup(`Origin: ${origin?.name ?? originId}`)
 						.addTo(originMarkerLayer!);
 				}
-				if (dest) {
-					L.marker([dest.lat, dest.lon], { pane: 'endpointsPane' })
-						.bindPopup(`Destination: ${dest.name}`)
+				if (destPoint) {
+					L.marker(destPoint, { pane: 'endpointsPane' })
+						.bindPopup(`Destination: ${dest?.name ?? destId}`)
 						.addTo(destMarkerLayer!);
 				}
 
