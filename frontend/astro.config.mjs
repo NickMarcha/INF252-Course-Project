@@ -8,7 +8,7 @@ export default defineConfig({
   base: '/INF252-Course-Project/',
   integrations: [tailwind()],
   vite: {
-    optimizeDeps: { include: ['leaflet'] },
-    ssr: { external: ['leaflet'] },
+    optimizeDeps: { include: ['leaflet', 'leaflet-polylinedecorator'] },
+    ssr: { external: ['leaflet', 'leaflet-polylinedecorator'] },
   },
 });
