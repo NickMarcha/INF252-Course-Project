@@ -27,7 +27,12 @@ function exportRoutes() {
   if (fs.existsSync(cacheDir)) {
     files = fs.readdirSync(cacheDir).filter((f) => f.endsWith('.json'));
   } else {
-    console.log('routes-cache/single/ not found, writing empty routes.');
+    console.log('routes-cache/single/ not found, skipping export (preserving existing prepared-data/routes.json).');
+    return;
+  }
+  if (files.length === 0) {
+    console.log('routes-cache/single/ is empty, skipping export (preserving existing prepared-data/routes.json).');
+    return;
   }
   const routes = [];
 
