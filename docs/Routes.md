@@ -32,6 +32,8 @@ flowchart LR
     RoutesMedium --> RT
 ```
 
+
+
 ## Data Flow
 
 1. **Stations** – `stations_prepare.ipynb` extracts unique stations with lat/lon and trip summaries → `prepared-data/stations.json`
@@ -147,12 +149,14 @@ Location: `frontend/src/pages/route-test.astro`
 
 The fetch sends a minimal request body:
 
-| Option | Value | Notes |
-|--------|-------|-------|
-| `origin` | `{ location: { latLng: { latitude, longitude } } }` | Station coordinates |
-| `destination` | Same structure | Station coordinates |
-| `travelMode` | `"BICYCLE"` | Essentials SKU, beta for cycling paths |
-| `units` | `"METRIC"` | Distance in metres |
+
+| Option        | Value                                               | Notes                                  |
+| ------------- | --------------------------------------------------- | -------------------------------------- |
+| `origin`      | `{ location: { latLng: { latitude, longitude } } }` | Station coordinates                    |
+| `destination` | Same structure                                      | Station coordinates                    |
+| `travelMode`  | `"BICYCLE"`                                         | Essentials SKU, beta for cycling paths |
+| `units`       | `"METRIC"`                                          | Distance in metres                     |
+
 
 We do **not** send: `routingPreference`, `departureTime`, `routeModifiers`, `computeAlternativeRoutes`, etc.
 
@@ -176,11 +180,13 @@ There is no parameter to request “shortest distance” for BICYCLE mode.
 
 ## Size Considerations
 
-| Format | Per route | 85k routes (full matrix) |
-|--------|-----------|---------------------------|
-| Full cache | ~12 KB | ~1 GB |
-| Slim (routes.json) | ~400 bytes | ~25 MB |
-| Medium (routes_medium.json) | ~480 bytes | ~35 MB |
+
+| Format                      | Per route  | 85k routes (full matrix) |
+| --------------------------- | ---------- | ------------------------ |
+| Full cache                  | ~12 KB     | ~1 GB                    |
+| Slim (routes.json)          | ~400 bytes | ~25 MB                   |
+| Medium (routes_medium.json) | ~480 bytes | ~35 MB                   |
+
 
 - **routes-cache/** is gitignored; sync it outside git (e.g. rsync, cloud storage) if needed
 - **prepared-data/routes.json** and **prepared-data/routes_medium.json** are synced to the frontend and can be committed if size is acceptable
@@ -192,11 +198,13 @@ There is no parameter to request “shortest distance” for BICYCLE mode.
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
+
+| Command                  | Description                                    |
+| ------------------------ | ---------------------------------------------- |
 | `npm run prepare:routes` | Export routes from cache to prepared-data only |
-| `npm run prepare:data` | Export routes + sync prepared-data to frontend |
-| `npm run build` | Runs prepare:data, then builds the frontend |
+| `npm run prepare:data`   | Export routes + sync prepared-data to frontend |
+| `npm run build`          | Runs prepare:data, then builds the frontend    |
+
 
 ## Environment
 
@@ -207,3 +215,4 @@ There is no parameter to request “shortest distance” for BICYCLE mode.
 
 - **stations_prepare.ipynb** – Builds `stations.json` with id, name, lat, lon, trip counts
 - **google_routes_test.ipynb** – Tests single-route fetch and batch fetch (~10 routes). Batch only calls API for pairs not in cache
+
