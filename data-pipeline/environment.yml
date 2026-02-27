@@ -10,3 +10,5 @@ dependencies:
   - scipy>=1.10
   - jupyter
   - psutil
+  - python-dotenv
+  - requests

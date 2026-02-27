@@ -78,3 +78,16 @@ export interface IsochronesData {
   time_bands_min: number[];
   isochrones: Record<string, Record<string, { type: 'Polygon'; coordinates: number[][][] }>>;
 }
+
+/** Slim route from routes-cache export (prepared-data/routes.json) */
+export interface RouteData {
+  origin_id: string;
+  dest_id: string;
+  duration_sec: number | null;
+  distance_m: number | null;
+  encodedPolyline: string | null;
+}
+
+export interface RoutesData {
+  routes: RouteData[];
+}

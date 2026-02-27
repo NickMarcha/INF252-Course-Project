@@ -1,0 +1,2643 @@
+{
+  "last_execution": {
+    "timestamp": "2026-02-27T19:32:49.377779",
+    "os": "Windows-11-10.0.26200-SP0",
+    "cpu_count": 32,
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "ram_gb": 31.1,
+    "ram_used_pct": 90.7,
+    "duration_seconds": 60
+  },
+  "data": {
+    "stations": [
+      {
+        "id": "377",
+        "name": "T\u00f8yenparken",
+        "lat": 59.915667,
+        "lon": 10.7775665,
+        "trips_as_origin": 27511,
+        "trips_as_dest": 25232,
+        "total_trips": 52743
+      },
+      {
+        "id": "378",
+        "name": "Colosseum Kino",
+        "lat": 59.929853,
+        "lon": 10.711515,
+        "trips_as_origin": 24904,
+        "trips_as_dest": 24567,
+        "total_trips": 49471
+      },
+      {
+        "id": "380",
+        "name": "Bentsebrugata",
+        "lat": 59.93923,
+        "lon": 10.75917,
+        "trips_as_origin": 54987,
+        "trips_as_dest": 31937,
+        "total_trips": 86924
+      },
+      {
+        "id": "381",
+        "name": "Gr\u00f8nlands torg",
+        "lat": 59.91252,
+        "lon": 10.76224,
+        "trips_as_origin": 53565,
+        "trips_as_dest": 60388,
+        "total_trips": 113953
+      },
+      {
+        "id": "382",
+        "name": "Stensgata",
+        "lat": 59.929634,
+        "lon": 10.732839,
+        "trips_as_origin": 30308,
+        "trips_as_dest": 29847,
+        "total_trips": 60155
+      },
+      {
+        "id": "383",
+        "name": "Arkitekt Rivertz Plass",
+        "lat": 59.934936,
+        "lon": 10.749466,
+        "trips_as_origin": 48621,
+        "trips_as_dest": 21363,
+        "total_trips": 69984
+      },
+      {
+        "id": "384",
+        "name": "V\u00e5r Frelsers gravlund s\u00f8r",
+        "lat": 59.919463,
+        "lon": 10.743829,
+        "trips_as_origin": 85120,
+        "trips_as_dest": 82866,
+        "total_trips": 167986
+      },
+      {
+        "id": "385",
+        "name": "S\u00f8ndre gate",
+        "lat": 59.918632,
+        "lon": 10.757867,
+        "trips_as_origin": 49901,
+        "trips_as_dest": 54931,
+        "total_trips": 104832
+      },
+      {
+        "id": "386",
+        "name": "Slemdalsveien",
+        "lat": 59.930596,
+        "lon": 10.714778,
+        "trips_as_origin": 14204,
+        "trips_as_dest": 12578,
+        "total_trips": 26782
+      },
+      {
+        "id": "387",
+        "name": "Studenterlunden",
+        "lat": 59.914586,
+        "lon": 10.735453,
+        "trips_as_origin": 42417,
+        "trips_as_dest": 46513,
+        "total_trips": 88930
+      },
+      {
+        "id": "388",
+        "name": "Skovveien",
+        "lat": 59.9163309,
+        "lon": 10.716349,
+        "trips_as_origin": 37212,
+        "trips_as_dest": 36869,
+        "total_trips": 74081
+      },
+      {
+        "id": "389",
+        "name": "Pilestredet Studenthus",
+        "lat": 59.9205528,
+        "lon": 10.7342854,
+        "trips_as_origin": 20383,
+        "trips_as_dest": 20263,
+        "total_trips": 40646
+      },
+      {
+        "id": "390",
+        "name": "Saga Kino",
+        "lat": 59.914002,
+        "lon": 10.732869,
+        "trips_as_origin": 57046,
+        "trips_as_dest": 74974,
+        "total_trips": 132020
+      },
+      {
+        "id": "391",
+        "name": "St. Hanshaugen park vest",
+        "lat": 59.9268706,
+        "lon": 10.7384634,
+        "trips_as_origin": 42898,
+        "trips_as_dest": 21500,
+        "total_trips": 64398
+      },
+      {
+        "id": "392",
+        "name": "Sj\u00f8siden vest",
+        "lat": 59.910178,
+        "lon": 10.751224,
+        "trips_as_origin": 30150,
+        "trips_as_dest": 75858,
+        "total_trips": 106008
+      },
+      {
+        "id": "393",
+        "name": "Hans Nielsen Hauges plass",
+        "lat": 59.939244,
+        "lon": 10.774319,
+        "trips_as_origin": 42344,
+        "trips_as_dest": 22187,
+        "total_trips": 64531
+      },
+      {
+        "id": "394",
+        "name": "Bj\u00f8lsen Studentby",
+        "lat": 59.94375,
+        "lon": 10.7603062,
+        "trips_as_origin": 52063,
+        "trips_as_dest": 30575,
+        "total_trips": 82638
+      },
+      {
+        "id": "395",
+        "name": "Frogner Tennisklubb",
+        "lat": 59.9261831,
+        "lon": 10.7098327,
+        "trips_as_origin": 16362,
+        "trips_as_dest": 16353,
+        "total_trips": 32715
+      },
+      {
+        "id": "396",
+        "name": "Kirkeristen",
+        "lat": 59.913032,
+        "lon": 10.746681,
+        "trips_as_origin": 88352,
+        "trips_as_dest": 127388,
+        "total_trips": 215740
+      },
+      {
+        "id": "397",
+        "name": "Storo Storsenter",
+        "lat": 59.946695,
+        "lon": 10.773871,
+        "trips_as_origin": 63741,
+        "trips_as_dest": 29144,
+        "total_trips": 92885
+      },
+      {
+        "id": "398",
+        "name": "Ringnes Park",
+        "lat": 59.92852,
+        "lon": 10.76047,
+        "trips_as_origin": 124875,
+        "trips_as_dest": 124213,
+        "total_trips": 249088
+      },
+      {
+        "id": "399",
+        "name": "Uelands gate",
+        "lat": 59.929545,
+        "lon": 10.7489862,
+        "trips_as_origin": 31864,
+        "trips_as_dest": 19986,
+        "total_trips": 51850
+      },
+      {
+        "id": "400",
+        "name": "HiOA",
+        "lat": 59.919927,
+        "lon": 10.735428,
+        "trips_as_origin": 42642,
+        "trips_as_dest": 43046,
+        "total_trips": 85688
+      },
+      {
+        "id": "401",
+        "name": "Schous plass",
+        "lat": 59.920259,
+        "lon": 10.760629,
+        "trips_as_origin": 27406,
+        "trips_as_dest": 28100,
+        "total_trips": 55506
+      },
+      {
+        "id": "402",
+        "name": "L\u00f8renveien",
+        "lat": 59.9311166,
+        "lon": 10.7910218,
+        "trips_as_origin": 37803,
+        "trips_as_dest": 16756,
+        "total_trips": 54559
+      },
+      {
+        "id": "403",
+        "name": "Parkveien",
+        "lat": 59.921768,
+        "lon": 10.730476,
+        "trips_as_origin": 38807,
+        "trips_as_dest": 38830,
+        "total_trips": 77637
+      },
+      {
+        "id": "404",
+        "name": "Oslo Handelsgymnasium",
+        "lat": 59.914306,
+        "lon": 10.720202,
+        "trips_as_origin": 41577,
+        "trips_as_dest": 42215,
+        "total_trips": 83792
+      },
+      {
+        "id": "405",
+        "name": "Frognerbadet",
+        "lat": 59.92808,
+        "lon": 10.708767,
+        "trips_as_origin": 23245,
+        "trips_as_dest": 21170,
+        "total_trips": 44415
+      },
+      {
+        "id": "406",
+        "name": "Carl Berners plass s\u00f8r",
+        "lat": 59.92507,
+        "lon": 10.775996,
+        "trips_as_origin": 49854,
+        "trips_as_dest": 49016,
+        "total_trips": 98870
+      },
+      {
+        "id": "407",
+        "name": "Sagene bussholdeplass",
+        "lat": 59.937743,
+        "lon": 10.751648,
+        "trips_as_origin": 44122,
+        "trips_as_dest": 30186,
+        "total_trips": 74308
+      },
+      {
+        "id": "408",
+        "name": "T\u00f8yen skole",
+        "lat": 59.914943,
+        "lon": 10.773977,
+        "trips_as_origin": 98594,
+        "trips_as_dest": 98159,
+        "total_trips": 196753
+      },
+      {
+        "id": "409",
+        "name": "John Colletts plass",
+        "lat": 59.940398,
+        "lon": 10.730036,
+        "trips_as_origin": 27156,
+        "trips_as_dest": 11180,
+        "total_trips": 38336
+      },
+      {
+        "id": "410",
+        "name": "Landstads gate",
+        "lat": 59.929005,
+        "lon": 10.7496755,
+        "trips_as_origin": 54847,
+        "trips_as_dest": 31931,
+        "total_trips": 86778
+      },
+      {
+        "id": "411",
+        "name": "Hasle Torg",
+        "lat": 59.9232266,
+        "lon": 10.7928824,
+        "trips_as_origin": 28223,
+        "trips_as_dest": 16755,
+        "total_trips": 44978
+      },
+      {
+        "id": "412",
+        "name": "Jakob kirke",
+        "lat": 59.917866,
+        "lon": 10.754898,
+        "trips_as_origin": 76670,
+        "trips_as_dest": 77324,
+        "total_trips": 153994
+      },
+      {
+        "id": "413",
+        "name": "Majorstuen",
+        "lat": 59.929045,
+        "lon": 10.716926,
+        "trips_as_origin": 78216,
+        "trips_as_dest": 68261,
+        "total_trips": 146477
+      },
+      {
+        "id": "414",
+        "name": "Kontraskj\u00e6ret",
+        "lat": 59.910242,
+        "lon": 10.73857,
+        "trips_as_origin": 37155,
+        "trips_as_dest": 37492,
+        "total_trips": 74647
+      },
+      {
+        "id": "415",
+        "name": "Sinsenveien",
+        "lat": 59.929542,
+        "lon": 10.781053,
+        "trips_as_origin": 20217,
+        "trips_as_dest": 10781,
+        "total_trips": 30998
+      },
+      {
+        "id": "416",
+        "name": "Tannlegeh\u00f8yskolen",
+        "lat": 59.932383,
+        "lon": 10.741475,
+        "trips_as_origin": 21617,
+        "trips_as_dest": 14911,
+        "total_trips": 36528
+      },
+      {
+        "id": "417",
+        "name": "Uranienborgparken",
+        "lat": 59.922485,
+        "lon": 10.720896,
+        "trips_as_origin": 30301,
+        "trips_as_dest": 18695,
+        "total_trips": 48996
+      },
+      {
+        "id": "418",
+        "name": "Norsk Folkemuseum",
+        "lat": 59.907674,
+        "lon": 10.686843,
+        "trips_as_origin": 30098,
+        "trips_as_dest": 31468,
+        "total_trips": 61566
+      },
+      {
+        "id": "419",
+        "name": "Storgata",
+        "lat": 59.9141252,
+        "lon": 10.751824,
+        "trips_as_origin": 9798,
+        "trips_as_dest": 9849,
+        "total_trips": 19647
+      },
+      {
+        "id": "420",
+        "name": "Bj\u00f8lsendumpa",
+        "lat": 59.94034,
+        "lon": 10.766079,
+        "trips_as_origin": 38185,
+        "trips_as_dest": 16858,
+        "total_trips": 55043
+      },
+      {
+        "id": "421",
+        "name": "Alexander Kiellands Plass",
+        "lat": 59.928058,
+        "lon": 10.751397,
+        "trips_as_origin": 132928,
+        "trips_as_dest": 130417,
+        "total_trips": 263345
+      },
+      {
+        "id": "422",
+        "name": "St. Hanshaugen",
+        "lat": 59.923703,
+        "lon": 10.740542,
+        "trips_as_origin": 29429,
+        "trips_as_dest": 29214,
+        "total_trips": 58643
+      },
+      {
+        "id": "423",
+        "name": "Schous plass",
+        "lat": 59.920335,
+        "lon": 10.760804,
+        "trips_as_origin": 74906,
+        "trips_as_dest": 83420,
+        "total_trips": 158326
+      },
+      {
+        "id": "424",
+        "name": "Birkelunden",
+        "lat": 59.9256113,
+        "lon": 10.760926,
+        "trips_as_origin": 80162,
+        "trips_as_dest": 80443,
+        "total_trips": 160605
+      },
+      {
+        "id": "425",
+        "name": "Adamstuen",
+        "lat": 59.932792,
+        "lon": 10.734457,
+        "trips_as_origin": 23332,
+        "trips_as_dest": 21842,
+        "total_trips": 45174
+      },
+      {
+        "id": "426",
+        "name": "Gimle Kino",
+        "lat": 59.917202,
+        "lon": 10.708339,
+        "trips_as_origin": 52808,
+        "trips_as_dest": 33381,
+        "total_trips": 86189
+      },
+      {
+        "id": "427",
+        "name": "Briskeby",
+        "lat": 59.920218,
+        "lon": 10.717978,
+        "trips_as_origin": 36675,
+        "trips_as_dest": 28163,
+        "total_trips": 64838
+      },
+      {
+        "id": "428",
+        "name": "Olav Kyrres plass",
+        "lat": 59.9193337,
+        "lon": 10.6968953,
+        "trips_as_origin": 12103,
+        "trips_as_dest": 12276,
+        "total_trips": 24379
+      },
+      {
+        "id": "429",
+        "name": "Thune",
+        "lat": 59.92208,
+        "lon": 10.68588,
+        "trips_as_origin": 20467,
+        "trips_as_dest": 31631,
+        "total_trips": 52098
+      },
+      {
+        "id": "430",
+        "name": "Spikersuppa Vest",
+        "lat": 59.9137965,
+        "lon": 10.7358023,
+        "trips_as_origin": 33628,
+        "trips_as_dest": 87563,
+        "total_trips": 121191
+      },
+      {
+        "id": "431",
+        "name": "Chr. Michelsens Gate",
+        "lat": 59.927292,
+        "lon": 10.773185,
+        "trips_as_origin": 36297,
+        "trips_as_dest": 35011,
+        "total_trips": 71308
+      },
+      {
+        "id": "432",
+        "name": "St. Hanshaugen park s\u00f8r",
+        "lat": 59.924821,
+        "lon": 10.739909,
+        "trips_as_origin": 28248,
+        "trips_as_dest": 22686,
+        "total_trips": 50934
+      },
+      {
+        "id": "433",
+        "name": "Ila",
+        "lat": 59.931828,
+        "lon": 10.748745,
+        "trips_as_origin": 27219,
+        "trips_as_dest": 16664,
+        "total_trips": 43883
+      },
+      {
+        "id": "434",
+        "name": "Lindern",
+        "lat": 59.9358883,
+        "lon": 10.7350062,
+        "trips_as_origin": 40565,
+        "trips_as_dest": 13040,
+        "total_trips": 53605
+      },
+      {
+        "id": "435",
+        "name": "Fram-g\u00e5rden",
+        "lat": 59.915424,
+        "lon": 10.714577,
+        "trips_as_origin": 40455,
+        "trips_as_dest": 37785,
+        "total_trips": 78240
+      },
+      {
+        "id": "436",
+        "name": "Vestkanttorvet",
+        "lat": 59.9244031,
+        "lon": 10.7130691,
+        "trips_as_origin": 34073,
+        "trips_as_dest": 28185,
+        "total_trips": 62258
+      },
+      {
+        "id": "437",
+        "name": "Sentrum Scene",
+        "lat": 59.915484,
+        "lon": 10.7510765,
+        "trips_as_origin": 55004,
+        "trips_as_dest": 98266,
+        "total_trips": 153270
+      },
+      {
+        "id": "438",
+        "name": "BI Nydalen",
+        "lat": 59.949239,
+        "lon": 10.768576,
+        "trips_as_origin": 56146,
+        "trips_as_dest": 28689,
+        "total_trips": 84835
+      },
+      {
+        "id": "439",
+        "name": "M\u00f8lleparken",
+        "lat": 59.9283928,
+        "lon": 10.7559693,
+        "trips_as_origin": 50010,
+        "trips_as_dest": 48092,
+        "total_trips": 98102
+      },
+      {
+        "id": "440",
+        "name": "Lakkegata",
+        "lat": 59.9172088,
+        "lon": 10.7622135,
+        "trips_as_origin": 54817,
+        "trips_as_dest": 56688,
+        "total_trips": 111505
+      },
+      {
+        "id": "441",
+        "name": "Vippetangen \u00f8st",
+        "lat": 59.903989,
+        "lon": 10.741077,
+        "trips_as_origin": 18900,
+        "trips_as_dest": 21924,
+        "total_trips": 40824
+      },
+      {
+        "id": "442",
+        "name": "Vulkan",
+        "lat": 59.92251,
+        "lon": 10.75101,
+        "trips_as_origin": 65018,
+        "trips_as_dest": 68226,
+        "total_trips": 133244
+      },
+      {
+        "id": "443",
+        "name": "Sj\u00f8siden \u00f8st",
+        "lat": 59.910178,
+        "lon": 10.751824,
+        "trips_as_origin": 94585,
+        "trips_as_dest": 136893,
+        "total_trips": 231478
+      },
+      {
+        "id": "444",
+        "name": "AHO",
+        "lat": 59.925265,
+        "lon": 10.750462,
+        "trips_as_origin": 73986,
+        "trips_as_dest": 74194,
+        "total_trips": 148180
+      },
+      {
+        "id": "445",
+        "name": "Sj\u00f8lyst",
+        "lat": 59.921673,
+        "lon": 10.67666,
+        "trips_as_origin": 15576,
+        "trips_as_dest": 18019,
+        "total_trips": 33595
+      },
+      {
+        "id": "446",
+        "name": "Bislett Stadion",
+        "lat": 59.92549,
+        "lon": 10.731288,
+        "trips_as_origin": 99351,
+        "trips_as_dest": 77217,
+        "total_trips": 176568
+      },
+      {
+        "id": "447",
+        "name": "Kv\u00e6rnerbyen",
+        "lat": 59.904473,
+        "lon": 10.786167,
+        "trips_as_origin": 66662,
+        "trips_as_dest": 63816,
+        "total_trips": 130478
+      },
+      {
+        "id": "448",
+        "name": "Oslo Plaza",
+        "lat": 59.912185,
+        "lon": 10.754506,
+        "trips_as_origin": 32007,
+        "trips_as_dest": 33649,
+        "total_trips": 65656
+      },
+      {
+        "id": "449",
+        "name": "Rusel\u00f8kkg\u00e5rden",
+        "lat": 59.913499,
+        "lon": 10.72656,
+        "trips_as_origin": 32386,
+        "trips_as_dest": 39292,
+        "total_trips": 71678
+      },
+      {
+        "id": "450",
+        "name": "Elisenberg",
+        "lat": 59.919524,
+        "lon": 10.70884,
+        "trips_as_origin": 41379,
+        "trips_as_dest": 37504,
+        "total_trips": 78883
+      },
+      {
+        "id": "451",
+        "name": "Suhms gate",
+        "lat": 59.929419,
+        "lon": 10.726195,
+        "trips_as_origin": 29114,
+        "trips_as_dest": 25637,
+        "total_trips": 54751
+      },
+      {
+        "id": "452",
+        "name": "Vippetangen vest",
+        "lat": 59.903989,
+        "lon": 10.740627,
+        "trips_as_origin": 46012,
+        "trips_as_dest": 65028,
+        "total_trips": 111040
+      },
+      {
+        "id": "453",
+        "name": "Frogner Stadion",
+        "lat": 59.927596,
+        "lon": 10.710033,
+        "trips_as_origin": 40779,
+        "trips_as_dest": 30264,
+        "total_trips": 71043
+      },
+      {
+        "id": "454",
+        "name": "Furulund",
+        "lat": 59.9198098,
+        "lon": 10.651118,
+        "trips_as_origin": 6871,
+        "trips_as_dest": 6224,
+        "total_trips": 13095
+      },
+      {
+        "id": "455",
+        "name": "Sofienbergparken s\u00f8r",
+        "lat": 59.922337,
+        "lon": 10.7617503,
+        "trips_as_origin": 43954,
+        "trips_as_dest": 44118,
+        "total_trips": 88072
+      },
+      {
+        "id": "456",
+        "name": "Frognerstranda",
+        "lat": 59.9103558,
+        "lon": 10.7051061,
+        "trips_as_origin": 51112,
+        "trips_as_dest": 53707,
+        "total_trips": 104819
+      },
+      {
+        "id": "457",
+        "name": "Trondheimsveien",
+        "lat": 59.9230577,
+        "lon": 10.7717192,
+        "trips_as_origin": 33437,
+        "trips_as_dest": 33293,
+        "total_trips": 66730
+      },
+      {
+        "id": "458",
+        "name": "Jenny Braatens Plass",
+        "lat": 59.928349,
+        "lon": 10.77837,
+        "trips_as_origin": 36404,
+        "trips_as_dest": 24118,
+        "total_trips": 60522
+      },
+      {
+        "id": "459",
+        "name": "Valkyrieplassen",
+        "lat": 59.9281319,
+        "lon": 10.71842,
+        "trips_as_origin": 25206,
+        "trips_as_dest": 24101,
+        "total_trips": 49307
+      },
+      {
+        "id": "460",
+        "name": "Botanisk Hage s\u00f8r",
+        "lat": 59.9152819,
+        "lon": 10.7696199,
+        "trips_as_origin": 80090,
+        "trips_as_dest": 82501,
+        "total_trips": 162591
+      },
+      {
+        "id": "461",
+        "name": "V\u00e5lerenga",
+        "lat": 59.908576,
+        "lon": 10.786856,
+        "trips_as_origin": 21635,
+        "trips_as_dest": 18758,
+        "total_trips": 40393
+      },
+      {
+        "id": "462",
+        "name": "Stensparken",
+        "lat": 59.92714,
+        "lon": 10.730981,
+        "trips_as_origin": 43927,
+        "trips_as_dest": 41387,
+        "total_trips": 85314
+      },
+      {
+        "id": "463",
+        "name": "Schous plass trikkestopp",
+        "lat": 59.9207284,
+        "lon": 10.7594857,
+        "trips_as_origin": 44011,
+        "trips_as_dest": 46746,
+        "total_trips": 90757
+      },
+      {
+        "id": "464",
+        "name": "Sukkerbiten",
+        "lat": 59.905037,
+        "lon": 10.753698,
+        "trips_as_origin": 99409,
+        "trips_as_dest": 120996,
+        "total_trips": 220405
+      },
+      {
+        "id": "465",
+        "name": "Bj\u00f8rvika",
+        "lat": 59.909006,
+        "lon": 10.75618,
+        "trips_as_origin": 61381,
+        "trips_as_dest": 105020,
+        "total_trips": 166401
+      },
+      {
+        "id": "466",
+        "name": "Ullev\u00e5lsall\u00e9en",
+        "lat": 59.937913,
+        "lon": 10.73048,
+        "trips_as_origin": 9765,
+        "trips_as_dest": 7186,
+        "total_trips": 16951
+      },
+      {
+        "id": "468",
+        "name": "Skillebekk",
+        "lat": 59.912742,
+        "lon": 10.710136,
+        "trips_as_origin": 51048,
+        "trips_as_dest": 51179,
+        "total_trips": 102227
+      },
+      {
+        "id": "469",
+        "name": "Studentparlamentet",
+        "lat": 59.920852,
+        "lon": 10.733357,
+        "trips_as_origin": 32111,
+        "trips_as_dest": 31581,
+        "total_trips": 63692
+      },
+      {
+        "id": "470",
+        "name": "St. Hanshaugen park nord",
+        "lat": 59.929771,
+        "lon": 10.743524,
+        "trips_as_origin": 23180,
+        "trips_as_dest": 13145,
+        "total_trips": 36325
+      },
+      {
+        "id": "471",
+        "name": "Marienlyst",
+        "lat": 59.932454,
+        "lon": 10.721769,
+        "trips_as_origin": 14435,
+        "trips_as_dest": 12992,
+        "total_trips": 27427
+      },
+      {
+        "id": "472",
+        "name": "Arendalsgata",
+        "lat": 59.9378,
+        "lon": 10.7541,
+        "trips_as_origin": 32488,
+        "trips_as_dest": 27464,
+        "total_trips": 59952
+      },
+      {
+        "id": "473",
+        "name": "Majorstuveien",
+        "lat": 59.926697,
+        "lon": 10.716195,
+        "trips_as_origin": 26097,
+        "trips_as_dest": 25270,
+        "total_trips": 51367
+      },
+      {
+        "id": "474",
+        "name": "Blindern studentparkering",
+        "lat": 59.940953,
+        "lon": 10.720862,
+        "trips_as_origin": 22901,
+        "trips_as_dest": 9329,
+        "total_trips": 32230
+      },
+      {
+        "id": "475",
+        "name": "Hausmanns bru",
+        "lat": 59.9146509,
+        "lon": 10.7598719,
+        "trips_as_origin": 24799,
+        "trips_as_dest": 28964,
+        "total_trips": 53763
+      },
+      {
+        "id": "476",
+        "name": "Edvard Storms gate",
+        "lat": 59.919111,
+        "lon": 10.736179,
+        "trips_as_origin": 45597,
+        "trips_as_dest": 46954,
+        "total_trips": 92551
+      },
+      {
+        "id": "477",
+        "name": "M\u00f8llergata",
+        "lat": 59.9154413,
+        "lon": 10.7485819,
+        "trips_as_origin": 18000,
+        "trips_as_dest": 27821,
+        "total_trips": 45821
+      },
+      {
+        "id": "478",
+        "name": "Jernbanetorget",
+        "lat": 59.911901,
+        "lon": 10.749929,
+        "trips_as_origin": 84608,
+        "trips_as_dest": 89535,
+        "total_trips": 174143
+      },
+      {
+        "id": "479",
+        "name": "Tjuvholmen",
+        "lat": 59.909467,
+        "lon": 10.722509,
+        "trips_as_origin": 100314,
+        "trips_as_dest": 122152,
+        "total_trips": 222466
+      },
+      {
+        "id": "480",
+        "name": "Helga Helgesens plass",
+        "lat": 59.9121109,
+        "lon": 10.7661939,
+        "trips_as_origin": 110901,
+        "trips_as_dest": 134949,
+        "total_trips": 245850
+      },
+      {
+        "id": "481",
+        "name": "R\u00e5dhusgata",
+        "lat": 59.910924,
+        "lon": 10.736215,
+        "trips_as_origin": 29173,
+        "trips_as_dest": 51055,
+        "total_trips": 80228
+      },
+      {
+        "id": "482",
+        "name": "Nydalen",
+        "lat": 59.952868,
+        "lon": 10.766483,
+        "trips_as_origin": 11942,
+        "trips_as_dest": 6641,
+        "total_trips": 18583
+      },
+      {
+        "id": "483",
+        "name": "Hausmanns gate",
+        "lat": 59.915451,
+        "lon": 10.758328,
+        "trips_as_origin": 27682,
+        "trips_as_dest": 32286,
+        "total_trips": 59968
+      },
+      {
+        "id": "484",
+        "name": "Karenlyst all\u00e9",
+        "lat": 59.92033,
+        "lon": 10.683814,
+        "trips_as_origin": 48517,
+        "trips_as_dest": 63660,
+        "total_trips": 112177
+      },
+      {
+        "id": "485",
+        "name": "Sommerfrydhagen",
+        "lat": 59.911453,
+        "lon": 10.776072,
+        "trips_as_origin": 56645,
+        "trips_as_dest": 53820,
+        "total_trips": 110465
+      },
+      {
+        "id": "486",
+        "name": "Det Teologiske fakultet",
+        "lat": 59.935342,
+        "lon": 10.726472,
+        "trips_as_origin": 26701,
+        "trips_as_dest": 15498,
+        "total_trips": 42199
+      },
+      {
+        "id": "487",
+        "name": "Carl Berners plass nord",
+        "lat": 59.926929,
+        "lon": 10.776971,
+        "trips_as_origin": 21387,
+        "trips_as_dest": 18315,
+        "total_trips": 39702
+      },
+      {
+        "id": "488",
+        "name": "Torshovparken vest",
+        "lat": 59.93507,
+        "lon": 10.76915,
+        "trips_as_origin": 33194,
+        "trips_as_dest": 9494,
+        "total_trips": 42688
+      },
+      {
+        "id": "489",
+        "name": "Torggata",
+        "lat": 59.916012,
+        "lon": 10.751655,
+        "trips_as_origin": 100788,
+        "trips_as_dest": 157030,
+        "total_trips": 257818
+      },
+      {
+        "id": "491",
+        "name": "Vaterlandsparken II",
+        "lat": 59.9136458,
+        "lon": 10.7573198,
+        "trips_as_origin": 27925,
+        "trips_as_dest": 34604,
+        "total_trips": 62529
+      },
+      {
+        "id": "492",
+        "name": "Goethe Institut",
+        "lat": 59.9131792,
+        "lon": 10.7607798,
+        "trips_as_origin": 2164,
+        "trips_as_dest": 2525,
+        "total_trips": 4689
+      },
+      {
+        "id": "493",
+        "name": "Sofienbergparken nordvest",
+        "lat": 59.9243639,
+        "lon": 10.7615858,
+        "trips_as_origin": 75262,
+        "trips_as_dest": 73205,
+        "total_trips": 148467
+      },
+      {
+        "id": "494",
+        "name": "R\u00e5dhusbrygge 4",
+        "lat": 59.9108469,
+        "lon": 10.7303766,
+        "trips_as_origin": 64880,
+        "trips_as_dest": 102968,
+        "total_trips": 167848
+      },
+      {
+        "id": "495",
+        "name": "Vaterlandsparken",
+        "lat": 59.913532,
+        "lon": 10.757334,
+        "trips_as_origin": 42742,
+        "trips_as_dest": 94284,
+        "total_trips": 137026
+      },
+      {
+        "id": "496",
+        "name": "Fysikkbygningen",
+        "lat": 59.9379399,
+        "lon": 10.7195985,
+        "trips_as_origin": 26814,
+        "trips_as_dest": 13613,
+        "total_trips": 40427
+      },
+      {
+        "id": "497",
+        "name": "Sirkustomta",
+        "lat": 59.919252,
+        "lon": 10.774712,
+        "trips_as_origin": 29376,
+        "trips_as_dest": 25224,
+        "total_trips": 54600
+      },
+      {
+        "id": "498",
+        "name": "HasleLinje",
+        "lat": 59.9276408,
+        "lon": 10.7992011,
+        "trips_as_origin": 10299,
+        "trips_as_dest": 3889,
+        "total_trips": 14188
+      },
+      {
+        "id": "499",
+        "name": "Bjerregaards gate",
+        "lat": 59.925488,
+        "lon": 10.746058,
+        "trips_as_origin": 62731,
+        "trips_as_dest": 61936,
+        "total_trips": 124667
+      },
+      {
+        "id": "500",
+        "name": "Anker Hostel",
+        "lat": 59.9172794,
+        "lon": 10.7581553,
+        "trips_as_origin": 38830,
+        "trips_as_dest": 41396,
+        "total_trips": 80226
+      },
+      {
+        "id": "501",
+        "name": "Krebs' gate",
+        "lat": 59.935995,
+        "lon": 10.765413,
+        "trips_as_origin": 27447,
+        "trips_as_dest": 22927,
+        "total_trips": 50374
+      },
+      {
+        "id": "502",
+        "name": "Ullev\u00e5l sykehus",
+        "lat": 59.9360307,
+        "lon": 10.7364516,
+        "trips_as_origin": 44458,
+        "trips_as_dest": 22437,
+        "total_trips": 66895
+      },
+      {
+        "id": "503",
+        "name": "Fagerheimgata",
+        "lat": 59.9274634,
+        "lon": 10.7657433,
+        "trips_as_origin": 71294,
+        "trips_as_dest": 52568,
+        "total_trips": 123862
+      },
+      {
+        "id": "505",
+        "name": "Marienlystparken",
+        "lat": 59.93215,
+        "lon": 10.723478,
+        "trips_as_origin": 31596,
+        "trips_as_dest": 24277,
+        "total_trips": 55873
+      },
+      {
+        "id": "506",
+        "name": "Botanisk Hage vest",
+        "lat": 59.920073,
+        "lon": 10.769035,
+        "trips_as_origin": 27387,
+        "trips_as_dest": 26479,
+        "total_trips": 53866
+      },
+      {
+        "id": "507",
+        "name": "Jens Bjelkes gate",
+        "lat": 59.919179,
+        "lon": 10.764162,
+        "trips_as_origin": 78449,
+        "trips_as_dest": 79065,
+        "total_trips": 157514
+      },
+      {
+        "id": "508",
+        "name": "Majorstuen t-bane",
+        "lat": 59.9297,
+        "lon": 10.714813,
+        "trips_as_origin": 9879,
+        "trips_as_dest": 7318,
+        "total_trips": 17197
+      },
+      {
+        "id": "509",
+        "name": "Kjeld Stubs gate",
+        "lat": 59.912711,
+        "lon": 10.735595,
+        "trips_as_origin": 17167,
+        "trips_as_dest": 18146,
+        "total_trips": 35313
+      },
+      {
+        "id": "511",
+        "name": "Henrik Ibsens gate",
+        "lat": 59.915088,
+        "lon": 10.7222803,
+        "trips_as_origin": 50860,
+        "trips_as_dest": 51046,
+        "total_trips": 101906
+      },
+      {
+        "id": "512",
+        "name": "Ensj\u00f8 T-Bane",
+        "lat": 59.9131891,
+        "lon": 10.7897605,
+        "trips_as_origin": 39264,
+        "trips_as_dest": 20554,
+        "total_trips": 59818
+      },
+      {
+        "id": "513",
+        "name": "B\u00f8kkerveien",
+        "lat": 59.9273747,
+        "lon": 10.7960147,
+        "trips_as_origin": 12771,
+        "trips_as_dest": 7165,
+        "total_trips": 19936
+      },
+      {
+        "id": "514",
+        "name": "Sofienberggata",
+        "lat": 59.9212063,
+        "lon": 10.7699892,
+        "trips_as_origin": 42216,
+        "trips_as_dest": 42047,
+        "total_trips": 84263
+      },
+      {
+        "id": "515",
+        "name": "Olav Vs gate",
+        "lat": 59.912918,
+        "lon": 10.732121,
+        "trips_as_origin": 5555,
+        "trips_as_dest": 9757,
+        "total_trips": 15312
+      },
+      {
+        "id": "516",
+        "name": "Finnmarksgata",
+        "lat": 59.922839,
+        "lon": 10.775658,
+        "trips_as_origin": 22563,
+        "trips_as_dest": 21941,
+        "total_trips": 44504
+      },
+      {
+        "id": "517",
+        "name": "T\u00e5senl\u00f8kka",
+        "lat": 59.9433939,
+        "lon": 10.7482848,
+        "trips_as_origin": 15448,
+        "trips_as_dest": 10781,
+        "total_trips": 26229
+      },
+      {
+        "id": "518",
+        "name": "Ullev\u00e5lsveien",
+        "lat": 59.9246852,
+        "lon": 10.7395045,
+        "trips_as_origin": 26313,
+        "trips_as_dest": 16859,
+        "total_trips": 43172
+      },
+      {
+        "id": "519",
+        "name": "Thomas Heftyes plass",
+        "lat": 59.9185405,
+        "lon": 10.7039116,
+        "trips_as_origin": 52579,
+        "trips_as_dest": 38760,
+        "total_trips": 91339
+      },
+      {
+        "id": "521",
+        "name": "Jess Carlsens gate",
+        "lat": 59.9186359,
+        "lon": 10.7523939,
+        "trips_as_origin": 68479,
+        "trips_as_dest": 69052,
+        "total_trips": 137531
+      },
+      {
+        "id": "522",
+        "name": "Mandalls gate",
+        "lat": 59.9123469,
+        "lon": 10.7638147,
+        "trips_as_origin": 33020,
+        "trips_as_dest": 33804,
+        "total_trips": 66824
+      },
+      {
+        "id": "523",
+        "name": "T\u00f8yenbekken",
+        "lat": 59.9115945,
+        "lon": 10.7617736,
+        "trips_as_origin": 27688,
+        "trips_as_dest": 79366,
+        "total_trips": 107054
+      },
+      {
+        "id": "524",
+        "name": "Volvat",
+        "lat": 59.9330951,
+        "lon": 10.7040189,
+        "trips_as_origin": 16248,
+        "trips_as_dest": 9998,
+        "total_trips": 26246
+      },
+      {
+        "id": "525",
+        "name": "Myral\u00f8kka \u00d8st",
+        "lat": 59.937205,
+        "lon": 10.7605813,
+        "trips_as_origin": 37305,
+        "trips_as_dest": 33537,
+        "total_trips": 70842
+      },
+      {
+        "id": "526",
+        "name": "Lille Grensen",
+        "lat": 59.9138973,
+        "lon": 10.7423101,
+        "trips_as_origin": 55983,
+        "trips_as_dest": 58107,
+        "total_trips": 114090
+      },
+      {
+        "id": "527",
+        "name": "Biskop Gunnerus' gate",
+        "lat": 59.9123341,
+        "lon": 10.752292,
+        "trips_as_origin": 24332,
+        "trips_as_dest": 25690,
+        "total_trips": 50022
+      },
+      {
+        "id": "528",
+        "name": "Nedre Slottsgate",
+        "lat": 59.913245,
+        "lon": 10.743669,
+        "trips_as_origin": 17315,
+        "trips_as_dest": 18249,
+        "total_trips": 35564
+      },
+      {
+        "id": "529",
+        "name": "Friggfeltet",
+        "lat": 59.9327726,
+        "lon": 10.7114661,
+        "trips_as_origin": 15328,
+        "trips_as_dest": 13346,
+        "total_trips": 28674
+      },
+      {
+        "id": "530",
+        "name": "Holbergs Plass",
+        "lat": 59.9193095,
+        "lon": 10.7343051,
+        "trips_as_origin": 40008,
+        "trips_as_dest": 40035,
+        "total_trips": 80043
+      },
+      {
+        "id": "531",
+        "name": "Monolittveien",
+        "lat": 59.935947,
+        "lon": 10.681138,
+        "trips_as_origin": 11808,
+        "trips_as_dest": 8442,
+        "total_trips": 20250
+      },
+      {
+        "id": "532",
+        "name": "Bryn T-Bane",
+        "lat": 59.909238,
+        "lon": 10.814199,
+        "trips_as_origin": 12663,
+        "trips_as_dest": 6646,
+        "total_trips": 19309
+      },
+      {
+        "id": "533",
+        "name": "S\u00f8rvest for Slottsparken",
+        "lat": 59.915262,
+        "lon": 10.7253157,
+        "trips_as_origin": 14374,
+        "trips_as_dest": 14439,
+        "total_trips": 28813
+      },
+      {
+        "id": "534",
+        "name": "Filipstadveien",
+        "lat": 59.9102277,
+        "lon": 10.7208788,
+        "trips_as_origin": 41833,
+        "trips_as_dest": 75638,
+        "total_trips": 117471
+      },
+      {
+        "id": "535",
+        "name": "Uranienborgveien",
+        "lat": 59.9200421,
+        "lon": 10.726634,
+        "trips_as_origin": 49022,
+        "trips_as_dest": 46808,
+        "total_trips": 95830
+      },
+      {
+        "id": "536",
+        "name": "Diakonhjemmet",
+        "lat": 59.9363277,
+        "lon": 10.7054333,
+        "trips_as_origin": 9934,
+        "trips_as_dest": 7491,
+        "total_trips": 17425
+      },
+      {
+        "id": "537",
+        "name": "St. Olavs gate",
+        "lat": 59.9179859,
+        "lon": 10.7385805,
+        "trips_as_origin": 65293,
+        "trips_as_dest": 66787,
+        "total_trips": 132080
+      },
+      {
+        "id": "538",
+        "name": "Bernt Ankers gate",
+        "lat": 59.9147887,
+        "lon": 10.7537068,
+        "trips_as_origin": 8959,
+        "trips_as_dest": 10383,
+        "total_trips": 19342
+      },
+      {
+        "id": "540",
+        "name": "Lilleborgbanen",
+        "lat": 59.933727,
+        "lon": 10.769094,
+        "trips_as_origin": 43348,
+        "trips_as_dest": 30722,
+        "total_trips": 74070
+      },
+      {
+        "id": "541",
+        "name": "Langkaia",
+        "lat": 59.9080552,
+        "lon": 10.7479977,
+        "trips_as_origin": 22563,
+        "trips_as_dest": 23843,
+        "total_trips": 46406
+      },
+      {
+        "id": "542",
+        "name": "Gr\u00fcnerhagen Nord",
+        "lat": 59.9224256,
+        "lon": 10.7554274,
+        "trips_as_origin": 42077,
+        "trips_as_dest": 42928,
+        "total_trips": 85005
+      },
+      {
+        "id": "543",
+        "name": "Fyrstikktorget",
+        "lat": 59.9138347,
+        "lon": 10.7981175,
+        "trips_as_origin": 24474,
+        "trips_as_dest": 11918,
+        "total_trips": 36392
+      },
+      {
+        "id": "545",
+        "name": "Arkaden S\u00f8r",
+        "lat": 59.9119691,
+        "lon": 10.7478583,
+        "trips_as_origin": 12799,
+        "trips_as_dest": 35127,
+        "total_trips": 47926
+      },
+      {
+        "id": "546",
+        "name": "Kon-Tiki Museet",
+        "lat": 59.90347421451344,
+        "lon": 10.698470025792318,
+        "trips_as_origin": 0,
+        "trips_as_dest": 1,
+        "total_trips": 1
+      },
+      {
+        "id": "547",
+        "name": "Skippergata",
+        "lat": 59.9112227,
+        "lon": 10.7481976,
+        "trips_as_origin": 23319,
+        "trips_as_dest": 31723,
+        "total_trips": 55042
+      },
+      {
+        "id": "548",
+        "name": "Colbj\u00f8rnsens gate",
+        "lat": 59.917293,
+        "lon": 10.716796,
+        "trips_as_origin": 26208,
+        "trips_as_dest": 25291,
+        "total_trips": 51499
+      },
+      {
+        "id": "549",
+        "name": "Linaaes gate",
+        "lat": 59.913832,
+        "lon": 10.7457018,
+        "trips_as_origin": 34390,
+        "trips_as_dest": 39966,
+        "total_trips": 74356
+      },
+      {
+        "id": "550",
+        "name": "Thereses gate",
+        "lat": 59.9261462,
+        "lon": 10.7310355,
+        "trips_as_origin": 12358,
+        "trips_as_dest": 12268,
+        "total_trips": 24626
+      },
+      {
+        "id": "551",
+        "name": "Olaf Ryes plass",
+        "lat": 59.922425,
+        "lon": 10.758182,
+        "trips_as_origin": 120790,
+        "trips_as_dest": 138737,
+        "total_trips": 259527
+      },
+      {
+        "id": "552",
+        "name": "Trelastgata",
+        "lat": 59.907967,
+        "lon": 10.762621,
+        "trips_as_origin": 29993,
+        "trips_as_dest": 41543,
+        "total_trips": 71536
+      },
+      {
+        "id": "553",
+        "name": "Skr\u00e5ninga",
+        "lat": 59.9139786,
+        "lon": 10.7474667,
+        "trips_as_origin": 30262,
+        "trips_as_dest": 44759,
+        "total_trips": 75021
+      },
+      {
+        "id": "554",
+        "name": "T\u00e5sen Senter",
+        "lat": 59.952659,
+        "lon": 10.751165,
+        "trips_as_origin": 20129,
+        "trips_as_dest": 7407,
+        "total_trips": 27536
+      },
+      {
+        "id": "555",
+        "name": "Griffenfeldts gate",
+        "lat": 59.9337026,
+        "lon": 10.7519299,
+        "trips_as_origin": 21046,
+        "trips_as_dest": 19686,
+        "total_trips": 40732
+      },
+      {
+        "id": "556",
+        "name": "Pilestredet",
+        "lat": 59.9262242,
+        "lon": 10.7296246,
+        "trips_as_origin": 22599,
+        "trips_as_dest": 21434,
+        "total_trips": 44033
+      },
+      {
+        "id": "557",
+        "name": "Akersgata",
+        "lat": 59.9141971,
+        "lon": 10.7428828,
+        "trips_as_origin": 47987,
+        "trips_as_dest": 66078,
+        "total_trips": 114065
+      },
+      {
+        "id": "558",
+        "name": "Dokkveien",
+        "lat": 59.910974,
+        "lon": 10.7277001,
+        "trips_as_origin": 53225,
+        "trips_as_dest": 55012,
+        "total_trips": 108237
+      },
+      {
+        "id": "559",
+        "name": "Hoffsveien",
+        "lat": 59.923898,
+        "lon": 10.6760339,
+        "trips_as_origin": 23071,
+        "trips_as_dest": 26511,
+        "total_trips": 49582
+      },
+      {
+        "id": "560",
+        "name": "Gaustad T-bane",
+        "lat": 59.945955,
+        "lon": 10.710392,
+        "trips_as_origin": 4645,
+        "trips_as_dest": 2806,
+        "total_trips": 7451
+      },
+      {
+        "id": "561",
+        "name": "Kirkeveien",
+        "lat": 59.9335582,
+        "lon": 10.7264261,
+        "trips_as_origin": 25494,
+        "trips_as_dest": 11693,
+        "total_trips": 37187
+      },
+      {
+        "id": "562",
+        "name": "Slottsparken \u00d8st",
+        "lat": 59.917485,
+        "lon": 10.732128,
+        "trips_as_origin": 40226,
+        "trips_as_dest": 41306,
+        "total_trips": 81532
+      },
+      {
+        "id": "563",
+        "name": "Huitfeldts gate",
+        "lat": 59.9126844,
+        "lon": 10.7229003,
+        "trips_as_origin": 48466,
+        "trips_as_dest": 49217,
+        "total_trips": 97683
+      },
+      {
+        "id": "564",
+        "name": "Oscars gate",
+        "lat": 59.9224222,
+        "lon": 10.7272388,
+        "trips_as_origin": 55820,
+        "trips_as_dest": 53968,
+        "total_trips": 109788
+      },
+      {
+        "id": "565",
+        "name": "Mailundveien",
+        "lat": 59.9309181,
+        "lon": 10.7728203,
+        "trips_as_origin": 9952,
+        "trips_as_dest": 6835,
+        "total_trips": 16787
+      },
+      {
+        "id": "566",
+        "name": "Hoff terrasse holdeplass",
+        "lat": 59.9272941,
+        "lon": 10.6755714,
+        "trips_as_origin": 13378,
+        "trips_as_dest": 13932,
+        "total_trips": 27310
+      },
+      {
+        "id": "567",
+        "name": "Forskningsveien",
+        "lat": 59.9454775,
+        "lon": 10.7138465,
+        "trips_as_origin": 28442,
+        "trips_as_dest": 11625,
+        "total_trips": 40067
+      },
+      {
+        "id": "568",
+        "name": "Frognerveien",
+        "lat": 59.9170851,
+        "lon": 10.7128796,
+        "trips_as_origin": 30111,
+        "trips_as_dest": 26431,
+        "total_trips": 56542
+      },
+      {
+        "id": "569",
+        "name": "Botanisk hage s\u00f8r-vest",
+        "lat": 59.9177943,
+        "lon": 10.7662784,
+        "trips_as_origin": 27784,
+        "trips_as_dest": 29001,
+        "total_trips": 56785
+      },
+      {
+        "id": "570",
+        "name": "Fr\u00f8en T-bane",
+        "lat": 59.9347352,
+        "lon": 10.7096985,
+        "trips_as_origin": 10061,
+        "trips_as_dest": 8097,
+        "total_trips": 18158
+      },
+      {
+        "id": "571",
+        "name": "Over R\u00e5dhusgata",
+        "lat": 59.9101207,
+        "lon": 10.7407129,
+        "trips_as_origin": 31927,
+        "trips_as_dest": 35713,
+        "total_trips": 67640
+      },
+      {
+        "id": "572",
+        "name": "Sk\u00f8yen",
+        "lat": 59.922247,
+        "lon": 10.679738,
+        "trips_as_origin": 34243,
+        "trips_as_dest": 54336,
+        "total_trips": 88579
+      },
+      {
+        "id": "573",
+        "name": "Tordenskiolds gate",
+        "lat": 59.9117882,
+        "lon": 10.7351647,
+        "trips_as_origin": 10331,
+        "trips_as_dest": 15704,
+        "total_trips": 26035
+      },
+      {
+        "id": "574",
+        "name": "Annette Thommessens Plass",
+        "lat": 59.9107393,
+        "lon": 10.7609998,
+        "trips_as_origin": 36875,
+        "trips_as_dest": 37830,
+        "total_trips": 74705
+      },
+      {
+        "id": "575",
+        "name": "Sognsveien",
+        "lat": 59.9474863,
+        "lon": 10.7324195,
+        "trips_as_origin": 32795,
+        "trips_as_dest": 21018,
+        "total_trips": 53813
+      },
+      {
+        "id": "576",
+        "name": "Dronningens gate",
+        "lat": 59.91138423128484,
+        "lon": 10.747318039414154,
+        "trips_as_origin": 14603,
+        "trips_as_dest": 16523,
+        "total_trips": 31126
+      },
+      {
+        "id": "577",
+        "name": "Arkaden Nord",
+        "lat": 59.9121472,
+        "lon": 10.7480527,
+        "trips_as_origin": 15786,
+        "trips_as_dest": 44133,
+        "total_trips": 59919
+      },
+      {
+        "id": "578",
+        "name": "Hallings gate",
+        "lat": 59.922777,
+        "lon": 10.738655,
+        "trips_as_origin": 41703,
+        "trips_as_dest": 32924,
+        "total_trips": 74627
+      },
+      {
+        "id": "579",
+        "name": "Bogstadveien",
+        "lat": 59.924732,
+        "lon": 10.724628,
+        "trips_as_origin": 67439,
+        "trips_as_dest": 66604,
+        "total_trips": 134043
+      },
+      {
+        "id": "580",
+        "name": "Georg Morgenstiernes hus",
+        "lat": 59.9390363,
+        "lon": 10.7229302,
+        "trips_as_origin": 37674,
+        "trips_as_dest": 16773,
+        "total_trips": 54447
+      },
+      {
+        "id": "581",
+        "name": "Jordalgata",
+        "lat": 59.908227,
+        "lon": 10.781088,
+        "trips_as_origin": 39429,
+        "trips_as_dest": 26527,
+        "total_trips": 65956
+      },
+      {
+        "id": "582",
+        "name": "Stavangergata",
+        "lat": 59.941108,
+        "lon": 10.7506048,
+        "trips_as_origin": 61856,
+        "trips_as_dest": 27738,
+        "total_trips": 89594
+      },
+      {
+        "id": "583",
+        "name": "Galgeberg",
+        "lat": 59.9071,
+        "lon": 10.77921,
+        "trips_as_origin": 42111,
+        "trips_as_dest": 38347,
+        "total_trips": 80458
+      },
+      {
+        "id": "584",
+        "name": "Henrik Wergelands all\u00e9",
+        "lat": 59.9268942,
+        "lon": 10.7207894,
+        "trips_as_origin": 29884,
+        "trips_as_dest": 28326,
+        "total_trips": 58210
+      },
+      {
+        "id": "585",
+        "name": "Nordre gate",
+        "lat": 59.9212171,
+        "lon": 10.7547918,
+        "trips_as_origin": 37349,
+        "trips_as_dest": 45645,
+        "total_trips": 82994
+      },
+      {
+        "id": "586",
+        "name": "K\u00f8benhavngata busstopp",
+        "lat": 59.9294754,
+        "lon": 10.769151,
+        "trips_as_origin": 27799,
+        "trips_as_dest": 18178,
+        "total_trips": 45977
+      },
+      {
+        "id": "587",
+        "name": "Riddervoldplass",
+        "lat": 59.9191421,
+        "lon": 10.7196414,
+        "trips_as_origin": 24311,
+        "trips_as_dest": 20011,
+        "total_trips": 44322
+      },
+      {
+        "id": "588",
+        "name": "Meltzers gate",
+        "lat": 59.9180141,
+        "lon": 10.7184345,
+        "trips_as_origin": 15850,
+        "trips_as_dest": 12734,
+        "total_trips": 28584
+      },
+      {
+        "id": "589",
+        "name": "Huk",
+        "lat": 59.898126,
+        "lon": 10.675096,
+        "trips_as_origin": 35215,
+        "trips_as_dest": 40909,
+        "total_trips": 76124
+      },
+      {
+        "id": "590",
+        "name": "Majorstua skole",
+        "lat": 59.9294351,
+        "lon": 10.7136816,
+        "trips_as_origin": 56067,
+        "trips_as_dest": 36466,
+        "total_trips": 92533
+      },
+      {
+        "id": "591",
+        "name": "Grenseveien",
+        "lat": 59.9246227,
+        "lon": 10.7815924,
+        "trips_as_origin": 13198,
+        "trips_as_dest": 5422,
+        "total_trips": 18620
+      },
+      {
+        "id": "592",
+        "name": "Badebakken",
+        "lat": 59.9455883,
+        "lon": 10.7604191,
+        "trips_as_origin": 19294,
+        "trips_as_dest": 14476,
+        "total_trips": 33770
+      },
+      {
+        "id": "593",
+        "name": "Bj\u00f8lsen m\u00f8lle",
+        "lat": 59.9392,
+        "lon": 10.768774,
+        "trips_as_origin": 30055,
+        "trips_as_dest": 12702,
+        "total_trips": 42757
+      },
+      {
+        "id": "594",
+        "name": "Kampen park \u00d8st",
+        "lat": 59.915182,
+        "lon": 10.782129,
+        "trips_as_origin": 23775,
+        "trips_as_dest": 7779,
+        "total_trips": 31554
+      },
+      {
+        "id": "595",
+        "name": "Skarpsnoparken",
+        "lat": 59.914871,
+        "lon": 10.701037,
+        "trips_as_origin": 11317,
+        "trips_as_dest": 11836,
+        "total_trips": 23153
+      },
+      {
+        "id": "596",
+        "name": "Idioten",
+        "lat": 59.9310814,
+        "lon": 10.7360029,
+        "trips_as_origin": 24018,
+        "trips_as_dest": 17238,
+        "total_trips": 41256
+      },
+      {
+        "id": "597",
+        "name": "Fredensborg",
+        "lat": 59.920995,
+        "lon": 10.750358,
+        "trips_as_origin": 60174,
+        "trips_as_dest": 61232,
+        "total_trips": 121406
+      },
+      {
+        "id": "598",
+        "name": "Sofienbergparken nord",
+        "lat": 59.923229,
+        "lon": 10.766171,
+        "trips_as_origin": 70604,
+        "trips_as_dest": 66955,
+        "total_trips": 137559
+      },
+      {
+        "id": "599",
+        "name": "Pal\u00e9haven",
+        "lat": 59.910331,
+        "lon": 10.75011,
+        "trips_as_origin": 38141,
+        "trips_as_dest": 86028,
+        "total_trips": 124169
+      },
+      {
+        "id": "600",
+        "name": "Dyvekes bru",
+        "lat": 59.905323,
+        "lon": 10.7689579,
+        "trips_as_origin": 40066,
+        "trips_as_dest": 38413,
+        "total_trips": 78479
+      },
+      {
+        "id": "601",
+        "name": "Rolf Wickstr\u00f8ms vei",
+        "lat": 59.9534114,
+        "lon": 10.7577241,
+        "trips_as_origin": 8983,
+        "trips_as_dest": 2586,
+        "total_trips": 11569
+      },
+      {
+        "id": "602",
+        "name": "Jarlsborgveien",
+        "lat": 59.9304645,
+        "lon": 10.6757833,
+        "trips_as_origin": 5269,
+        "trips_as_dest": 4053,
+        "total_trips": 9322
+      },
+      {
+        "id": "603",
+        "name": "Frogner plass",
+        "lat": 59.9225392,
+        "lon": 10.7045406,
+        "trips_as_origin": 52900,
+        "trips_as_dest": 52643,
+        "total_trips": 105543
+      },
+      {
+        "id": "605",
+        "name": "\u00d8kernveien",
+        "lat": 59.9167376,
+        "lon": 10.779916,
+        "trips_as_origin": 17304,
+        "trips_as_dest": 9717,
+        "total_trips": 27021
+      },
+      {
+        "id": "606",
+        "name": "Stockfleths gate",
+        "lat": 59.9339754,
+        "lon": 10.7521029,
+        "trips_as_origin": 11961,
+        "trips_as_dest": 10867,
+        "total_trips": 22828
+      },
+      {
+        "id": "607",
+        "name": "Marcus Thranes gate",
+        "lat": 59.9327471,
+        "lon": 10.7585697,
+        "trips_as_origin": 76407,
+        "trips_as_dest": 60655,
+        "total_trips": 137062
+      },
+      {
+        "id": "608",
+        "name": "Colletts gate",
+        "lat": 59.9307367,
+        "lon": 10.746379,
+        "trips_as_origin": 21924,
+        "trips_as_dest": 12429,
+        "total_trips": 34353
+      },
+      {
+        "id": "609",
+        "name": "Fred Olsens gate",
+        "lat": 59.9110506,
+        "lon": 10.7493737,
+        "trips_as_origin": 32987,
+        "trips_as_dest": 53883,
+        "total_trips": 86870
+      },
+      {
+        "id": "610",
+        "name": "Sotahj\u00f8rnet",
+        "lat": 59.9099822,
+        "lon": 10.7914482,
+        "trips_as_origin": 27664,
+        "trips_as_dest": 16948,
+        "total_trips": 44612
+      },
+      {
+        "id": "611",
+        "name": "Bankplassen",
+        "lat": 59.908454,
+        "lon": 10.741869,
+        "trips_as_origin": 42747,
+        "trips_as_dest": 93130,
+        "total_trips": 135877
+      },
+      {
+        "id": "612",
+        "name": "Ensj\u00f8veien",
+        "lat": 59.9167033,
+        "lon": 10.7833627,
+        "trips_as_origin": 19967,
+        "trips_as_dest": 8968,
+        "total_trips": 28935
+      },
+      {
+        "id": "613",
+        "name": "Schives gate",
+        "lat": 59.9208044,
+        "lon": 10.7140544,
+        "trips_as_origin": 31257,
+        "trips_as_dest": 21461,
+        "total_trips": 52718
+      },
+      {
+        "id": "614",
+        "name": "Sinsen T-bane",
+        "lat": 59.938808,
+        "lon": 10.780445,
+        "trips_as_origin": 31609,
+        "trips_as_dest": 13871,
+        "total_trips": 45480
+      },
+      {
+        "id": "615",
+        "name": "Munkedamsveien",
+        "lat": 59.9135227,
+        "lon": 10.7301061,
+        "trips_as_origin": 17062,
+        "trips_as_dest": 20478,
+        "total_trips": 37540
+      },
+      {
+        "id": "616",
+        "name": "Salt",
+        "lat": 59.9069066,
+        "lon": 10.7466245,
+        "trips_as_origin": 28656,
+        "trips_as_dest": 29401,
+        "total_trips": 58057
+      },
+      {
+        "id": "617",
+        "name": "Bjerregaardsgate \u00d8st",
+        "lat": 59.9272161,
+        "lon": 10.7497787,
+        "trips_as_origin": 40498,
+        "trips_as_dest": 36311,
+        "total_trips": 76809
+      },
+      {
+        "id": "618",
+        "name": "Bak Niels Treschows hus s\u00f8r",
+        "lat": 59.9424323,
+        "lon": 10.723903,
+        "trips_as_origin": 17837,
+        "trips_as_dest": 9325,
+        "total_trips": 27162
+      },
+      {
+        "id": "619",
+        "name": "Bak Niels Treschows hus nord",
+        "lat": 59.9424323,
+        "lon": 10.723903,
+        "trips_as_origin": 20407,
+        "trips_as_dest": 10873,
+        "total_trips": 31280
+      },
+      {
+        "id": "620",
+        "name": "Bislettgata",
+        "lat": 59.9238336,
+        "lon": 10.7346377,
+        "trips_as_origin": 79107,
+        "trips_as_dest": 57699,
+        "total_trips": 136806
+      },
+      {
+        "id": "621",
+        "name": "Torshovdalen \u00f8st",
+        "lat": 59.9328069,
+        "lon": 10.7774484,
+        "trips_as_origin": 18949,
+        "trips_as_dest": 11071,
+        "total_trips": 30020
+      },
+      {
+        "id": "622",
+        "name": "Pilestredet 63",
+        "lat": 59.9238826,
+        "lon": 10.7313627,
+        "trips_as_origin": 31526,
+        "trips_as_dest": 30139,
+        "total_trips": 61665
+      },
+      {
+        "id": "623",
+        "name": "7 Juni Plassen",
+        "lat": 59.9150596,
+        "lon": 10.7312715,
+        "trips_as_origin": 49501,
+        "trips_as_dest": 56893,
+        "total_trips": 106394
+      },
+      {
+        "id": "624",
+        "name": "D\u00e6lenenggata",
+        "lat": 59.928716,
+        "lon": 10.7675618,
+        "trips_as_origin": 34847,
+        "trips_as_dest": 33333,
+        "total_trips": 68180
+      },
+      {
+        "id": "625",
+        "name": "Spikersuppa \u00d8st",
+        "lat": 59.91336,
+        "lon": 10.737663,
+        "trips_as_origin": 35942,
+        "trips_as_dest": 62274,
+        "total_trips": 98216
+      },
+      {
+        "id": "626",
+        "name": "Drammensveien",
+        "lat": 59.9204038,
+        "lon": 10.691147,
+        "trips_as_origin": 16175,
+        "trips_as_dest": 19454,
+        "total_trips": 35629
+      },
+      {
+        "id": "627",
+        "name": "Sk\u00f8yen Stasjon",
+        "lat": 59.9226729,
+        "lon": 10.6788129,
+        "trips_as_origin": 10205,
+        "trips_as_dest": 17113,
+        "total_trips": 27318
+      },
+      {
+        "id": "734",
+        "name": "Nylandsveien",
+        "lat": 59.9156603,
+        "lon": 10.7622812,
+        "trips_as_origin": 19869,
+        "trips_as_dest": 21746,
+        "total_trips": 41615
+      },
+      {
+        "id": "735",
+        "name": "Oslo Hospital",
+        "lat": 59.9031036,
+        "lon": 10.7673282,
+        "trips_as_origin": 53156,
+        "trips_as_dest": 53374,
+        "total_trips": 106530
+      },
+      {
+        "id": "737",
+        "name": "Munkegata trikkestopp",
+        "lat": 59.908255,
+        "lon": 10.7678,
+        "trips_as_origin": 62849,
+        "trips_as_dest": 67864,
+        "total_trips": 130713
+      },
+      {
+        "id": "738",
+        "name": "Lodalen busstopp",
+        "lat": 59.9034528,
+        "lon": 10.777958,
+        "trips_as_origin": 16221,
+        "trips_as_dest": 15754,
+        "total_trips": 31975
+      },
+      {
+        "id": "739",
+        "name": "Hammersborg Torg",
+        "lat": 59.916536,
+        "lon": 10.749162,
+        "trips_as_origin": 39194,
+        "trips_as_dest": 41745,
+        "total_trips": 80939
+      },
+      {
+        "id": "742",
+        "name": "Hasle",
+        "lat": 59.924342,
+        "lon": 10.79285,
+        "trips_as_origin": 25372,
+        "trips_as_dest": 6255,
+        "total_trips": 31627
+      },
+      {
+        "id": "744",
+        "name": "Hall\u00e9nparken",
+        "lat": 59.9315302,
+        "lon": 10.762169,
+        "trips_as_origin": 34464,
+        "trips_as_dest": 32740,
+        "total_trips": 67204
+      },
+      {
+        "id": "746",
+        "name": "Bygd\u00f8y all\u00e9",
+        "lat": 59.919001,
+        "lon": 10.692321,
+        "trips_as_origin": 16976,
+        "trips_as_dest": 17176,
+        "total_trips": 34152
+      },
+      {
+        "id": "748",
+        "name": "Hydroparken",
+        "lat": 59.914145,
+        "lon": 10.715505,
+        "trips_as_origin": 28494,
+        "trips_as_dest": 28325,
+        "total_trips": 56819
+      },
+      {
+        "id": "787",
+        "name": "Kirkegata 15",
+        "lat": 59.91015615055511,
+        "lon": 10.743456971511705,
+        "trips_as_origin": 32392,
+        "trips_as_dest": 33797,
+        "total_trips": 66189
+      },
+      {
+        "id": "970",
+        "name": "Enerhaugen",
+        "lat": 59.91320242563816,
+        "lon": 10.767579386407874,
+        "trips_as_origin": 25137,
+        "trips_as_dest": 24922,
+        "total_trips": 50059
+      },
+      {
+        "id": "1009",
+        "name": "Borgenveien",
+        "lat": 59.942742106473666,
+        "lon": 10.703833031254021,
+        "trips_as_origin": 7967,
+        "trips_as_dest": 6795,
+        "total_trips": 14762
+      },
+      {
+        "id": "1023",
+        "name": "Professor Aschehougs plass",
+        "lat": 59.9147672,
+        "lon": 10.740971,
+        "trips_as_origin": 36738,
+        "trips_as_dest": 40421,
+        "total_trips": 77159
+      },
+      {
+        "id": "1101",
+        "name": "Stortingstunellen",
+        "lat": 59.91065301806209,
+        "lon": 10.737365277561025,
+        "trips_as_origin": 6970,
+        "trips_as_dest": 13170,
+        "total_trips": 20140
+      },
+      {
+        "id": "1755",
+        "name": "Aker Brygge",
+        "lat": 59.91118372188379,
+        "lon": 10.730034556850455,
+        "trips_as_origin": 45303,
+        "trips_as_dest": 82590,
+        "total_trips": 127893
+      },
+      {
+        "id": "1919",
+        "name": "Kv\u00e6rnerveien",
+        "lat": 59.90591083488326,
+        "lon": 10.778592132296495,
+        "trips_as_origin": 4711,
+        "trips_as_dest": 3293,
+        "total_trips": 8004
+      },
+      {
+        "id": "2270",
+        "name": "L\u00f8renporten",
+        "lat": 59.92883258499495,
+        "lon": 10.799770383800876,
+        "trips_as_origin": 10154,
+        "trips_as_dest": 4021,
+        "total_trips": 14175
+      },
+      {
+        "id": "2280",
+        "name": "Klingenberggata",
+        "lat": 59.913150534075015,
+        "lon": 10.732281291700133,
+        "trips_as_origin": 15489,
+        "trips_as_dest": 16442,
+        "total_trips": 31931
+      },
+      {
+        "id": "2304",
+        "name": "Hedmarksgata",
+        "lat": 59.91178403655783,
+        "lon": 10.783884345957915,
+        "trips_as_origin": 12894,
+        "trips_as_dest": 7545,
+        "total_trips": 20439
+      },
+      {
+        "id": "2305",
+        "name": "Hesselbergs Gate",
+        "lat": 59.92774803110845,
+        "lon": 10.761265771390583,
+        "trips_as_origin": 18632,
+        "trips_as_dest": 18497,
+        "total_trips": 37129
+      },
+      {
+        "id": "2306",
+        "name": "\u00d8kern Portal",
+        "lat": 59.93097164065915,
+        "lon": 10.801829756346933,
+        "trips_as_origin": 7273,
+        "trips_as_dest": 4215,
+        "total_trips": 11488
+      },
+      {
+        "id": "2307",
+        "name": "Domus Athletica",
+        "lat": 59.946219381760216,
+        "lon": 10.724626314653563,
+        "trips_as_origin": 13380,
+        "trips_as_dest": 9804,
+        "total_trips": 23184
+      },
+      {
+        "id": "2308",
+        "name": "Gunerius",
+        "lat": 59.91463805889239,
+        "lon": 10.75342798022669,
+        "trips_as_origin": 18468,
+        "trips_as_dest": 18589,
+        "total_trips": 37057
+      },
+      {
+        "id": "2309",
+        "name": "Ulven Torg",
+        "lat": 59.924959978447504,
+        "lon": 10.812061140924698,
+        "trips_as_origin": 5173,
+        "trips_as_dest": 2600,
+        "total_trips": 7773
+      },
+      {
+        "id": "2315",
+        "name": "Rostockgata",
+        "lat": 59.90688962048543,
+        "lon": 10.76030652299994,
+        "trips_as_origin": 38143,
+        "trips_as_dest": 41572,
+        "total_trips": 79715
+      },
+      {
+        "id": "2328",
+        "name": "The Hub",
+        "lat": 59.912522370233745,
+        "lon": 10.750910185807754,
+        "trips_as_origin": 30575,
+        "trips_as_dest": 51651,
+        "total_trips": 82226
+      },
+      {
+        "id": "2329",
+        "name": "Via Vika",
+        "lat": 59.91271286014364,
+        "lon": 10.727170827087008,
+        "trips_as_origin": 8824,
+        "trips_as_dest": 9134,
+        "total_trips": 17958
+      },
+      {
+        "id": "2330",
+        "name": "Stjerneplassen",
+        "lat": 59.91323316606503,
+        "lon": 10.749958763650312,
+        "trips_as_origin": 18956,
+        "trips_as_dest": 20365,
+        "total_trips": 39321
+      },
+      {
+        "id": "2332",
+        "name": "Legevakten",
+        "lat": 59.91629601075576,
+        "lon": 10.757376666842816,
+        "trips_as_origin": 4059,
+        "trips_as_dest": 4368,
+        "total_trips": 8427
+      },
+      {
+        "id": "2333",
+        "name": "Akerselvallmenningen",
+        "lat": 59.90725889890288,
+        "lon": 10.754884663589621,
+        "trips_as_origin": 27800,
+        "trips_as_dest": 30628,
+        "total_trips": 58428
+      },
+      {
+        "id": "2334",
+        "name": "Nybrua holdeplass",
+        "lat": 59.916544926082935,
+        "lon": 10.757428972017067,
+        "trips_as_origin": 8384,
+        "trips_as_dest": 8708,
+        "total_trips": 17092
+      },
+      {
+        "id": "2337",
+        "name": "Universitetsgata",
+        "lat": 59.91591543378553,
+        "lon": 10.737834990277321,
+        "trips_as_origin": 17629,
+        "trips_as_dest": 18149,
+        "total_trips": 35778
+      },
+      {
+        "id": "2339",
+        "name": "Elgsletta",
+        "lat": 59.91564920880896,
+        "lon": 10.761724502548105,
+        "trips_as_origin": 15308,
+        "trips_as_dest": 18689,
+        "total_trips": 33997
+      },
+      {
+        "id": "2340",
+        "name": "Tiedemannsparken",
+        "lat": 59.92021459438331,
+        "lon": 10.793482520372635,
+        "trips_as_origin": 10635,
+        "trips_as_dest": 5844,
+        "total_trips": 16479
+      },
+      {
+        "id": "2347",
+        "name": "Huk 2",
+        "lat": 59.89843428245928,
+        "lon": 10.674398461025874,
+        "trips_as_origin": 12717,
+        "trips_as_dest": 15258,
+        "total_trips": 27975
+      },
+      {
+        "id": "2349",
+        "name": "Maritimt Museum",
+        "lat": 59.902942924651484,
+        "lon": 10.698048967006343,
+        "trips_as_origin": 7833,
+        "trips_as_dest": 8482,
+        "total_trips": 16315
+      },
+      {
+        "id": "2350",
+        "name": "Blindern T-Bane",
+        "lat": 59.94022899411701,
+        "lon": 10.716856460117071,
+        "trips_as_origin": 5629,
+        "trips_as_dest": 3942,
+        "total_trips": 9571
+      },
+      {
+        "id": "2351",
+        "name": "Sogn Studentby",
+        "lat": 59.95208441268443,
+        "lon": 10.727852791011173,
+        "trips_as_origin": 5925,
+        "trips_as_dest": 3359,
+        "total_trips": 9284
+      },
+      {
+        "id": "2355",
+        "name": "\u00d8kern T-bane",
+        "lat": 59.928894918817605,
+        "lon": 10.806234776281599,
+        "trips_as_origin": 2845,
+        "trips_as_dest": 1640,
+        "total_trips": 4485
+      },
+      {
+        "id": "2357",
+        "name": "Aker Brygge 2 mot R\u00e5dhusplassen",
+        "lat": 59.9112013908412,
+        "lon": 10.730126804554885,
+        "trips_as_origin": 21612,
+        "trips_as_dest": 27859,
+        "total_trips": 49471
+      },
+      {
+        "id": "2358",
+        "name": "Aker Brygge 3 mot Fergene",
+        "lat": 59.91087115068967,
+        "lon": 10.729828757277915,
+        "trips_as_origin": 25619,
+        "trips_as_dest": 25985,
+        "total_trips": 51604
+      },
+      {
+        "id": "3725",
+        "name": "Vestre Aker Kirke",
+        "lat": 59.936006155097004,
+        "lon": 10.73190903696522,
+        "trips_as_origin": 4562,
+        "trips_as_dest": 2367,
+        "total_trips": 6929
+      },
+      {
+        "id": "4552",
+        "name": "Bryn Brannstasjon",
+        "lat": 59.912716333310414,
+        "lon": 10.813758421127346,
+        "trips_as_origin": 1769,
+        "trips_as_dest": 879,
+        "total_trips": 2648
+      },
+      {
+        "id": "4683",
+        "name": "Valle Vision",
+        "lat": 59.91606483663281,
+        "lon": 10.807177606311825,
+        "trips_as_origin": 2769,
+        "trips_as_dest": 1915,
+        "total_trips": 4684
+      },
+      {
+        "id": "5113",
+        "name": "Leirfallsgata",
+        "lat": 59.919114923856284,
+        "lon": 10.757830546598228,
+        "trips_as_origin": 7770,
+        "trips_as_dest": 7805,
+        "total_trips": 15575
+      },
+      {
+        "id": "5217",
+        "name": "Egertorget",
+        "lat": 59.9126744968093,
+        "lon": 10.742025127034452,
+        "trips_as_origin": 6633,
+        "trips_as_dest": 7992,
+        "total_trips": 14625
+      },
+      {
+        "id": "5220",
+        "name": "Blindern vgs",
+        "lat": 59.949880716926174,
+        "lon": 10.73015807639294,
+        "trips_as_origin": 1095,
+        "trips_as_dest": 724,
+        "total_trips": 1819
+      },
+      {
+        "id": "5424",
+        "name": "Makrellbekken T",
+        "lat": 59.94190336268767,
+        "lon": 10.674100664853142,
+        "trips_as_origin": 836,
+        "trips_as_dest": 747,
+        "total_trips": 1583
+      },
+      {
+        "id": "5431",
+        "name": "NRK",
+        "lat": 59.933349714027514,
+        "lon": 10.71960326747913,
+        "trips_as_origin": 2483,
+        "trips_as_dest": 2025,
+        "total_trips": 4508
+      },
+      {
+        "id": "6026",
+        "name": "\u00d8stbanehallen",
+        "lat": 59.910499184043516,
+        "lon": 10.750505532434318,
+        "trips_as_origin": 52,
+        "trips_as_dest": 55,
+        "total_trips": 107
+      }
+    ]
+  }
+}
