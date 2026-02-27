@@ -79,13 +79,25 @@ export interface IsochronesData {
   isochrones: Record<string, Record<string, { type: 'Polygon'; coordinates: number[][][] }>>;
 }
 
-/** Slim route from routes-cache export (prepared-data/routes.json) */
+/** Leg in medium format – start derived from route origin or previous leg end */
+export interface RouteLeg {
+  end_lat: number;
+  end_lon: number;
+  distance_m: number;
+  duration_sec: number;
+  encodedPolyline: string;
+}
+
+/** Slim or medium route from routes-cache export */
 export interface RouteData {
   origin_id: string;
   dest_id: string;
   duration_sec: number | null;
   distance_m: number | null;
-  encodedPolyline: string | null;
+  start_lat?: number;
+  start_lon?: number;
+  encodedPolyline?: string | null;
+  legs?: RouteLeg[];
 }
 
 export interface RoutesData {
