@@ -45,8 +45,9 @@ flowchart LR
 Location: `data-pipeline/routes_fetch.py`
 
 - **Purpose:** Fetch bicycle routes via Google Routes API REST, with cache-before-fetch and force-fetch support
-- **API:** `fetch_route(origin_id, dest_id, stations, api_key, cache_dir, force_fetch=False)`
-- **Cache:** Checks `routes-cache/single/{origin_id}_{dest_id}.json` before calling the API
+- **API:** `fetch_route(origin_id, dest_id, stations, api_key, cache_dir, force_fetch=False)` for a single route; `fetch_routes_batch(route_pairs, stations, api_key, cache_dir, force_fetch=False)` for multiple
+- **API model:** Uses **Compute Routes** (one origin → one destination per request), not Compute Route Matrix. Each route pair = one API request. Batch fetches loop over pairs and make one request per pair; there is no batch API that fetches many pairs in a single call.
+- **Cache:** Checks `routes-cache/single/{origin_id}_{dest_id}.json` before each API call. Batch fetches only call the API for pairs not yet cached
 - **Force fetch:** Set `force_fetch=True` or `FORCE_ROUTES_FETCH=1` to bypass cache
 - **Field mask:** Requests `routes.duration`, `routes.distanceMeters`, `routes.polyline`, `routes.viewport`, `routes.legs`, `routes.travelAdvisory`
 
@@ -69,7 +70,7 @@ The full response includes route legs, steps, navigation instructions, and polyl
 
 Location: `scripts/export-routes-to-prepared.js`
 
-- **Purpose:** Convert full cache to a slim format for the frontend
+- **Purpose:** Convert full cache to a slim format for the frontend. Reads all cached routes (single and batch) and outputs one combined `routes.json`; the frontend cannot tell how each route was fetched
 - **Input:** `routes-cache/single/*.json`
 - **Output:** `prepared-data/routes.json`
 - **Slim format per route:** `origin_id`, `dest_id`, `duration_sec`, `distance_m`, `encodedPolyline`
@@ -162,4 +163,4 @@ There is no parameter to request “shortest distance” for BICYCLE mode.
 ## Notebooks
 
 - **stations_prepare.ipynb** – Builds `stations.json` with id, name, lat, lon, trip counts
-- **google_routes_test.ipynb** – Tests a single route fetch (e.g. Tøyenparken → Grønlands torg)
+- **google_routes_test.ipynb** – Tests single-route fetch and batch fetch (~10 routes). Batch only calls API for pairs not in cache
