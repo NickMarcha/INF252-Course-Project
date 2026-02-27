@@ -9,7 +9,7 @@ import 'leaflet/dist/leaflet.css';
 			Route Test – Oslo Bysykkel
 		</h1>
 		<p class="text-slate-600 dark:text-slate-400">
-			Display fetched bicycle routes on the map. Select a route from the dropdown to view it. Arrows indicate travel direction.
+			Display fetched bicycle routes on the map. Select a route from the dropdown to view it. When both directions are available, both are shown (green = selected direction, blue = return). Arrows indicate travel direction.
 		</p>
 
 		<div class="flex flex-col sm:flex-row gap-4 items-start flex-wrap">
@@ -55,6 +55,7 @@ import 'leaflet/dist/leaflet.css';
 	import type { RoutesData, RouteData } from '../data/prepared-data-types';
 	import type { IsochronesData, IsochroneStation } from '../data/prepared-data-types';
 	import { decodePolyline } from '../utils/decode-polyline';
+	import { offsetPolyline } from '../utils/offset-polyline';
 	import type { Map, LayerGroup } from 'leaflet';
 
 	const base = import.meta.env.BASE_URL ?? '/';
@@ -67,11 +68,34 @@ import 'leaflet/dist/leaflet.css';
 	const DEFAULT_ZOOM = 13;
 	const STATION_DOT_RADIUS = 6;
 	const ARROW_COLOR = '#1a1a1a';
+	const ROUTE_OFFSET_M = 12;
+	const COLOR_FORWARD = '#22c55e';
+	const COLOR_RETURN = '#3b82f6';
 
-	function addArrowDecorator(
+			function getBoundsForLayerGroup(
+				L: typeof import('leaflet'),
+				group: L.LayerGroup
+			): L.LatLngBounds | null {
+				const layers = group.getLayers();
+				let bounds: L.LatLngBounds | null = null;
+				for (const layer of layers) {
+					const b = (layer as L.Polyline).getBounds?.();
+					if (b?.isValid?.()) {
+						if (!bounds) {
+							bounds = L.latLngBounds(b.getSouthWest(), b.getNorthEast());
+						} else {
+							bounds.extend(b);
+						}
+					}
+				}
+				return bounds;
+			}
+
+			function addArrowDecorator(
 		L: typeof import('leaflet'),
 		layer: L.Polyline,
-		group: L.LayerGroup
+		group: L.LayerGroup,
+		color = ARROW_COLOR
 	) {
 		try {
 			const decorator = (L as any).polylineDecorator(layer, {
@@ -83,8 +107,8 @@ import 'leaflet/dist/leaflet.css';
 							pixelSize: 12,
 							polygon: true,
 							pathOptions: {
-								color: ARROW_COLOR,
-								fillColor: ARROW_COLOR,
+								color,
+								fillColor: color,
 								fillOpacity: 1,
 								weight: 1,
 							},
@@ -139,6 +163,12 @@ import 'leaflet/dist/leaflet.css';
 					: '';
 
 			const stationById = new Map(stations.map((s) => [s.id, s]));
+			const routeByKey = new Map<string, RouteData>();
+			for (const r of routes) {
+				if (r.encodedPolyline) {
+					routeByKey.set(`${r.origin_id}|${r.dest_id}`, r);
+				}
+			}
 
 			for (const r of routes) {
 				const origin = stationById.get(r.origin_id);
@@ -183,58 +213,90 @@ import 'leaflet/dist/leaflet.css';
 				circle.addTo(stationDotsLayer);
 			}
 
+			function formatDuration(sec: number | null) {
+				return sec != null ? `${Math.round(sec / 60)} min` : 'N/A';
+			}
+			function formatDistance(m: number | null) {
+				return m != null ? `${(m / 1000).toFixed(2)} km` : 'N/A';
+			}
+
+			function addRoutePolyline(
+				route: RouteData,
+				color: string,
+				offsetM: number,
+				originName: string,
+				destName: string
+			) {
+				if (!route?.encodedPolyline) return;
+				const points = decodePolyline(route.encodedPolyline).map(
+					([lat, lng]) => [lat, lng] as [number, number]
+				);
+				const latlngs =
+					offsetM !== 0 ? offsetPolyline(points, offsetM) : points;
+				const poly = L.polyline(latlngs, {
+					pane: 'routePane',
+					color,
+					weight: 5,
+					opacity: 0.8,
+				}).addTo(routeGroup);
+				poly.on('mouseover', () => poly.setStyle({ weight: 8, opacity: 1 }));
+				poly.on('mouseout', () => poly.setStyle({ weight: 5, opacity: 0.8 }));
+				addArrowDecorator(L, poly, routeGroup, color);
+				return poly;
+			}
+
 			function showRoute(routeKey: string) {
 				routeGroup.clearLayers();
 				originMarkerLayer?.clearLayers();
 				destMarkerLayer?.clearLayers();
 
 				const [originId, destId] = routeKey.split('|');
-				const route = routes.find(
-					(r) => r.origin_id === originId && r.dest_id === destId
-				);
+				const route = routeByKey.get(routeKey);
 				if (!route?.encodedPolyline) return;
 
 				const origin = stationById.get(originId);
 				const dest = stationById.get(destId);
+				const originName = origin?.name ?? originId;
+				const destName = dest?.name ?? destId;
 
-				const latlngs = decodePolyline(route.encodedPolyline).map(
+				const returnKey = `${destId}|${originId}`;
+				const returnRoute = routeByKey.get(returnKey);
+
+				addRoutePolyline(route, COLOR_FORWARD, 0, originName, destName);
+				if (returnRoute) {
+					addRoutePolyline(
+						returnRoute,
+						COLOR_RETURN,
+						ROUTE_OFFSET_M,
+						destName,
+						originName
+					);
+				}
+
+				const bounds = getBoundsForLayerGroup(L, routeGroup);
+				if (bounds?.isValid()) map?.fitBounds(bounds, { padding: [30, 30] });
+
+				const points = decodePolyline(route.encodedPolyline).map(
 					([lat, lng]) => [lat, lng] as [number, number]
 				);
-				const poly = L.polyline(latlngs, {
-					pane: 'routePane',
-					color: '#22c55e',
-					weight: 5,
-					opacity: 0.8,
-				}).addTo(routeGroup);
-				poly.on('mouseover', () => poly.setStyle({ weight: 8, opacity: 1 }));
-				poly.on('mouseout', () => poly.setStyle({ weight: 5, opacity: 0.8 }));
-				addArrowDecorator(L, poly, routeGroup);
-
-				map?.fitBounds(poly.getBounds(), { padding: [30, 30] });
-
-				if (latlngs.length > 0) {
-					L.marker(latlngs[0], { pane: 'endpointsPane' })
-						.bindPopup(`Origin: ${origin?.name ?? originId}`)
+				if (points.length > 0) {
+					L.marker(points[0], { pane: 'endpointsPane' })
+						.bindPopup(`Origin: ${originName}`)
 						.addTo(originMarkerLayer!);
-					L.marker(latlngs[latlngs.length - 1], { pane: 'endpointsPane' })
-						.bindPopup(`Destination: ${dest?.name ?? destId}`)
+					L.marker(points[points.length - 1], { pane: 'endpointsPane' })
+						.bindPopup(`Destination: ${destName}`)
 						.addTo(destMarkerLayer!);
 				}
 
 				infoSection.classList.remove('hidden');
-				const duration =
-					route.duration_sec != null
-						? `${Math.round(route.duration_sec / 60)} min`
-						: 'N/A';
-				const distance =
-					route.distance_m != null
-						? `${(route.distance_m / 1000).toFixed(2)} km`
-						: 'N/A';
-				infoContent.innerHTML = `
-					<p><strong>${origin?.name ?? originId}</strong> → <strong>${dest?.name ?? destId}</strong></p>
-					<p>Duration: ${duration}</p>
-					<p>Distance: ${distance}</p>
-				`;
+				let html = `<p><strong>${originName}</strong> ↔ <strong>${destName}</strong></p>`;
+				html += `<p class="mt-2"><strong>${originName}</strong> → ${destName}: ${formatDuration(route.duration_sec)} · ${formatDistance(route.distance_m)}</p>`;
+				if (returnRoute) {
+					html += `<p><strong>${destName}</strong> → ${originName}: ${formatDuration(returnRoute.duration_sec)} · ${formatDistance(returnRoute.distance_m)}</p>`;
+				} else {
+					html += `<p class="text-amber-600 dark:text-amber-400 italic">Return route (${destName} → ${originName}) not yet available.</p>`;
+				}
+				infoContent.innerHTML = html;
 			}
 
 			selectEl.addEventListener('change', () => {
