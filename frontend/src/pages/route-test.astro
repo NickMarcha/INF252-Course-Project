@@ -4,21 +4,13 @@ import 'leaflet/dist/leaflet.css';
 ---
 
 <Layout>
-	<div class="p-6 max-w-7xl mx-auto space-y-6">
+	<div class="p-6 max-w-6xl mx-auto space-y-4">
 		<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">
-			Route Test – Slim vs Medium
+			Route Test – Oslo Bysykkel
 		</h1>
-
-		<section class="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-4">
-			<h2 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-				Format comparison
-			</h2>
-			<p class="text-slate-600 dark:text-slate-400 text-sm">
-				Both maps show the same route. <strong>Slim</strong> (left) stores a single encoded polyline per route (~400 bytes). 
-				<strong>Medium</strong> (right) stores per-leg data with start/end coordinates and polylines (~480 bytes), enabling leg-level hover and styling.
-				Arrows indicate travel direction.
-			</p>
-		</section>
+		<p class="text-slate-600 dark:text-slate-400">
+			Display fetched bicycle routes on the map. Select a route from the dropdown to view it. Arrows indicate travel direction.
+		</p>
 
 		<div class="flex flex-col sm:flex-row gap-4 items-start flex-wrap">
 			<div class="flex items-center gap-2">
@@ -37,63 +29,49 @@ import 'leaflet/dist/leaflet.css';
 			</div>
 		</div>
 
-		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-			<div class="space-y-2">
-				<h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300">
-					Slim format
-				</h3>
-				<div
-					id="map-slim"
-					class="w-full h-[450px] rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700"
-				></div>
-				<section
-					id="summary-slim"
-					class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 min-h-[60px] hidden"
-				>
-					<div id="summary-slim-content" class="text-slate-600 dark:text-slate-400 text-sm space-y-1"></div>
-				</section>
-			</div>
-			<div class="space-y-2">
-				<h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300">
-					Medium format
-				</h3>
-				<div
-					id="map-medium"
-					class="w-full h-[450px] rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700"
-				></div>
-				<section
-					id="summary-medium"
-					class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 min-h-[60px] hidden"
-				>
-					<div id="summary-medium-content" class="text-slate-600 dark:text-slate-400 text-sm space-y-1"></div>
-				</section>
-			</div>
-		</div>
-
+		<div
+			id="map-container"
+			class="w-full h-[500px] rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700"
+		></div>
 		<p id="status" class="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
+
+		<section
+			id="route-info"
+			class="rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-4 min-h-[80px] hidden"
+		>
+			<h2 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+				Trip info
+			</h2>
+			<div
+				id="route-info-content"
+				class="text-slate-600 dark:text-slate-400 text-sm space-y-1"
+			></div>
+		</section>
 	</div>
 </Layout>
 
 <script>
 	import { loadPreparedData } from '../data/load-prepared-data';
-	import type { RoutesData, RouteData, RouteLeg } from '../data/prepared-data-types';
+	import type { RoutesData, RouteData } from '../data/prepared-data-types';
 	import type { IsochronesData, IsochroneStation } from '../data/prepared-data-types';
 	import { decodePolyline } from '../utils/decode-polyline';
+	import type { Map, LayerGroup } from 'leaflet';
 
 	const base = import.meta.env.BASE_URL ?? '/';
 
+	let map: Map | null = null;
+	let stationDotsLayer: LayerGroup | null = null;
+	let originMarkerLayer: LayerGroup | null = null;
+	let destMarkerLayer: LayerGroup | null = null;
 	const OSLO_CENTER: [number, number] = [59.92, 10.75];
 	const DEFAULT_ZOOM = 13;
 	const STATION_DOT_RADIUS = 6;
-
-	// Leg colors for medium format (distinct, accessible)
-	const LEG_COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+	const ARROW_COLOR = '#1a1a1a';
 
 	function addArrowDecorator(
 		L: typeof import('leaflet'),
 		layer: L.Polyline,
-		group: L.LayerGroup,
-		color: string
+		group: L.LayerGroup
 	) {
 		try {
 			const decorator = (L as any).polylineDecorator(layer, {
@@ -104,7 +82,12 @@ import 'leaflet/dist/leaflet.css';
 						symbol: (L as any).Symbol.arrowHead({
 							pixelSize: 12,
 							polygon: true,
-							pathOptions: { color, fillColor: color, fillOpacity: 0.9, weight: 1 },
+							pathOptions: {
+								color: ARROW_COLOR,
+								fillColor: ARROW_COLOR,
+								fillOpacity: 1,
+								weight: 1,
+							},
 						}),
 					},
 				],
@@ -118,24 +101,10 @@ import 'leaflet/dist/leaflet.css';
 	async function init() {
 		const statusEl = document.getElementById('status');
 		const selectEl = document.getElementById('route-select') as HTMLSelectElement;
-		const mapSlimEl = document.getElementById('map-slim');
-		const mapMediumEl = document.getElementById('map-medium');
-		const summarySlim = document.getElementById('summary-slim');
-		const summarySlimContent = document.getElementById('summary-slim-content');
-		const summaryMedium = document.getElementById('summary-medium');
-		const summaryMediumContent = document.getElementById('summary-medium-content');
-
-		if (
-			!statusEl ||
-			!selectEl ||
-			!mapSlimEl ||
-			!mapMediumEl ||
-			!summarySlim ||
-			!summarySlimContent ||
-			!summaryMedium ||
-			!summaryMediumContent
-		)
-			return;
+		const mapEl = document.getElementById('map-container');
+		const infoSection = document.getElementById('route-info');
+		const infoContent = document.getElementById('route-info-content');
+		if (!statusEl || !selectEl || !mapEl || !infoSection || !infoContent) return;
 
 		const L = (await import('leaflet')).default;
 		await import('leaflet-polylinedecorator');
@@ -143,7 +112,9 @@ import 'leaflet/dist/leaflet.css';
 		try {
 			let stations: IsochroneStation[] = [];
 			try {
-				const { data } = await loadPreparedData<{ stations: IsochroneStation[] }>('stations.json');
+				const { data } = await loadPreparedData<{ stations: IsochroneStation[] }>(
+					'stations.json'
+				);
 				stations = data?.stations ?? [];
 			} catch {
 				const { data } = await loadPreparedData<IsochronesData>('isochrones.json');
@@ -151,33 +122,16 @@ import 'leaflet/dist/leaflet.css';
 			}
 
 			if (!stations.length) {
-				statusEl.textContent = 'No stations. Run stations_prepare.ipynb and npm run prepare:data.';
+				statusEl.textContent =
+					'No stations. Run stations_prepare.ipynb and npm run prepare:data.';
 				return;
 			}
 
-			let routesSlim: RouteData[] = [];
-			let routesMedium: RouteData[] = [];
+			let routes: RouteData[] = [];
 			try {
 				const { data } = await loadPreparedData<RoutesData>('routes.json');
-				routesSlim = data?.routes ?? [];
+				routes = data?.routes ?? [];
 			} catch {}
-			try {
-				const { data } = await loadPreparedData<RoutesData>('routes_medium.json');
-				routesMedium = data?.routes ?? [];
-			} catch {}
-
-			const routes = routesMedium.length > 0 ? routesMedium : routesSlim;
-			const routeByKey = new Map<string, { slim?: RouteData; medium?: RouteData }>();
-			for (const r of routesSlim) {
-				const key = `${r.origin_id}|${r.dest_id}`;
-				if (!routeByKey.has(key)) routeByKey.set(key, {});
-				routeByKey.get(key)!.slim = r;
-			}
-			for (const r of routesMedium) {
-				const key = `${r.origin_id}|${r.dest_id}`;
-				if (!routeByKey.has(key)) routeByKey.set(key, {});
-				routeByKey.get(key)!.medium = r;
-			}
 
 			statusEl.textContent =
 				routes.length === 0
@@ -186,216 +140,101 @@ import 'leaflet/dist/leaflet.css';
 
 			const stationById = new Map(stations.map((s) => [s.id, s]));
 
-			for (const [key] of routeByKey) {
-				const [originId, destId] = key.split('|');
-				const origin = stationById.get(originId);
-				const dest = stationById.get(destId);
-				const label =
-					origin && dest ? `${origin.name} → ${dest.name}` : `${originId} → ${destId}`;
+			for (const r of routes) {
+				const origin = stationById.get(r.origin_id);
+				const dest = stationById.get(r.dest_id);
+				const label = origin && dest
+					? `${origin.name} → ${dest.name}`
+					: `${r.origin_id} → ${r.dest_id}`;
 				const opt = document.createElement('option');
-				opt.value = key;
+				opt.value = `${r.origin_id}|${r.dest_id}`;
 				opt.textContent = label;
 				selectEl.appendChild(opt);
 			}
 
-			function createMap(container: HTMLElement) {
-				const m = L.map(container).setView(OSLO_CENTER, DEFAULT_ZOOM);
-				L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-					attribution:
-						'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-				}).addTo(m);
-				m.createPane('routePane');
-				m.getPane('routePane')!.style.zIndex = '400';
-				m.createPane('stationMarkersPane');
-				m.getPane('stationMarkersPane')!.style.zIndex = '450';
-				m.createPane('endpointsPane');
-				m.getPane('endpointsPane')!.style.zIndex = '600';
-				return m;
-			}
+			map = L.map(mapEl).setView(OSLO_CENTER, DEFAULT_ZOOM);
+			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				attribution:
+					'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+			}).addTo(map);
 
-			const mapSlim = createMap(mapSlimEl);
-			const mapMedium = createMap(mapMediumEl);
+			map.createPane('routePane');
+			map.getPane('routePane')!.style.zIndex = '400';
+			map.createPane('stationMarkersPane');
+			map.getPane('stationMarkersPane')!.style.zIndex = '450';
+			map.createPane('endpointsPane');
+			map.getPane('endpointsPane')!.style.zIndex = '600';
 
-			const routeGroupSlim = L.layerGroup().addTo(mapSlim);
-			const routeGroupMedium = L.layerGroup().addTo(mapMedium);
-			const stationDotsSlim = L.layerGroup().addTo(mapSlim);
-			const stationDotsMedium = L.layerGroup().addTo(mapMedium);
-			const originMarkerSlim = L.layerGroup().addTo(mapSlim);
-			const destMarkerSlim = L.layerGroup().addTo(mapSlim);
-			const originMarkerMedium = L.layerGroup().addTo(mapMedium);
-			const destMarkerMedium = L.layerGroup().addTo(mapMedium);
+			const routeGroup = L.layerGroup().addTo(map);
+			stationDotsLayer = L.layerGroup().addTo(map);
+			originMarkerLayer = L.layerGroup().addTo(map);
+			destMarkerLayer = L.layerGroup().addTo(map);
 
 			for (const s of stations) {
-				const opts = {
+				const circle = L.circleMarker([s.lat, s.lon], {
 					pane: 'stationMarkersPane',
 					radius: STATION_DOT_RADIUS,
 					fillColor: '#3b82f6',
 					fillOpacity: 0.7,
 					color: '#1e40af',
 					weight: 1.5,
-				};
-				const c1 = L.circleMarker([s.lat, s.lon], opts);
-				c1.bindTooltip(s.name, { permanent: false, direction: 'top' });
-				c1.addTo(stationDotsSlim);
-				const c2 = L.circleMarker([s.lat, s.lon], opts);
-				c2.bindTooltip(s.name, { permanent: false, direction: 'top' });
-				c2.addTo(stationDotsMedium);
+				});
+				circle.bindTooltip(s.name, { permanent: false, direction: 'top' });
+				circle.addTo(stationDotsLayer);
 			}
 
 			function showRoute(routeKey: string) {
-				routeGroupSlim.clearLayers();
-				routeGroupMedium.clearLayers();
-				originMarkerSlim.clearLayers();
-				destMarkerSlim.clearLayers();
-				originMarkerMedium.clearLayers();
-				destMarkerMedium.clearLayers();
-
-				const entry = routeByKey.get(routeKey);
-				if (!entry) return;
+				routeGroup.clearLayers();
+				originMarkerLayer?.clearLayers();
+				destMarkerLayer?.clearLayers();
 
 				const [originId, destId] = routeKey.split('|');
+				const route = routes.find(
+					(r) => r.origin_id === originId && r.dest_id === destId
+				);
+				if (!route?.encodedPolyline) return;
+
 				const origin = stationById.get(originId);
 				const dest = stationById.get(destId);
 
-				// Slim map
-				const slim = entry.slim;
-				if (slim?.encodedPolyline) {
-					const latlngs = decodePolyline(slim.encodedPolyline).map(
-						([lat, lng]) => [lat, lng] as [number, number]
-					);
-					const poly = L.polyline(latlngs, {
-						pane: 'routePane',
-						color: '#22c55e',
-						weight: 5,
-						opacity: 0.8,
-					}).addTo(routeGroupSlim);
-					poly.bindTooltip('Slim: single polyline', { sticky: true, direction: 'top' });
-					poly.on('mouseover', () => poly.setStyle({ weight: 8, opacity: 1 }));
-					poly.on('mouseout', () => poly.setStyle({ weight: 5, opacity: 0.8 }));
-					addArrowDecorator(L, poly, routeGroupSlim, '#22c55e');
+				const latlngs = decodePolyline(route.encodedPolyline).map(
+					([lat, lng]) => [lat, lng] as [number, number]
+				);
+				const poly = L.polyline(latlngs, {
+					pane: 'routePane',
+					color: '#22c55e',
+					weight: 5,
+					opacity: 0.8,
+				}).addTo(routeGroup);
+				poly.on('mouseover', () => poly.setStyle({ weight: 8, opacity: 1 }));
+				poly.on('mouseout', () => poly.setStyle({ weight: 5, opacity: 0.8 }));
+				addArrowDecorator(L, poly, routeGroup);
 
-					const bounds = poly.getBounds();
-					mapSlim.fitBounds(bounds, { padding: [20, 20] });
+				map?.fitBounds(poly.getBounds(), { padding: [30, 30] });
 
-					if (latlngs.length > 0) {
-						L.marker(latlngs[0], { pane: 'endpointsPane' })
-							.bindPopup(`Origin: ${origin?.name ?? originId}`)
-							.addTo(originMarkerSlim);
-						L.marker(latlngs[latlngs.length - 1], { pane: 'endpointsPane' })
-							.bindPopup(`Destination: ${dest?.name ?? destId}`)
-							.addTo(destMarkerSlim);
-					}
+				if (latlngs.length > 0) {
+					L.marker(latlngs[0], { pane: 'endpointsPane' })
+						.bindPopup(`Origin: ${origin?.name ?? originId}`)
+						.addTo(originMarkerLayer!);
+					L.marker(latlngs[latlngs.length - 1], { pane: 'endpointsPane' })
+						.bindPopup(`Destination: ${dest?.name ?? destId}`)
+						.addTo(destMarkerLayer!);
 				}
 
-				// Medium map
-				const medium = entry.medium;
-				if (medium?.legs?.length) {
-					let allBounds: L.LatLngBounds | null = null;
-					medium.legs.forEach((leg: RouteLeg, i: number) => {
-						const latlngs = decodePolyline(leg.encodedPolyline).map(
-							([lat, lng]) => [lat, lng] as [number, number]
-						);
-						const color = LEG_COLORS[i % LEG_COLORS.length];
-						const poly = L.polyline(latlngs, {
-							pane: 'routePane',
-							color,
-							weight: 5,
-							opacity: 0.85,
-						}).addTo(routeGroupMedium);
-						const legLabel = `Leg ${i + 1}: ${(leg.distance_m / 1000).toFixed(2)} km, ${Math.round(leg.duration_sec / 60)} min`;
-						poly.bindTooltip(legLabel, { sticky: true, direction: 'top' });
-						poly.on('mouseover', () => poly.setStyle({ weight: 8, opacity: 1 }));
-						poly.on('mouseout', () => poly.setStyle({ weight: 5, opacity: 0.85 }));
-						addArrowDecorator(L, poly, routeGroupMedium, color);
-
-						const b = poly.getBounds();
-						allBounds = allBounds ? allBounds.extend(b) : b;
-					});
-
-					if (allBounds) mapMedium.fitBounds(allBounds, { padding: [20, 20] });
-
-					const originPoint =
-						medium.start_lat != null && medium.start_lon != null
-							? ([medium.start_lat, medium.start_lon] as [number, number])
-							: null;
-					const lastLeg = medium.legs[medium.legs.length - 1];
-					const destPoint =
-						lastLeg.end_lat != null && lastLeg.end_lon != null
-							? ([lastLeg.end_lat, lastLeg.end_lon] as [number, number])
-							: null;
-
-					if (originPoint) {
-						L.marker(originPoint, { pane: 'endpointsPane' })
-							.bindPopup(`Origin: ${origin?.name ?? originId}`)
-							.addTo(originMarkerMedium);
-					}
-					if (destPoint) {
-						L.marker(destPoint, { pane: 'endpointsPane' })
-							.bindPopup(`Destination: ${dest?.name ?? destId}`)
-							.addTo(destMarkerMedium);
-					}
-				} else if (slim?.encodedPolyline) {
-					// Fallback: show slim on medium map if no medium data
-					const latlngs = decodePolyline(slim.encodedPolyline).map(
-						([lat, lng]) => [lat, lng] as [number, number]
-					);
-					const poly = L.polyline(latlngs, {
-						pane: 'routePane',
-						color: '#3b82f6',
-						weight: 5,
-						opacity: 0.8,
-					}).addTo(routeGroupMedium);
-					poly.bindTooltip('Medium: no legs (using slim fallback)', { sticky: true });
-					addArrowDecorator(L, poly, routeGroupMedium, '#3b82f6');
-					mapMedium.fitBounds(poly.getBounds(), { padding: [20, 20] });
-					if (latlngs.length > 0) {
-						L.marker(latlngs[0], { pane: 'endpointsPane' })
-							.bindPopup(`Origin: ${origin?.name ?? originId}`)
-							.addTo(originMarkerMedium);
-						L.marker(latlngs[latlngs.length - 1], { pane: 'endpointsPane' })
-							.bindPopup(`Destination: ${dest?.name ?? destId}`)
-							.addTo(destMarkerMedium);
-					}
-				}
-
-				// Summaries
-				const route = medium ?? slim;
-				if (!route) return;
-
+				infoSection.classList.remove('hidden');
 				const duration =
-					route.duration_sec != null ? `${Math.round(route.duration_sec / 60)} min` : 'N/A';
+					route.duration_sec != null
+						? `${Math.round(route.duration_sec / 60)} min`
+						: 'N/A';
 				const distance =
-					route.distance_m != null ? `${(route.distance_m / 1000).toFixed(2)} km` : 'N/A';
-
-				summarySlim.classList.remove('hidden');
-				summaryMedium.classList.remove('hidden');
-
-				summarySlimContent.innerHTML = `
+					route.distance_m != null
+						? `${(route.distance_m / 1000).toFixed(2)} km`
+						: 'N/A';
+				infoContent.innerHTML = `
 					<p><strong>${origin?.name ?? originId}</strong> → <strong>${dest?.name ?? destId}</strong></p>
-					<p>Duration: ${duration} · Distance: ${distance}</p>
-					<p class="text-slate-500 dark:text-slate-500">Single encoded polyline, no leg breakdown.</p>
+					<p>Duration: ${duration}</p>
+					<p>Distance: ${distance}</p>
 				`;
-
-				if (medium?.legs?.length) {
-					const legRows = medium.legs
-						.map(
-							(l, i) =>
-								`<p>Leg ${i + 1}: ${(l.distance_m / 1000).toFixed(2)} km, ${Math.round(l.duration_sec / 60)} min</p>`
-						)
-						.join('');
-					summaryMediumContent.innerHTML = `
-						<p><strong>${origin?.name ?? originId}</strong> → <strong>${dest?.name ?? destId}</strong></p>
-						<p>Total: ${duration} · ${distance}</p>
-						<p class="text-slate-500 dark:text-slate-500 mt-1">Per-leg breakdown:</p>
-						${legRows}
-					`;
-				} else {
-					summaryMediumContent.innerHTML = `
-						<p><strong>${origin?.name ?? originId}</strong> → <strong>${dest?.name ?? destId}</strong></p>
-						<p>Duration: ${duration} · Distance: ${distance}</p>
-						<p class="text-slate-500 dark:text-slate-500">No medium data; showing slim fallback.</p>
-					`;
-				}
 			}
 
 			selectEl.addEventListener('change', () => {
@@ -404,9 +243,8 @@ import 'leaflet/dist/leaflet.css';
 			});
 
 			if (routes.length > 0) {
-				const firstKey = `${routes[0].origin_id}|${routes[0].dest_id}`;
-				selectEl.value = firstKey;
-				showRoute(firstKey);
+				selectEl.value = `${routes[0].origin_id}|${routes[0].dest_id}`;
+				showRoute(selectEl.value);
 			}
 		} catch (err) {
 			statusEl.textContent = `Failed to load: ${err instanceof Error ? err.message : String(err)}`;
