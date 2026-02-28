@@ -2,9 +2,10 @@
 /**
  * Export routes from routes-cache/ to prepared-data/routes.json (slim format).
  * Reads cached responses and writes only essential fields for frontend.
+ * routes-cache/ is committed (source of truth); routes.json is a build artifact.
  *
  * Size: Cache ~1–3 KB/route (minimal field mask). Slim ~400 bytes/route.
- * At 85k routes: cache ~85–255 MB (gitignored), slim ~25 MB.
+ * At 85k routes: cache ~85–255 MB, slim ~25 MB.
  */
 
 const fs = require('fs');

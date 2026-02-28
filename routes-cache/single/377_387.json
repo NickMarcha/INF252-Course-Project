@@ -1,0 +1,638 @@
+{
+  "origin_id": "377",
+  "dest_id": "387",
+  "fetched_at": "2026-02-27T20:09:02.400201",
+  "response": {
+    "routes": [
+      {
+        "legs": [
+          {
+            "distanceMeters": 3910,
+            "duration": "844s",
+            "staticDuration": "844s",
+            "polyline": {
+              "encodedPolyline": "mgulJ__x`ALhBc@@sBx@STu@\\o@h@Q`@}Bp@mB|@mBl@o@F?dAB^S^YEyBjEg@z@aJSUpGC\\S~@aEnWM`AcAtGiFr\\CnAIp`@FZHhDHND?CZNnCLd@f@`A`@p@H|@NTXL?rGtCIPD`Bt@`@D|@KNB^O@\\\\?xAbAj@d@`A`CJNXv@F@HRzAnCJJDJLNdABjBM\\HJb@D`@vAzTjCa@PDdDe@DDFAHX~@nPZxBEJg@xD{ArHxJlLU|ASdAVZJg@"
+            },
+            "startLocation": {
+              "latLng": {
+                "latitude": 59.9155927,
+                "longitude": 10.7776044
+              }
+            },
+            "endLocation": {
+              "latLng": {
+                "latitude": 59.9146117,
+                "longitude": 10.7354826
+              }
+            },
+            "steps": [
+              {
+                "distanceMeters": 31,
+                "staticDuration": "3s",
+                "polyline": {
+                  "encodedPolyline": "mgulJ__x`ALhB"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.9155927,
+                    "longitude": 10.7776044
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.915520599999994,
+                    "longitude": 10.777074899999999
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "DEPART",
+                  "instructions": "Head vest on \u00d8kernveien"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "31 m"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 397,
+                "staticDuration": "69s",
+                "polyline": {
+                  "encodedPolyline": "_gulJu{w`Ac@@sBx@STu@\\o@h@Q`@}Bp@mB|@mBl@o@F"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.915520599999994,
+                    "longitude": 10.777074899999999
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.9189468,
+                    "longitude": 10.7752951
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_RIGHT",
+                  "instructions": "Sving til h\u00f8gre"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,4 km"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 29,
+                "staticDuration": "29s",
+                "polyline": {
+                  "encodedPolyline": "m|ulJspw`A?dAB^"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.9189468,
+                    "longitude": 10.7752951
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.918926500000005,
+                    "longitude": 10.774786899999999
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_LEFT",
+                  "instructions": "Sving til venstre mot Monrads gate"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "29 m"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 342,
+                "staticDuration": "61s",
+                "polyline": {
+                  "encodedPolyline": "i|ulJmmw`AS^YEyBjEg@z@aJS"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.918926500000005,
+                    "longitude": 10.774786899999999
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.921736599999996,
+                    "longitude": 10.773438299999999
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_RIGHT",
+                  "instructions": "Turn right onto Monrads gate"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,3 km"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 1141,
+                "staticDuration": "219s",
+                "polyline": {
+                  "encodedPolyline": "{mvlJ_ew`AUpGC\\S~@aEnWM`AcAtGiFr\\CnAIp`@FZHhDHND?"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.921736599999996,
+                    "longitude": 10.773438299999999
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.9244222,
+                    "longitude": 10.754375300000001
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_LEFT",
+                  "instructions": "Turn left onto Helgesens gate"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "1,1 km"
+                  },
+                  "staticDuration": {
+                    "text": "4 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 159,
+                "staticDuration": "29s",
+                "polyline": {
+                  "encodedPolyline": "s~vlJ{ms`ACZNnCLd@f@`A`@p@H|@NTXL"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.9244222,
+                    "longitude": 10.754375300000001
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.92365590000001,
+                    "longitude": 10.7522589
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_RIGHT",
+                  "instructions": "Turn right onto Bergverksgata"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,2 km"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 77,
+                "staticDuration": "18s",
+                "polyline": {
+                  "encodedPolyline": "{yvlJs`s`A?rG"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.92365590000001,
+                    "longitude": 10.7522589
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.923664300000006,
+                    "longitude": 10.750877899999999
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_RIGHT",
+                  "instructions": "Sving til h\u00f8gre mot Maridalsveien"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "77 m"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 231,
+                "staticDuration": "75s",
+                "polyline": {
+                  "encodedPolyline": "{yvlJ_xr`AtCIPD`Bt@`@D|@KNB^O"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.923664300000006,
+                    "longitude": 10.750877899999999
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.9216134,
+                    "longitude": 10.7507179
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_LEFT",
+                  "instructions": "Turn left onto Maridalsveien"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,2 km"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 8,
+                "staticDuration": "2s",
+                "polyline": {
+                  "encodedPolyline": "amvlJ_wr`A@\\"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.9216134,
+                    "longitude": 10.7507179
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.92160409999999,
+                    "longitude": 10.750574799999999
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_RIGHT",
+                  "instructions": "Turn right onto Fredensborgveien"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "8 m"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 415,
+                "staticDuration": "99s",
+                "polyline": {
+                  "encodedPolyline": "_mvlJavr`A\\?xAbAj@d@`A`CJNXv@F@HRzAnCJJDJLNdABjBM\\HJb@D`@"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.92160409999999,
+                    "longitude": 10.750574799999999
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.9184164,
+                    "longitude": 10.7476523
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_LEFT",
+                  "instructions": "Sving til venstre for \u00e5 halde deg p\u00e5 Fredensborgveien"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,4 km"
+                  },
+                  "staticDuration": {
+                    "text": "2 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 201,
+                "staticDuration": "36s",
+                "polyline": {
+                  "encodedPolyline": "cyulJycr`AvAzT"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.9184164,
+                    "longitude": 10.7476523
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.9179756,
+                    "longitude": 10.7441496
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "NAME_CHANGE",
+                  "instructions": "Continue onto Thor Olsens gate"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,2 km"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 181,
+                "staticDuration": "55s",
+                "polyline": {
+                  "encodedPolyline": "kvulJ}mq`AjCa@PDdDe@"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.9179756,
+                    "longitude": 10.7441496
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.9163621,
+                    "longitude": 10.744482999999999
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_LEFT",
+                  "instructions": "Turn left onto Akersgata"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,2 km"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 215,
+                "staticDuration": "42s",
+                "polyline": {
+                  "encodedPolyline": "glulJ_pq`ADDFAHX~@nPZxB"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.9163621,
+                    "longitude": 10.744482999999999
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.9157797,
+                    "longitude": 10.7409152
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "ROUNDABOUT_RIGHT",
+                  "instructions": "Ved rundk\u00f8yringa tar du f\u00f8rste avk\u00f8yring mot Teatergata"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,2 km"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 161,
+                "staticDuration": "25s",
+                "polyline": {
+                  "encodedPolyline": "shulJwyp`AEJg@xD{ArH"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.9157797,
+                    "longitude": 10.7409152
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.91647,
+                    "longitude": 10.738393799999999
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_RIGHT",
+                  "instructions": "Turn right onto Kristian Augusts gate"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,2 km"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 242,
+                "staticDuration": "31s",
+                "polyline": {
+                  "encodedPolyline": "}lulJ}ip`AxJlL"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.91647,
+                    "longitude": 10.738393799999999
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.914577099999995,
+                    "longitude": 10.736237299999999
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_LEFT",
+                  "instructions": "Turn left onto Universitetsgata"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,2 km"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 51,
+                "staticDuration": "10s",
+                "polyline": {
+                  "encodedPolyline": "caulJo|o`AU|ASdA"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.914577099999995,
+                    "longitude": 10.736237299999999
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.9147907,
+                    "longitude": 10.735422999999999
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_RIGHT",
+                  "instructions": "Sving til h\u00f8gre"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "51 m"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 16,
+                "staticDuration": "29s",
+                "polyline": {
+                  "encodedPolyline": "mbulJkwo`AVZ"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.9147907,
+                    "longitude": 10.735422999999999
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.9146692,
+                    "longitude": 10.735284
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_LEFT",
+                  "instructions": "Sving til venstre\nWalk your bicycle"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "16 m"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 13,
+                "staticDuration": "12s",
+                "polyline": {
+                  "encodedPolyline": "uaulJovo`AJg@"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.9146692,
+                    "longitude": 10.735284
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.9146117,
+                    "longitude": 10.7354826
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_LEFT",
+                  "instructions": "Sving til venstre\nWalk your bicycle\nReisem\u00e5let blir p\u00e5 h\u00f8gre side"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "13 m"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              }
+            ],
+            "localizedValues": {
+              "distance": {
+                "text": "3,9 km"
+              },
+              "duration": {
+                "text": "14 min"
+              },
+              "staticDuration": {
+                "text": "14 min"
+              }
+            }
+          }
+        ],
+        "distanceMeters": 3910,
+        "duration": "844s",
+        "polyline": {
+          "encodedPolyline": "mgulJ__x`ALhBc@@sBx@STu@\\o@h@Q`@}Bp@mB|@mBl@o@F?dAB^S^YEyBjEg@z@aJSUpGC\\S~@aEnWM`AcAtGiFr\\CnAIp`@FZHhDHND?CZNnCLd@f@`A`@p@H|@NTXL?rGtCIPD`Bt@`@D|@KNB^O@\\\\?xAbAj@d@`A`CJNXv@F@HRzAnCJJDJLNdABjBM\\HJb@D`@vAzTjCa@PDdDe@DDFAHX~@nPZxBEJg@xD{ArHxJlLU|ASdAVZJg@"
+        },
+        "viewport": {
+          "low": {
+            "latitude": 59.914577099999995,
+            "longitude": 10.735284
+          },
+          "high": {
+            "latitude": 59.9245898,
+            "longitude": 10.7776044
+          }
+        },
+        "travelAdvisory": {}
+      }
+    ]
+  }
+}

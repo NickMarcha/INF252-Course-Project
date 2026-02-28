@@ -1,0 +1,666 @@
+{
+  "origin_id": "381",
+  "dest_id": "380",
+  "fetched_at": "2026-02-27T20:09:02.754151",
+  "response": {
+    "routes": [
+      {
+        "legs": [
+          {
+            "distanceMeters": 4065,
+            "duration": "1142s",
+            "staticDuration": "1142s",
+            "polyline": {
+              "encodedPolyline": "ottlJe_u`AYtCU?SKmAtM[xDk@c@_@u@o@YmBqBiAaB{@w@W_@wBkBe@s@Yu@UQm@{@i@[WAYP_@j@{@bC[xAIzAB`BIz@YbAU^IDi@dBKjAL|CCpAGTOVUPm@JiAD_@T[n@QbACn@BrIEn@O`@UPOAKK{AiDiAgAAQoAA@oBWE]_@a@}@UHWd@oAJ]b@ITWzBQDeGPOLELe@`Ej@`Ae@z@c@\\eDp@]MaAiAiAk@uBiAWg@aAoFg@qA[Y{D{@g@MaB}@a@c@}BiDIUI_@q@}@a@]aACM_AG}AKKGtAq@?SO_@s@_@W]Cg@DoA`@m@Bu@~@e@p@mAt@_@CWzBITyBFsDQw@g@{Ae@MKSa@kAyDiB{Iu@oAYEe@T{DpCsAx@[\\EFEB"
+            },
+            "startLocation": {
+              "latLng": {
+                "latitude": 59.912559200000004,
+                "longitude": 10.762267099999999
+              }
+            },
+            "endLocation": {
+              "latLng": {
+                "latitude": 59.93921479999999,
+                "longitude": 10.7591164
+              }
+            },
+            "steps": [
+              {
+                "distanceMeters": 44,
+                "staticDuration": "8s",
+                "polyline": {
+                  "encodedPolyline": "ottlJe_u`AYtC"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.912559200000004,
+                    "longitude": 10.762267099999999
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.912689,
+                    "longitude": 10.7615205
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "DEPART",
+                  "instructions": "Head vest toward Smalgangen"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "44 m"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 24,
+                "staticDuration": "4s",
+                "polyline": {
+                  "encodedPolyline": "iutlJozt`AU?SK"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.912689,
+                    "longitude": 10.7615205
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.91289820000001,
+                    "longitude": 10.7615792
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_RIGHT",
+                  "instructions": "Turn right onto Smalgangen"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "24 m"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 192,
+                "staticDuration": "35s",
+                "polyline": {
+                  "encodedPolyline": "svtlJ{zt`AmAtM[xD"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.91289820000001,
+                    "longitude": 10.7615792
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.913431100000004,
+                    "longitude": 10.7583027
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_LEFT",
+                  "instructions": "Turn left onto Gr\u00f8nland"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,2 km"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 1257,
+                "staticDuration": "265s",
+                "polyline": {
+                  "encodedPolyline": "}ytlJkft`Ak@c@_@u@o@YmBqBiAaB{@w@W_@wBkBe@s@Yu@UQm@{@i@[WAYP_@j@{@bC[xAIzAB`BIz@YbAU^IDi@dBKjAL|CCpAGTOVUPm@JiAD_@T[n@QbACn@BrIEn@O`@UPOAKK{AiDiAgAAQ"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.913431100000004,
+                    "longitude": 10.7583027
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.920719999999996,
+                    "longitude": 10.7545256
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_RIGHT",
+                  "instructions": "Sving til h\u00f8gre"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "1,3 km"
+                  },
+                  "staticDuration": {
+                    "text": "4 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 45,
+                "staticDuration": "8s",
+                "polyline": {
+                  "encodedPolyline": "ogvlJyns`AoAA"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.920719999999996,
+                    "longitude": 10.7545256
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.92112100000001,
+                    "longitude": 10.7545413
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_LEFT",
+                  "instructions": "Turn left onto Nedre gate"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "45 m"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 31,
+                "staticDuration": "12s",
+                "polyline": {
+                  "encodedPolyline": "_jvlJ{ns`A@oB"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.92112100000001,
+                    "longitude": 10.7545413
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.921112699999995,
+                    "longitude": 10.7550963
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_RIGHT",
+                  "instructions": "Turn right onto Nordre gate"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "31 m"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 58,
+                "staticDuration": "36s",
+                "polyline": {
+                  "encodedPolyline": "}ivlJkrs`AWE]_@a@}@"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.921112699999995,
+                    "longitude": 10.7550963
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.9215513,
+                    "longitude": 10.755600699999999
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_LEFT",
+                  "instructions": "Sving til venstre"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "58 m"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 139,
+                "staticDuration": "28s",
+                "polyline": {
+                  "encodedPolyline": "ulvlJous`AUHWd@oAJ]b@ITWzB"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.9215513,
+                    "longitude": 10.755600699999999
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.922504,
+                    "longitude": 10.754394399999999
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_LEFT",
+                  "instructions": "Sving til venstre"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,1 km"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 228,
+                "staticDuration": "62s",
+                "polyline": {
+                  "encodedPolyline": "srvlJ}ms`AQDeGPOLELe@`E"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.922504,
+                    "longitude": 10.754394399999999
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.92420049999999,
+                    "longitude": 10.7531582
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_RIGHT",
+                  "instructions": "Sving til h\u00f8gre"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,2 km"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 31,
+                "staticDuration": "9s",
+                "polyline": {
+                  "encodedPolyline": "g}vlJgfs`Aj@`A"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.92420049999999,
+                    "longitude": 10.7531582
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.923976599999996,
+                    "longitude": 10.7528309
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_LEFT",
+                  "instructions": "Sving til venstre"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "31 m"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 245,
+                "staticDuration": "88s",
+                "polyline": {
+                  "encodedPolyline": "{{vlJeds`Ae@z@c@\\eDp@]MaAiAiAk@"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.923976599999996,
+                    "longitude": 10.7528309
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.9260325,
+                    "longitude": 10.752789199999999
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_RIGHT",
+                  "instructions": "Sving til h\u00f8gre"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,2 km"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 666,
+                "staticDuration": "231s",
+                "polyline": {
+                  "encodedPolyline": "uhwlJ}cs`AuBiAWg@aAoFg@qA[Y{D{@g@MaB}@a@c@}BiDIUI_@q@}@a@]aACM_AG}AKK"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.9260325,
+                    "longitude": 10.752789199999999
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.93086179999999,
+                    "longitude": 10.758407799999999
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "NAME_CHANGE",
+                  "instructions": "Continue onto \u00c5motbrua"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,7 km"
+                  },
+                  "staticDuration": {
+                    "text": "4 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 24,
+                "staticDuration": "5s",
+                "polyline": {
+                  "encodedPolyline": "{fxlJagt`AGtA"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.93086179999999,
+                    "longitude": 10.758407799999999
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.930899999999994,
+                    "longitude": 10.757979899999999
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_LEFT",
+                  "instructions": "Turn left onto Beierbrua"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "24 m"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 192,
+                "staticDuration": "76s",
+                "polyline": {
+                  "encodedPolyline": "cgxlJkdt`Aq@?SO_@s@_@W]Cg@DoA`@m@B"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.930899999999994,
+                    "longitude": 10.757979899999999
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.93255130000001,
+                    "longitude": 10.7582449
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_RIGHT",
+                  "instructions": "Sving til h\u00f8gre"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,2 km"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 124,
+                "staticDuration": "49s",
+                "polyline": {
+                  "encodedPolyline": "mqxlJ_ft`Au@~@e@p@mAt@_@C"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.93255130000001,
+                    "longitude": 10.7582449
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.93356240000001,
+                    "longitude": 10.7574226
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_SLIGHT_LEFT",
+                  "instructions": "Sving slakt mot venstre"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,1 km"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 37,
+                "staticDuration": "7s",
+                "polyline": {
+                  "encodedPolyline": "wwxlJ{`t`AWzB"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.93356240000001,
+                    "longitude": 10.7574226
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.933675799999996,
+                    "longitude": 10.7567962
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_LEFT",
+                  "instructions": "Sving til venstre"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "37 m"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 518,
+                "staticDuration": "147s",
+                "polyline": {
+                  "encodedPolyline": "oxxlJ_}s`AITyBFsDQw@g@{Ae@MKSa@kAyDiB{Iu@oAYE"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.933675799999996,
+                    "longitude": 10.7567962
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.9374574,
+                    "longitude": 10.760461
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_SLIGHT_RIGHT",
+                  "instructions": "Slak sving mot h\u00f8gre"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,5 km"
+                  },
+                  "staticDuration": {
+                    "text": "2 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 206,
+                "staticDuration": "59s",
+                "polyline": {
+                  "encodedPolyline": "cpylJ{st`Ae@T{DpCsAx@[\\EF"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.9374574,
+                    "longitude": 10.760461
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.93917690000001,
+                    "longitude": 10.7591427
+                  }
+                },
+                "navigationInstruction": {
+                  "maneuver": "TURN_SLIGHT_LEFT",
+                  "instructions": "Slight left onto Bentsebrugata"
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "0,2 km"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              },
+              {
+                "distanceMeters": 4,
+                "staticDuration": "13s",
+                "polyline": {
+                  "encodedPolyline": "{zylJskt`AEB"
+                },
+                "startLocation": {
+                  "latLng": {
+                    "latitude": 59.93917690000001,
+                    "longitude": 10.7591427
+                  }
+                },
+                "endLocation": {
+                  "latLng": {
+                    "latitude": 59.93921479999999,
+                    "longitude": 10.7591164
+                  }
+                },
+                "localizedValues": {
+                  "distance": {
+                    "text": "4 m"
+                  },
+                  "staticDuration": {
+                    "text": "1 min"
+                  }
+                },
+                "travelMode": "BICYCLE"
+              }
+            ],
+            "localizedValues": {
+              "distance": {
+                "text": "4,1 km"
+              },
+              "duration": {
+                "text": "19 min"
+              },
+              "staticDuration": {
+                "text": "19 min"
+              }
+            }
+          }
+        ],
+        "distanceMeters": 4065,
+        "duration": "1141s",
+        "polyline": {
+          "encodedPolyline": "ottlJe_u`AYtCU?SKmAtM[xDk@c@_@u@o@YmBqBiAaB{@w@W_@wBkBe@s@Yu@UQm@{@i@[WAYP_@j@{@bC[xAIzAB`BIz@YbAU^IDi@dBKjAL|CCpAGTOVUPm@JiAD_@T[n@QbACn@BrIEn@O`@UPOAKK{AiDiAgAAQoAA@oBWE]_@a@}@UHWd@oAJ]b@ITWzBQDeGPOLELe@`Ej@`Ae@z@c@\\eDp@]MaAiAiAk@uBiAWg@aAoFg@qA[Y{D{@g@MaB}@a@c@}BiDIUI_@q@}@a@]aACM_AG}AKKGtAq@?SO_@s@_@W]Cg@DoA`@m@Bu@~@e@p@mAt@_@CWzBITyBFsDQw@g@{Ae@MKSa@kAyDiB{Iu@oAYEe@T{DpCsAx@[\\EFEB"
+        },
+        "viewport": {
+          "low": {
+            "latitude": 59.912559200000004,
+            "longitude": 10.752129799999999
+          },
+          "high": {
+            "latitude": 59.93921479999999,
+            "longitude": 10.762267099999999
+          }
+        },
+        "travelAdvisory": {}
+      }
+    ]
+  }
+}

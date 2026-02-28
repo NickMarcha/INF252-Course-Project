@@ -1,0 +1,16 @@
+{
+  "origin_id": "440",
+  "dest_id": "448",
+  "fetched_at": "2026-02-28T23:28:39.047939",
+  "response": {
+    "routes": [
+      {
+        "distanceMeters": 875,
+        "duration": "176s",
+        "polyline": {
+          "encodedPolyline": "mqulJ_`u`ArAZt@\\\\An@aADIVELFfCvIHPC`@D`@PLPIbE|DdHfGRd@FZAvACj@@nAJv@R^|@j@B\\DDMlBYzCEP"
+        }
+      }
+    ]
+  }
+}

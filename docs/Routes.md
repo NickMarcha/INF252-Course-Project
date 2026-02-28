@@ -11,11 +11,13 @@ flowchart LR
         NB2[google_routes_test.ipynb]
         RF[routes_fetch.py]
     end
-    subgraph cache [Gitignored Cache]
+    subgraph committed [Committed]
         RC[routes-cache/single/]
     end
-    subgraph prepared [Prepared Data]
+    subgraph build [Build Time]
         Export[export-routes-to-prepared.js]
+    end
+    subgraph artifacts [Build Artifacts]
         Routes[prepared-data/routes.json]
     end
     subgraph frontend [Frontend]
@@ -35,7 +37,7 @@ flowchart LR
 
 1. **Stations** – `stations_prepare.ipynb` extracts unique stations with lat/lon and trip summaries → `prepared-data/stations.json`
 2. **Fetch** – `google_routes_test.ipynb` calls `routes_fetch.fetch_route()` to get bicycle routes from the Google Routes API
-3. **Cache** – Full API responses are stored in `routes-cache/single/{origin_id}_{dest_id}.json` (gitignored)
+3. **Cache** – Full API responses are stored in `routes-cache/single/{origin_id}_{dest_id}.json` (committed; source of truth)
 4. **Export** – `export-routes-to-prepared.js` reads the cache and writes `prepared-data/routes.json` (slim format)
 5. **Sync** – `npm run prepare:data` copies prepared-data to the frontend
 6. **Display** – `/route-test/` loads routes and stations, renders the map with Leaflet
@@ -148,8 +150,8 @@ There is no parameter to request “shortest distance” for BICYCLE mode.
 | Cache (minimal mask) | ~1–3 KB    | ~85–255 MB               |
 | Slim (routes.json)  | ~400 bytes | ~25 MB                   |
 
-- **routes-cache/** is gitignored; sync it outside git (e.g. rsync, cloud storage) if needed
-- **prepared-data/routes.json** is synced to the frontend and can be committed if size is acceptable
+- **routes-cache/** is committed and is the source of truth for routes; no refetch on clone
+- **prepared-data/routes.json** is a build artifact (derived from cache by export script); not committed
 
 ## Cost Optimization
 
