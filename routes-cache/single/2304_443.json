@@ -1,0 +1,16 @@
+{
+  "origin_id": "2304",
+  "dest_id": "443",
+  "fetched_at": "2026-02-27T20:58:22.876120",
+  "response": {
+    "routes": [
+      {
+        "distanceMeters": 3077,
+        "duration": "575s",
+        "polyline": {
+          "encodedPolyline": "iotlJ}ey`Ax@wG@UCe@bA_IJ_@~E{GdBgCfA`Fd@lDpChXh@~Dt@hENp@Pm@^_EvAcAPDCLA`@BnDGlBOrAY~@O\\WXDXNPfBlIhA|FLJe@dUBbCLfCl@nGVnAv@fCf@rAM`@q@|EOtAg@lJINMZeApHeA`HmAnHIt@_Fr[gCnPs@nEq@y@Mr@SYOHa@MKpA"
+        }
+      }
+    ]
+  }
+}

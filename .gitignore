@@ -1,3 +1,4 @@
 raw-data/
 .env
-routes-cache/
+prepared-data/routes.json
+frontend/public/prepared-data/routes.json
