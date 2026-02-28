@@ -181,5 +181,5 @@ A **medium format** (`routes_medium.json`) was briefly implemented and then remo
 ## Notebooks
 
 - **stations_prepare.ipynb** – Builds `stations.json` with id, name, lat, lon, trip counts
-- **google_routes_test.ipynb** – Tests single-route fetch and batch fetch. Batch fetches the top 10 stations (by total_trips) and all observed origin–destination pairs involving them from trip data. Only pairs not in cache trigger API calls.
+- **google_routes_test.ipynb** – Tests single-route fetch and batch fetch. Batch fetches the top 50 stations (by total_trips), top 20 connections per station from trip data, both directions, capped at ~1000. Only pairs not in cache trigger API calls.
 
