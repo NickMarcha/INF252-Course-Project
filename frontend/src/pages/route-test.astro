@@ -47,13 +47,39 @@ import 'leaflet/dist/leaflet.css';
 				class="text-slate-600 dark:text-slate-400 text-sm space-y-1"
 			></div>
 		</section>
+
+		<section class="mt-12 pt-8 border-t border-slate-200 dark:border-slate-700">
+			<h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">
+				All routes
+			</h2>
+			<p class="text-slate-600 dark:text-slate-400 text-sm mb-4">
+				All fetched routes displayed at once. Routes use alternating colors for visibility.
+			</p>
+			<div
+				id="map-all-routes"
+				class="w-full h-[500px] rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700"
+			></div>
+		</section>
+
+		<section class="mt-12 pt-8 border-t border-slate-200 dark:border-slate-700">
+			<h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">
+				Route density
+			</h2>
+			<p class="text-slate-600 dark:text-slate-400 text-sm mb-4">
+				Same routes with a single color and opacity. Roads used by more routes appear darker (overlapping segments accumulate).
+			</p>
+			<div
+				id="map-route-density"
+				class="w-full h-[500px] rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700"
+			></div>
+		</section>
 	</div>
 </Layout>
 
 <script>
-	import { loadPreparedData } from '../data/load-prepared-data';
-	import type { RoutesData, RouteData } from '../data/prepared-data-types';
-	import type { IsochronesData, IsochroneStation } from '../data/prepared-data-types';
+	import { loadPreparedData, loadParquetData, loadIsochronesData } from '../data/load-prepared-data';
+	import type { RoutesData, RouteData, RoutePairCount } from '../data/prepared-data-types';
+	import type { IsochroneStation } from '../data/prepared-data-types';
 	import { decodePolyline } from '../utils/decode-polyline';
 	import { offsetPolyline } from '../utils/offset-polyline';
 	import type { Map, LayerGroup } from 'leaflet';
@@ -71,6 +97,15 @@ import 'leaflet/dist/leaflet.css';
 	const ROUTE_OFFSET_M = 12;
 	const COLOR_FORWARD = '#22c55e';
 	const COLOR_RETURN = '#3b82f6';
+	const ALL_ROUTES_COLORS = [
+		'#22c55e',
+		'#3b82f6',
+		'#f59e0b',
+		'#8b5cf6',
+		'#ec4899',
+		'#06b6d4',
+		'#ef4444',
+	];
 
 			function getBoundsForLayerGroup(
 				L: typeof import('leaflet'),
@@ -141,7 +176,7 @@ import 'leaflet/dist/leaflet.css';
 				);
 				stations = data?.stations ?? [];
 			} catch {
-				const { data } = await loadPreparedData<IsochronesData>('isochrones.json');
+				const data = await loadIsochronesData();
 				stations = data?.stations ?? [];
 			}
 
@@ -156,6 +191,16 @@ import 'leaflet/dist/leaflet.css';
 				const { data } = await loadPreparedData<RoutesData>('routes.json');
 				routes = data?.routes ?? [];
 			} catch {}
+
+			const pairCountByKey = new Map<string, number>();
+			try {
+				const rows = await loadParquetData<RoutePairCount>('routes/route_pair_counts.parquet');
+				for (const r of rows) {
+					pairCountByKey.set(r.route_key, r.count);
+				}
+			} catch {
+				// Parquet not yet generated; trip counts will be omitted
+			}
 
 			statusEl.textContent =
 				routes.length === 0
@@ -289,7 +334,11 @@ import 'leaflet/dist/leaflet.css';
 				}
 
 				infoSection.classList.remove('hidden');
+				const tripCount = pairCountByKey.get(routeKey);
 				let html = `<p><strong>${originName}</strong> ↔ <strong>${destName}</strong></p>`;
+				if (tripCount != null) {
+					html += `<p class="mt-2">Total trips: <strong>${tripCount.toLocaleString()}</strong></p>`;
+				}
 				html += `<p class="mt-2"><strong>${originName}</strong> → ${destName}: ${formatDuration(route.duration_sec)} · ${formatDistance(route.distance_m)}</p>`;
 				if (returnRoute) {
 					html += `<p><strong>${destName}</strong> → ${originName}: ${formatDuration(returnRoute.duration_sec)} · ${formatDistance(returnRoute.distance_m)}</p>`;
@@ -307,6 +356,130 @@ import 'leaflet/dist/leaflet.css';
 			if (routes.length > 0) {
 				selectEl.value = `${routes[0].origin_id}|${routes[0].dest_id}`;
 				showRoute(selectEl.value);
+			}
+
+			// All-routes map
+			const mapAllEl = document.getElementById('map-all-routes');
+			if (mapAllEl && routes.length > 0) {
+				const mapAll = L.map(mapAllEl).setView(OSLO_CENTER, DEFAULT_ZOOM);
+				L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+					attribution:
+						'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+				}).addTo(mapAll);
+
+				mapAll.createPane('allRoutePane');
+				mapAll.getPane('allRoutePane')!.style.zIndex = '400';
+				mapAll.createPane('allStationPane');
+				mapAll.getPane('allStationPane')!.style.zIndex = '450';
+
+				const allRouteGroup = L.layerGroup().addTo(mapAll);
+				const allStationLayer = L.layerGroup().addTo(mapAll);
+
+				for (const s of stations) {
+					const circle = L.circleMarker([s.lat, s.lon], {
+						pane: 'allStationPane',
+						radius: 4,
+						fillColor: '#64748b',
+						fillOpacity: 0.6,
+						color: '#475569',
+						weight: 1,
+					});
+					circle.addTo(allStationLayer);
+				}
+
+				let allBounds: L.LatLngBounds | null = null;
+				for (let i = 0; i < routes.length; i++) {
+					const r = routes[i];
+					if (!r?.encodedPolyline) continue;
+					const points = decodePolyline(r.encodedPolyline).map(
+						([lat, lng]) => [lat, lng] as [number, number]
+					);
+					const color = ALL_ROUTES_COLORS[i % ALL_ROUTES_COLORS.length];
+					const poly = L.polyline(points, {
+						pane: 'allRoutePane',
+						color,
+						weight: 3,
+						opacity: 0.7,
+					}).addTo(allRouteGroup);
+					poly.on('mouseover', () => poly.setStyle({ weight: 5, opacity: 1 }));
+					poly.on('mouseout', () => poly.setStyle({ weight: 3, opacity: 0.7 }));
+					const origin = stationById.get(r.origin_id);
+					const dest = stationById.get(r.dest_id);
+					const label = origin && dest
+						? `${origin.name} → ${dest.name}`
+						: `${r.origin_id} → ${r.dest_id}`;
+					poly.bindTooltip(label, { permanent: false, direction: 'top' });
+					const b = poly.getBounds();
+					if (b?.isValid?.()) {
+						if (!allBounds) allBounds = L.latLngBounds(b.getSouthWest(), b.getNorthEast());
+						else allBounds.extend(b);
+					}
+				}
+				if (allBounds?.isValid()) {
+					mapAll.fitBounds(allBounds, { padding: [40, 40] });
+				}
+			}
+
+			// Route density map (opacity-based: overlapping = darker)
+			const mapDensityEl = document.getElementById('map-route-density');
+			if (mapDensityEl && routes.length > 0) {
+				const mapDensity = L.map(mapDensityEl).setView(OSLO_CENTER, DEFAULT_ZOOM);
+				L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+					attribution:
+						'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+				}).addTo(mapDensity);
+
+				mapDensity.createPane('densityRoutePane');
+				mapDensity.getPane('densityRoutePane')!.style.zIndex = '400';
+				mapDensity.createPane('densityStationPane');
+				mapDensity.getPane('densityStationPane')!.style.zIndex = '450';
+
+				const densityRouteGroup = L.layerGroup().addTo(mapDensity);
+				const densityStationLayer = L.layerGroup().addTo(mapDensity);
+
+				for (const s of stations) {
+					const circle = L.circleMarker([s.lat, s.lon], {
+						pane: 'densityStationPane',
+						radius: 4,
+						fillColor: '#64748b',
+						fillOpacity: 0.6,
+						color: '#475569',
+						weight: 1,
+					});
+					circle.addTo(densityStationLayer);
+				}
+
+				const DENSITY_COLOR = '#2563eb';
+				const DENSITY_OPACITY = 0.35;
+				let densityBounds: L.LatLngBounds | null = null;
+				for (const r of routes) {
+					if (!r?.encodedPolyline) continue;
+					const points = decodePolyline(r.encodedPolyline).map(
+						([lat, lng]) => [lat, lng] as [number, number]
+					);
+					const poly = L.polyline(points, {
+						pane: 'densityRoutePane',
+						color: DENSITY_COLOR,
+						weight: 4,
+						opacity: DENSITY_OPACITY,
+					}).addTo(densityRouteGroup);
+					poly.on('mouseover', () => poly.setStyle({ weight: 6, opacity: 0.7 }));
+					poly.on('mouseout', () => poly.setStyle({ weight: 4, opacity: DENSITY_OPACITY }));
+					const origin = stationById.get(r.origin_id);
+					const dest = stationById.get(r.dest_id);
+					const label = origin && dest
+						? `${origin.name} → ${dest.name}`
+						: `${r.origin_id} → ${r.dest_id}`;
+					poly.bindTooltip(label, { permanent: false, direction: 'top' });
+					const b = poly.getBounds();
+					if (b?.isValid?.()) {
+						if (!densityBounds) densityBounds = L.latLngBounds(b.getSouthWest(), b.getNorthEast());
+						else densityBounds.extend(b);
+					}
+				}
+				if (densityBounds?.isValid()) {
+					mapDensity.fitBounds(densityBounds, { padding: [40, 40] });
+				}
 			}
 		} catch (err) {
 			statusEl.textContent = `Failed to load: ${err instanceof Error ? err.message : String(err)}`;
