@@ -3,6 +3,13 @@ import Layout from '../layouts/Layout.astro';
 import 'leaflet/dist/leaflet.css';
 ---
 
+<style>
+	.route-endpoint-marker {
+		background: none !important;
+		border: none !important;
+	}
+</style>
+
 <Layout>
 	<div class="p-6 max-w-6xl mx-auto space-y-4">
 		<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">
@@ -66,8 +73,77 @@ import 'leaflet/dist/leaflet.css';
 				Route density
 			</h2>
 			<p class="text-slate-600 dark:text-slate-400 text-sm mb-4">
-				Same routes with a single color and opacity. Roads used by more routes appear darker (overlapping segments accumulate).
+				Routes by trip count from <code class="text-xs bg-slate-200 dark:bg-slate-700 px-1 rounded">station_trip_counts.ipynb</code>. Choose total, year, or month; scroll the timeline in year/month modes.
 			</p>
+			<div
+				id="density-controls"
+				class="flex flex-wrap gap-6 items-end mb-4 p-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50"
+			>
+				<div class="flex flex-col gap-1">
+					<label for="density-period-mode" class="text-sm font-medium text-slate-700 dark:text-slate-300">Period</label>
+					<select
+						id="density-period-mode"
+						class="px-3 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+					>
+						<option value="total">Total</option>
+						<option value="year">By year</option>
+						<option value="month">By month</option>
+					</select>
+				</div>
+				<div id="density-timeline-wrap" class="flex flex-col gap-1 hidden">
+					<label for="density-timeline" class="text-sm font-medium text-slate-700 dark:text-slate-300">Timeline</label>
+					<div class="flex items-center gap-3">
+						<input
+							id="density-timeline"
+							type="range"
+							min="0"
+							max="1"
+							step="1"
+							value="0"
+							class="flex-1 min-w-[200px]"
+						/>
+						<span id="density-timeline-label" class="text-sm font-medium text-slate-700 dark:text-slate-300 min-w-[100px]"></span>
+					</div>
+				</div>
+				<div class="flex flex-col gap-1">
+					<label for="density-opacity-min" class="text-sm font-medium text-slate-700 dark:text-slate-300">Min opacity</label>
+					<input
+						id="density-opacity-min"
+						type="range"
+						min="0"
+						max="1"
+						step="0.05"
+						value="0.15"
+						class="w-28"
+					/>
+					<span id="density-opacity-min-val" class="text-xs text-slate-500 dark:text-slate-400">0.15</span>
+				</div>
+				<div class="flex flex-col gap-1">
+					<label for="density-opacity-max" class="text-sm font-medium text-slate-700 dark:text-slate-300">Max opacity</label>
+					<input
+						id="density-opacity-max"
+						type="range"
+						min="0"
+						max="1"
+						step="0.05"
+						value="0.9"
+						class="w-28"
+					/>
+					<span id="density-opacity-max-val" class="text-xs text-slate-500 dark:text-slate-400">0.9</span>
+				</div>
+				<div class="flex flex-col gap-1">
+					<label for="density-min-trips" class="text-sm font-medium text-slate-700 dark:text-slate-300">Min trips (filter)</label>
+					<input
+						id="density-min-trips"
+						type="number"
+						min="0"
+						value="0"
+						class="px-3 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 w-24"
+					/>
+					<span id="density-route-count" class="text-xs text-slate-500 dark:text-slate-400"></span>
+				</div>
+				<p id="density-trip-count-status" class="hidden w-full text-sm text-amber-600 dark:text-amber-400"></p>
+			</div>
 			<div
 				id="map-route-density"
 				class="w-full h-[500px] rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700"
@@ -78,11 +154,12 @@ import 'leaflet/dist/leaflet.css';
 
 <script>
 	import { loadPreparedData, loadParquetData, loadIsochronesData } from '../data/load-prepared-data';
-	import type { RoutesData, RouteData, RoutePairCount } from '../data/prepared-data-types';
+	import type { RoutesData, RouteData, RoutePairCount, RouteBinnedRow } from '../data/prepared-data-types';
 	import type { IsochroneStation } from '../data/prepared-data-types';
 	import { decodePolyline } from '../utils/decode-polyline';
 	import { offsetPolyline } from '../utils/offset-polyline';
 	import type { Map, LayerGroup } from 'leaflet';
+	import * as d3 from 'd3';
 
 	const base = import.meta.env.BASE_URL ?? '/';
 
@@ -190,16 +267,67 @@ import 'leaflet/dist/leaflet.css';
 			try {
 				const { data } = await loadPreparedData<RoutesData>('routes.json');
 				routes = data?.routes ?? [];
-			} catch {}
+				if (routes.length > 0) {
+					console.log('[route-test] Loaded', routes.length, 'routes');
+				}
+			} catch (e) {
+				console.warn('Routes load failed:', e);
+			}
 
 			const pairCountByKey = new Map<string, number>();
+			const countByYear = new Map<string, Map<string, number>>();
+			const countByMonth = new Map<string, Map<string, number>>();
+			let yearsSorted: string[] = [];
+			let monthsSorted: string[] = [];
+			let yearsLoaded = false;
+			let monthsLoaded = false;
+
 			try {
 				const rows = await loadParquetData<RoutePairCount>('routes/route_pair_counts.parquet');
 				for (const r of rows) {
-					pairCountByKey.set(r.route_key, r.count);
+					const key = String(r.route_key ?? '').trim();
+					pairCountByKey.set(key, Number(r.count));
 				}
-			} catch {
-				// Parquet not yet generated; trip counts will be omitted
+			} catch (e) {
+				console.warn('Parquet load failed: routes/route_pair_counts.parquet', e);
+			}
+
+			async function ensureYearDataLoaded(): Promise<void> {
+				if (yearsLoaded) return;
+				try {
+					const yearRows = await loadParquetData<RouteBinnedRow>('routes/route_by_year.parquet');
+					for (const r of yearRows) {
+						const key = String(r.route_key ?? '').trim();
+						if (!countByYear.has(r.period)) countByYear.set(r.period, new Map());
+						const m = countByYear.get(r.period)!;
+						m.set(key, (m.get(key) ?? 0) + Number(r.count));
+					}
+					yearsSorted = [...countByYear.keys()].sort();
+					yearsLoaded = true;
+				} catch (e) {
+					console.warn('Parquet load failed: routes/route_by_year.parquet', e);
+				}
+			}
+
+			async function ensureMonthDataLoaded(): Promise<void> {
+				if (monthsLoaded) return;
+				try {
+					const monthRows = await loadParquetData<RouteBinnedRow>('routes/route_by_month.parquet');
+					for (const r of monthRows) {
+						const key = String(r.route_key ?? '').trim();
+						if (!countByMonth.has(r.period)) countByMonth.set(r.period, new Map());
+						const m = countByMonth.get(r.period)!;
+						m.set(key, (m.get(key) ?? 0) + Number(r.count));
+					}
+					monthsSorted = [...countByMonth.keys()].sort();
+					monthsLoaded = true;
+				} catch (e) {
+					console.warn('Parquet load failed: routes/route_by_month.parquet', e);
+				}
+			}
+
+			function routeKey(originId: string | number, destId: string | number): string {
+				return `${String(originId).trim()}|${String(destId).trim()}`;
 			}
 
 			statusEl.textContent =
@@ -211,7 +339,7 @@ import 'leaflet/dist/leaflet.css';
 			const routeByKey = new Map<string, RouteData>();
 			for (const r of routes) {
 				if (r.encodedPolyline) {
-					routeByKey.set(`${r.origin_id}|${r.dest_id}`, r);
+					routeByKey.set(routeKey(r.origin_id, r.dest_id), r);
 				}
 			}
 
@@ -222,7 +350,7 @@ import 'leaflet/dist/leaflet.css';
 					? `${origin.name} → ${dest.name}`
 					: `${r.origin_id} → ${r.dest_id}`;
 				const opt = document.createElement('option');
-				opt.value = `${r.origin_id}|${r.dest_id}`;
+				opt.value = routeKey(r.origin_id, r.dest_id);
 				opt.textContent = label;
 				selectEl.appendChild(opt);
 			}
@@ -290,13 +418,13 @@ import 'leaflet/dist/leaflet.css';
 				return poly;
 			}
 
-			function showRoute(routeKey: string) {
+			function showRoute(selectedKey: string) {
 				routeGroup.clearLayers();
 				originMarkerLayer?.clearLayers();
 				destMarkerLayer?.clearLayers();
 
-				const [originId, destId] = routeKey.split('|');
-				const route = routeByKey.get(routeKey);
+				const [originId, destId] = selectedKey.split('|');
+				const route = routeByKey.get(selectedKey);
 				if (!route?.encodedPolyline) return;
 
 				const origin = stationById.get(originId);
@@ -304,7 +432,7 @@ import 'leaflet/dist/leaflet.css';
 				const originName = origin?.name ?? originId;
 				const destName = dest?.name ?? destId;
 
-				const returnKey = `${destId}|${originId}`;
+				const returnKey = routeKey(destId, originId);
 				const returnRoute = routeByKey.get(returnKey);
 
 				addRoutePolyline(route, COLOR_FORWARD, 0, originName, destName);
@@ -325,19 +453,31 @@ import 'leaflet/dist/leaflet.css';
 					([lat, lng]) => [lat, lng] as [number, number]
 				);
 				if (points.length > 0) {
-					L.marker(points[0], { pane: 'endpointsPane' })
+					const originIcon = L.divIcon({
+						className: 'route-endpoint-marker',
+						html: '<div style="width:24px;height:24px;border-radius:50%;background:#22c55e;border:3px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.4);"></div>',
+						iconSize: [24, 24],
+						iconAnchor: [12, 12],
+					});
+					const destIcon = L.divIcon({
+						className: 'route-endpoint-marker',
+						html: '<div style="width:24px;height:24px;border-radius:50%;background:#3b82f6;border:3px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.4);"></div>',
+						iconSize: [24, 24],
+						iconAnchor: [12, 12],
+					});
+					L.marker(points[0], { icon: originIcon, pane: 'endpointsPane' })
 						.bindPopup(`Origin: ${originName}`)
 						.addTo(originMarkerLayer!);
-					L.marker(points[points.length - 1], { pane: 'endpointsPane' })
+					L.marker(points[points.length - 1], { icon: destIcon, pane: 'endpointsPane' })
 						.bindPopup(`Destination: ${destName}`)
 						.addTo(destMarkerLayer!);
 				}
 
 				infoSection.classList.remove('hidden');
-				const tripCount = pairCountByKey.get(routeKey);
+				const tripCount = pairCountByKey.get(selectedKey);
 				let html = `<p><strong>${originName}</strong> ↔ <strong>${destName}</strong></p>`;
 				if (tripCount != null) {
-					html += `<p class="mt-2">Total trips: <strong>${tripCount.toLocaleString()}</strong></p>`;
+					html += `<p class="mt-2">Total trips: <strong>${Number(tripCount).toLocaleString()}</strong></p>`;
 				}
 				html += `<p class="mt-2"><strong>${originName}</strong> → ${destName}: ${formatDuration(route.duration_sec)} · ${formatDistance(route.distance_m)}</p>`;
 				if (returnRoute) {
@@ -354,7 +494,7 @@ import 'leaflet/dist/leaflet.css';
 			});
 
 			if (routes.length > 0) {
-				selectEl.value = `${routes[0].origin_id}|${routes[0].dest_id}`;
+				selectEl.value = routeKey(routes[0].origin_id, routes[0].dest_id);
 				showRoute(selectEl.value);
 			}
 
@@ -418,12 +558,166 @@ import 'leaflet/dist/leaflet.css';
 				if (allBounds?.isValid()) {
 					mapAll.fitBounds(allBounds, { padding: [40, 40] });
 				}
+				// Fix map size: container may have 0 height at init when below the fold
+				const fixMapSize = () => {
+					mapAll.invalidateSize();
+					const allRoutesSection = mapAllEl.closest('section');
+					if (allRoutesSection) {
+						const obs = new IntersectionObserver(
+							([entry]) => {
+								if (entry?.isIntersecting) mapAll.invalidateSize();
+							},
+							{ threshold: 0.1 }
+						);
+						obs.observe(allRoutesSection);
+					}
+				};
+				requestAnimationFrame(() => requestAnimationFrame(fixMapSize));
 			}
 
-			// Route density map (opacity-based: overlapping = darker)
+			// Route density map (opacity by trip count; single color; total/year/month + timeline)
+			const DENSITY_COLOR = '#2563eb';
 			const mapDensityEl = document.getElementById('map-route-density');
+			const densityPeriodMode = document.getElementById('density-period-mode') as HTMLSelectElement;
+			const densityTimelineWrap = document.getElementById('density-timeline-wrap');
+			const densityTimeline = document.getElementById('density-timeline') as HTMLInputElement;
+			const densityTimelineLabel = document.getElementById('density-timeline-label');
+			const densityOpacityMin = document.getElementById('density-opacity-min') as HTMLInputElement;
+			const densityOpacityMax = document.getElementById('density-opacity-max') as HTMLInputElement;
+			const densityMinTrips = document.getElementById('density-min-trips') as HTMLInputElement;
+			const densityOpacityMinVal = document.getElementById('density-opacity-min-val');
+			const densityOpacityMaxVal = document.getElementById('density-opacity-max-val');
+			const densityRouteCount = document.getElementById('density-route-count');
+			const densityTripCountStatus = document.getElementById('density-trip-count-status');
+
+			const hasTripCountData = pairCountByKey.size > 0;
+			if (densityTripCountStatus && !hasTripCountData) {
+				densityTripCountStatus.classList.remove('hidden');
+				densityTripCountStatus.textContent = 'Trip counts not available. Run station_trip_counts.ipynb and npm run prepare:data.';
+			}
+
+			function getCountForRoute(
+				key: string,
+				periodMode: string,
+				period: string
+			): number {
+				const raw =
+					periodMode === 'total' ? pairCountByKey.get(key)
+					: periodMode === 'year' ? countByYear.get(period)?.get(key)
+					: periodMode === 'month' ? countByMonth.get(period)?.get(key)
+					: undefined;
+				return Number(raw) || 0;
+			}
+
+			function updateTimelineUI() {
+				const mode = densityPeriodMode?.value ?? 'total';
+				if (mode === 'total') {
+					densityTimelineWrap?.classList.add('hidden');
+					return;
+				}
+				densityTimelineWrap?.classList.remove('hidden');
+				const periods = mode === 'year' ? yearsSorted : monthsSorted;
+				if (periods.length === 0) {
+					if (densityTimelineLabel) densityTimelineLabel.textContent = 'No data';
+					return;
+				}
+				if (densityTimeline) {
+					densityTimeline.max = String(Math.max(0, periods.length - 1));
+					densityTimeline.step = '1';
+					densityTimeline.value = String(Math.min(parseInt(densityTimeline.value || '0', 10), periods.length - 1));
+					const idx = parseInt(densityTimeline.value, 10);
+					const period = periods[idx] ?? periods[0];
+					if (densityTimelineLabel) densityTimelineLabel.textContent = period;
+				}
+			}
+
+			async function handleDensityControlChange() {
+				const mode = densityPeriodMode?.value ?? 'total';
+				if (mode === 'year') {
+					if (densityTimelineLabel) densityTimelineLabel.textContent = 'Loading…';
+					densityTimelineWrap?.classList.remove('hidden');
+					await ensureYearDataLoaded();
+				} else if (mode === 'month') {
+					if (densityTimelineLabel) densityTimelineLabel.textContent = 'Loading…';
+					densityTimelineWrap?.classList.remove('hidden');
+					await ensureMonthDataLoaded();
+				}
+				updateTimelineUI();
+				renderDensityMap(true);
+			}
+
+			function getDensitySettings() {
+				const minOpacity = parseFloat(densityOpacityMin?.value ?? '0.15') || 0.15;
+				const maxOpacity = parseFloat(densityOpacityMax?.value ?? '0.9') || 0.9;
+				const minTrips = parseInt(densityMinTrips?.value ?? '0', 10) || 0;
+				const periodMode = densityPeriodMode?.value ?? 'total';
+				const periods = periodMode === 'year' ? yearsSorted : periodMode === 'month' ? monthsSorted : [];
+				const idx = Math.min(parseInt(densityTimeline?.value ?? '0', 10), Math.max(0, periods.length - 1));
+				const period = periods[idx] ?? periods[0] ?? '';
+				return { minOpacity, maxOpacity, minTrips, periodMode, period };
+			}
+
+			function renderDensityMap(fitBoundsNow = false) {
+				if (!mapDensityEl || routes.length === 0) return;
+				const { minOpacity, maxOpacity, minTrips, periodMode, period } = getDensitySettings();
+
+				const routesWithCount = routes
+					.map((r) => {
+						const key = routeKey(r.origin_id, r.dest_id);
+						const count = getCountForRoute(key, periodMode, period);
+						return { route: r, key, count };
+					})
+					.filter(({ count }) => count >= minTrips);
+
+				const counts = routesWithCount.map((x) => x.count);
+				const countMin = counts.length ? Math.min(...counts) : 0;
+				const countMax = counts.length ? Math.max(...counts) : 1;
+				const countDomain = countMax > countMin ? [countMin, countMax] : [0, 1];
+				const opacityScale = d3.scaleLinear().domain(countDomain).range([minOpacity, maxOpacity]);
+
+				if (densityRouteCount) {
+					densityRouteCount.textContent = `${routesWithCount.length} routes shown`;
+				}
+
+				densityRouteGroup?.clearLayers();
+
+				let densityBounds: L.LatLngBounds | null = null;
+				for (const { route: r, key, count } of routesWithCount) {
+					if (!r?.encodedPolyline) continue;
+					const points = decodePolyline(r.encodedPolyline).map(
+						([lat, lng]) => [lat, lng] as [number, number]
+					);
+					const opacity = opacityScale(count);
+					const poly = L.polyline(points, {
+						pane: 'densityRoutePane',
+						color: DENSITY_COLOR,
+						weight: 4,
+						opacity,
+					}).addTo(densityRouteGroup!);
+					poly.on('mouseover', () => poly.setStyle({ weight: 6, opacity: Math.min(1, opacity + 0.2) }));
+					poly.on('mouseout', () => poly.setStyle({ weight: 4, opacity }));
+					const origin = stationById.get(r.origin_id);
+					const dest = stationById.get(r.dest_id);
+					const label = origin && dest
+						? `${origin.name} → ${dest.name} (${count.toLocaleString()} trips)`
+						: `${r.origin_id} → ${r.dest_id} (${count.toLocaleString()} trips)`;
+					poly.bindTooltip(label, { permanent: false, direction: 'top' });
+					const b = poly.getBounds();
+					if (b?.isValid?.()) {
+						if (!densityBounds) densityBounds = L.latLngBounds(b.getSouthWest(), b.getNorthEast());
+						else densityBounds.extend(b);
+					}
+				}
+				if (fitBoundsNow && densityBounds?.isValid()) {
+					mapDensity!.fitBounds(densityBounds, { padding: [40, 40] });
+				}
+			}
+
+			let mapDensity: L.Map | null = null;
+			let densityRouteGroup: L.LayerGroup | null = null;
+
 			if (mapDensityEl && routes.length > 0) {
-				const mapDensity = L.map(mapDensityEl).setView(OSLO_CENTER, DEFAULT_ZOOM);
+				mapDensity = L.map(mapDensityEl).setView(OSLO_CENTER, DEFAULT_ZOOM);
 				L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 					attribution:
 						'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -434,7 +728,7 @@ import 'leaflet/dist/leaflet.css';
 				mapDensity.createPane('densityStationPane');
 				mapDensity.getPane('densityStationPane')!.style.zIndex = '450';
 
-				const densityRouteGroup = L.layerGroup().addTo(mapDensity);
+				densityRouteGroup = L.layerGroup().addTo(mapDensity);
 				const densityStationLayer = L.layerGroup().addTo(mapDensity);
 
 				for (const s of stations) {
@@ -449,36 +743,36 @@ import 'leaflet/dist/leaflet.css';
 					circle.addTo(densityStationLayer);
 				}
 
-				const DENSITY_COLOR = '#2563eb';
-				const DENSITY_OPACITY = 0.35;
-				let densityBounds: L.LatLngBounds | null = null;
-				for (const r of routes) {
-					if (!r?.encodedPolyline) continue;
-					const points = decodePolyline(r.encodedPolyline).map(
-						([lat, lng]) => [lat, lng] as [number, number]
+				updateTimelineUI();
+				renderDensityMap(true);
+
+				// Fix map size: container may have 0 height at init when below the fold
+				requestAnimationFrame(() => requestAnimationFrame(() => mapDensity?.invalidateSize()));
+
+				densityPeriodMode?.addEventListener('change', () => void handleDensityControlChange());
+				[densityTimeline, densityOpacityMin, densityOpacityMax, densityMinTrips].forEach((el) => {
+					el?.addEventListener('change', () => {
+						updateTimelineUI();
+						renderDensityMap(true);
+					});
+					el?.addEventListener('input', () => {
+						updateTimelineUI();
+						renderDensityMap(false);
+						if (el === densityOpacityMin && densityOpacityMinVal) densityOpacityMinVal.textContent = densityOpacityMin.value;
+						if (el === densityOpacityMax && densityOpacityMaxVal) densityOpacityMaxVal.textContent = densityOpacityMax.value;
+					});
+				});
+				if (densityOpacityMinVal) densityOpacityMinVal.textContent = densityOpacityMin?.value ?? '0.15';
+				if (densityOpacityMaxVal) densityOpacityMaxVal.textContent = densityOpacityMax?.value ?? '0.9';
+				const densitySection = mapDensityEl.closest('section');
+				if (densitySection && mapDensity) {
+					const obs = new IntersectionObserver(
+						([entry]) => {
+							if (entry?.isIntersecting) mapDensity?.invalidateSize();
+						},
+						{ threshold: 0.1 }
 					);
-					const poly = L.polyline(points, {
-						pane: 'densityRoutePane',
-						color: DENSITY_COLOR,
-						weight: 4,
-						opacity: DENSITY_OPACITY,
-					}).addTo(densityRouteGroup);
-					poly.on('mouseover', () => poly.setStyle({ weight: 6, opacity: 0.7 }));
-					poly.on('mouseout', () => poly.setStyle({ weight: 4, opacity: DENSITY_OPACITY }));
-					const origin = stationById.get(r.origin_id);
-					const dest = stationById.get(r.dest_id);
-					const label = origin && dest
-						? `${origin.name} → ${dest.name}`
-						: `${r.origin_id} → ${r.dest_id}`;
-					poly.bindTooltip(label, { permanent: false, direction: 'top' });
-					const b = poly.getBounds();
-					if (b?.isValid?.()) {
-						if (!densityBounds) densityBounds = L.latLngBounds(b.getSouthWest(), b.getNorthEast());
-						else densityBounds.extend(b);
-					}
-				}
-				if (densityBounds?.isValid()) {
-					mapDensity.fitBounds(densityBounds, { padding: [40, 40] });
+					obs.observe(densitySection);
 				}
 			}
 		} catch (err) {
