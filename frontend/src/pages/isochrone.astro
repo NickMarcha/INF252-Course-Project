@@ -3,6 +3,13 @@ import Layout from '../layouts/Layout.astro';
 import 'leaflet/dist/leaflet.css';
 ---
 
+<style>
+	.selected-station-marker {
+		background: none !important;
+		border: none !important;
+	}
+</style>
+
 <Layout>
 	<div class="p-6 max-w-6xl mx-auto space-y-4">
 		<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Isochrone Map – Oslo Bysykkel</h1>
@@ -145,9 +152,15 @@ import 'leaflet/dist/leaflet.css';
 				// Center on station
 				map?.setView([station.lat, station.lon], DEFAULT_ZOOM);
 
-				// Update selected marker
+				// Update selected marker (divIcon avoids marker-icon.png path issues in Vite)
 				selectedLayer.clearLayers();
-				L.marker([station.lat, station.lon])
+				const selectedIcon = L.divIcon({
+					className: 'selected-station-marker',
+					html: '<div style="width:20px;height:20px;border-radius:50%;background:#22c55e;border:3px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.4);"></div>',
+					iconSize: [20, 20],
+					iconAnchor: [10, 10],
+				});
+				L.marker([station.lat, station.lon], { icon: selectedIcon })
 					.bindPopup(station.name)
 					.addTo(selectedLayer);
 

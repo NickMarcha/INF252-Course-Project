@@ -9,14 +9,14 @@ import type { PreparedDataWithMetadata } from './prepared-data-types.js';
 
 const base = import.meta.env.BASE_URL ?? '/';
 
-// Vite resolves this to the correct asset URL (including base path for GitHub Pages)
-import wasmUrl from 'parquet-wasm/esm/parquet_wasm_bg.wasm?url';
+// WASM file copied to public/ so it's served with correct MIME type (avoids Vite dep optimization issues)
+const wasmUrl = `${base}parquet_wasm_bg.wasm`;
 
 let parquetWasmInitialized = false;
 
 async function ensureParquetWasm() {
   if (!parquetWasmInitialized) {
-    await initWasm(wasmUrl);
+    await initWasm({ module_or_path: wasmUrl });
     parquetWasmInitialized = true;
   }
 }
