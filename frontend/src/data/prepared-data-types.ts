@@ -91,3 +91,17 @@ export interface RouteData {
 export interface RoutesData {
   routes: RouteData[];
 }
+
+/** Route pair counts from route_pair_counts.parquet */
+export interface RoutePairCount {
+  route_key: string;
+  count: number;
+}
+
+/** Route binned rows from route_by_year.parquet, route_by_month.parquet, route_by_day_YYYY.parquet */
+export interface RouteBinnedRow {
+  period: string;
+  route_key: string;
+  hour: number;
+  count: number;
+}

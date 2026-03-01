@@ -1,0 +1,12 @@
+{
+  "last_execution": {
+    "timestamp": "2026-03-01T02:26:28.131990",
+    "os": "Windows-11-10.0.26200-SP0",
+    "cpu_count": 32,
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "ram_gb": 31.1,
+    "ram_used_pct": 90.4,
+    "duration_seconds": 133
+  },
+  "data": {}
+}
