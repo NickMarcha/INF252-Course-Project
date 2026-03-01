@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
+import wasm from 'vite-plugin-wasm';
 
 // https://astro.build/config
 export default defineConfig({
@@ -8,7 +9,11 @@ export default defineConfig({
   base: '/INF252-Course-Project/',
   integrations: [tailwind()],
   vite: {
-    optimizeDeps: { include: ['leaflet', 'leaflet-polylinedecorator'] },
+    plugins: [wasm()],
+    optimizeDeps: {
+      include: ['leaflet', 'leaflet-polylinedecorator'],
+      exclude: ['parquet-wasm'],
+    },
     ssr: { external: ['leaflet', 'leaflet-polylinedecorator'] },
   },
 });
