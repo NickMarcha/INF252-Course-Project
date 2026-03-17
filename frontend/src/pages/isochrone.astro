@@ -47,6 +47,7 @@ import 'leaflet/dist/leaflet.css';
 
 <script>
 	import { loadIsochronesData, loadPreparedData } from '../data/load-prepared-data';
+	import { loadBydelerGeoJSON, loadDelbydelerGeoJSON } from '../data/load-regions';
 	import type { EdaSummaryStats } from '../data/prepared-data-types';
 
 	const base = import.meta.env.BASE_URL ?? '/';
@@ -96,6 +97,18 @@ import 'leaflet/dist/leaflet.css';
 				// EDA data optional
 			}
 
+			let regionByStationId: Record<string, { bydel?: string; delbydel?: string }> = {};
+			try {
+				const { data: stationsData } = await loadPreparedData<{ stations: Array<{ id: string; bydel?: string; delbydel?: string }> }>('stations.json');
+				if (stationsData?.stations) {
+					for (const s of stationsData.stations) {
+						regionByStationId[s.id] = { bydel: s.bydel, delbydel: s.delbydel };
+					}
+				}
+			} catch {
+				// stations.json optional
+			}
+
 			statusEl.textContent = '';
 
 			// Populate station dropdown
@@ -112,11 +125,47 @@ import 'leaflet/dist/leaflet.css';
 				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			}).addTo(map);
 
-			// Custom panes for z-index order (bottom to top): polygons 350, station markers 450, selected marker 600 default
+			// Custom panes for z-index order (bottom to top): regions 300, polygons 350, station markers 450, selected marker 600 default
+			map.createPane('regionsPane');
+			map.getPane('regionsPane')!.style.zIndex = '300';
 			map.createPane('polygonsPane');
 			map.getPane('polygonsPane')!.style.zIndex = '350';
 			map.createPane('stationMarkersPane');
 			map.getPane('stationMarkersPane')!.style.zIndex = '450';
+
+			// Region overlays (bydeler, delbydeler)
+			const overlayLayers: Record<string, L.Layer> = {};
+			try {
+				const [bydelerGeo, delbydelerGeo] = await Promise.all([
+					loadBydelerGeoJSON(),
+					loadDelbydelerGeoJSON(),
+				]);
+				const bydelerLayer = L.geoJSON(bydelerGeo, {
+					style: {
+						fillColor: '#64748b',
+						fillOpacity: 0.15,
+						color: '#475569',
+						weight: 1,
+					},
+					pane: 'regionsPane',
+				}).addTo(map);
+				overlayLayers['Bydeler'] = bydelerLayer;
+
+				const delbydelerLayer = L.geoJSON(delbydelerGeo, {
+					style: {
+						fillColor: '#94a3b8',
+						fillOpacity: 0.1,
+						color: '#64748b',
+						weight: 1,
+					},
+					pane: 'regionsPane',
+				}).addTo(map);
+				overlayLayers['Delbydeler'] = delbydelerLayer;
+
+				L.control.layers({}, overlayLayers, { collapsed: false }).addTo(map);
+			} catch {
+				// Region GeoJSON optional (run stations_prepare.ipynb to generate)
+			}
 
 			const polygonsLayer = L.layerGroup().addTo(map);
 			stationDotsLayer = L.layerGroup().addTo(map);
@@ -209,8 +258,13 @@ import 'leaflet/dist/leaflet.css';
 				// Station info panel
 				infoSection.classList.remove('hidden');
 				const tripCount = tripCountByStation[station.name];
+				const region = regionByStationId[station.id];
+				const regionLine = region && (region.bydel || region.delbydel)
+					? `<p class="text-slate-500 dark:text-slate-400">${[region.bydel, region.delbydel].filter(Boolean).join(' · ')}</p>`
+					: '';
 				infoContent.innerHTML = `
 					<p><strong>${station.name}</strong></p>
+					${regionLine}
 					<p>${tripCount != null ? `Trip count: ${tripCount.toLocaleString()}` : 'N/A'}</p>
 				`;
 			}

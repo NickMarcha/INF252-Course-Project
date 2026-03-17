@@ -13,3 +13,5 @@ dependencies:
   - python-dotenv
   - requests
   - pyarrow>=14.0
+  - shapely
+  - pyproj

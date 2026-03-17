@@ -65,12 +65,16 @@ export interface EdaSummaryStats {
   duration_distribution?: Array<{ bin_min: number; count: number }>;
 }
 
-/** Isochrone data from isochrone_precompute.ipynb */
+/** Station from stations.json or isochrone data */
 export interface IsochroneStation {
   id: string;
   name: string;
   lat: number;
   lon: number;
+  /** Bydel (district) from stations_prepare region assignment */
+  bydel?: string;
+  /** Delbydel (sub-district) from stations_prepare region assignment */
+  delbydel?: string;
 }
 
 export interface IsochronesData {

@@ -154,6 +154,7 @@ import 'leaflet/dist/leaflet.css';
 
 <script>
 	import { loadPreparedData, loadParquetData, loadIsochronesData } from '../data/load-prepared-data';
+	import { loadBydelerGeoJSON, loadDelbydelerGeoJSON } from '../data/load-regions';
 	import type { RoutesData, RouteData, RoutePairCount, RouteBinnedRow } from '../data/prepared-data-types';
 	import type { IsochroneStation } from '../data/prepared-data-types';
 	import { decodePolyline } from '../utils/decode-polyline';
@@ -204,35 +205,57 @@ import 'leaflet/dist/leaflet.css';
 			}
 
 			function addArrowDecorator(
-		L: typeof import('leaflet'),
-		layer: L.Polyline,
-		group: L.LayerGroup,
-		color = ARROW_COLOR
-	) {
-		try {
-			const decorator = (L as any).polylineDecorator(layer, {
-				patterns: [
-					{
-						offset: 0,
-						repeat: 80,
-						symbol: (L as any).Symbol.arrowHead({
-							pixelSize: 12,
-							polygon: true,
-							pathOptions: {
-								color,
-								fillColor: color,
-								fillOpacity: 1,
-								weight: 1,
+				L: typeof import('leaflet'),
+				layer: L.Polyline,
+				group: L.LayerGroup,
+				color = ARROW_COLOR
+			) {
+				try {
+					const decorator = (L as any).polylineDecorator(layer, {
+						patterns: [
+							{
+								offset: 0,
+								repeat: 80,
+								symbol: (L as any).Symbol.arrowHead({
+									pixelSize: 12,
+									polygon: true,
+									pathOptions: {
+										color,
+										fillColor: color,
+										fillOpacity: 1,
+										weight: 1,
+									},
+								}),
 							},
-						}),
-					},
-				],
-			});
-			decorator.addTo(group);
-		} catch {
-			// Plugin may not be loaded; skip arrows
-		}
-	}
+						],
+					});
+					decorator.addTo(group);
+				} catch {
+					// Plugin may not be loaded; skip arrows
+				}
+			}
+
+			async function addRegionOverlays(L: typeof import('leaflet'), map: L.Map) {
+				try {
+					const [bydelerGeo, delbydelerGeo] = await Promise.all([
+						loadBydelerGeoJSON(),
+						loadDelbydelerGeoJSON(),
+					]);
+					map.createPane('regionsPane');
+					map.getPane('regionsPane')!.style.zIndex = '300';
+					const bydelerLayer = L.geoJSON(bydelerGeo, {
+						style: { fillColor: '#64748b', fillOpacity: 0.15, color: '#475569', weight: 1 },
+						pane: 'regionsPane',
+					}).addTo(map);
+					const delbydelerLayer = L.geoJSON(delbydelerGeo, {
+						style: { fillColor: '#94a3b8', fillOpacity: 0.1, color: '#64748b', weight: 1 },
+						pane: 'regionsPane',
+					}).addTo(map);
+					L.control.layers({}, { Bydeler: bydelerLayer, Delbydeler: delbydelerLayer }, { collapsed: false }).addTo(map);
+				} catch {
+					// Region GeoJSON optional (run stations_prepare.ipynb to generate)
+				}
+			}
 
 	async function init() {
 		const statusEl = document.getElementById('status');
@@ -361,6 +384,8 @@ import 'leaflet/dist/leaflet.css';
 					'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			}).addTo(map);
 
+			await addRegionOverlays(L, map);
+
 			map.createPane('routePane');
 			map.getPane('routePane')!.style.zIndex = '400';
 			map.createPane('stationMarkersPane');
@@ -476,6 +501,12 @@ import 'leaflet/dist/leaflet.css';
 				infoSection.classList.remove('hidden');
 				const tripCount = pairCountByKey.get(selectedKey);
 				let html = `<p><strong>${originName}</strong> ↔ <strong>${destName}</strong></p>`;
+				if (origin?.bydel || origin?.delbydel) {
+					html += `<p class="mt-1 text-slate-500 dark:text-slate-400">Origin: ${[origin.bydel, origin.delbydel].filter(Boolean).join(' · ')}</p>`;
+				}
+				if (dest?.bydel || dest?.delbydel) {
+					html += `<p class="mt-1 text-slate-500 dark:text-slate-400">Destination: ${[dest.bydel, dest.delbydel].filter(Boolean).join(' · ')}</p>`;
+				}
 				if (tripCount != null) {
 					html += `<p class="mt-2">Total trips: <strong>${Number(tripCount).toLocaleString()}</strong></p>`;
 				}
@@ -506,6 +537,8 @@ import 'leaflet/dist/leaflet.css';
 					attribution:
 						'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 				}).addTo(mapAll);
+
+				await addRegionOverlays(L, mapAll);
 
 				mapAll.createPane('allRoutePane');
 				mapAll.getPane('allRoutePane')!.style.zIndex = '400';
@@ -722,6 +755,8 @@ import 'leaflet/dist/leaflet.css';
 					attribution:
 						'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 				}).addTo(mapDensity);
+
+				await addRegionOverlays(L, mapDensity);
 
 				mapDensity.createPane('densityRoutePane');
 				mapDensity.getPane('densityRoutePane')!.style.zIndex = '400';
