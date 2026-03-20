@@ -1,4 +1,6 @@
 raw-data/
 .env
+env/
+weather-cache/
 prepared-data/routes.json
 frontend/public/prepared-data/routes.json

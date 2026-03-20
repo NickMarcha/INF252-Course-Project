@@ -109,3 +109,19 @@ export interface RouteBinnedRow {
   hour: number;
   count: number;
 }
+
+/** One day of weather from export-weather-to-prepared (Frost Oslo Blindern). */
+export interface WeatherOsloRow {
+  date: string;
+  temperature?: number;
+  precipitation?: number;
+  wind_speed?: number;
+  relative_humidity?: number;
+}
+
+/** Weather payload in prepared-data/weather_oslo.json */
+export interface WeatherOsloData {
+  source_id: string;
+  station_name: string;
+  data: WeatherOsloRow[];
+}

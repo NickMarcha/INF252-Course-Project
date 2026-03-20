@@ -1,0 +1,180 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<style>
+	.chart-container text {
+		fill: currentColor;
+	}
+	.chart-container .domain,
+	.chart-container .tick line {
+		stroke: currentColor;
+	}
+</style>
+
+<Layout>
+	<div class="p-6 max-w-4xl mx-auto space-y-12">
+		<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Weather over time – Oslo (Blindern)</h1>
+		<p class="text-slate-600 dark:text-slate-400">
+			Historical weather from MET Norway Frost API, station <strong>SN18700</strong> Oslo Blindern.
+		</p>
+
+		<section>
+			<h2 class="text-lg font-semibold mb-2 text-slate-800 dark:text-slate-200">Temperature</h2>
+			<div id="chart-temperature" class="chart-container w-full min-h-[280px] text-slate-700 dark:text-slate-300"></div>
+			<p id="status-temperature" class="mt-2 text-sm text-slate-500 dark:text-slate-400">Loading…</p>
+		</section>
+
+		<section>
+			<h2 class="text-lg font-semibold mb-2 text-slate-800 dark:text-slate-200">Precipitation</h2>
+			<div id="chart-precipitation" class="chart-container w-full min-h-[280px] text-slate-700 dark:text-slate-300"></div>
+			<p id="status-precipitation" class="mt-2 text-sm text-slate-500 dark:text-slate-400">Loading…</p>
+		</section>
+	</div>
+</Layout>
+
+<script>
+	import * as d3 from 'd3';
+	import type { WeatherOsloData, WeatherOsloRow } from '../data/prepared-data-types';
+
+	const base = import.meta.env.BASE_URL ?? '/';
+	const margin = { top: 20, right: 30, bottom: 50, left: 50 };
+	const chartHeight = 280;
+
+	async function render() {
+		const statusTemp = document.getElementById('status-temperature');
+		const statusPrecip = document.getElementById('status-precipitation');
+		const msgNoData = 'Run frost_weather_fetch.ipynb and npm run prepare:data to load weather.';
+
+		try {
+			const res = await fetch(`${base}prepared-data/weather_oslo.json`);
+			if (!res.ok) {
+				if (statusTemp) statusTemp.textContent = msgNoData;
+				if (statusPrecip) statusPrecip.textContent = '';
+				return;
+			}
+			const payload = (await res.json()) as WeatherOsloData;
+			const rows = payload?.data ?? [];
+
+			if (!rows.length) {
+				if (statusTemp) statusTemp.textContent = msgNoData;
+				if (statusPrecip) statusPrecip.textContent = '';
+				return;
+			}
+
+			const withTemp = rows.filter((d) => d.temperature != null) as (WeatherOsloRow & { temperature: number })[];
+			const withPrecip = rows.filter((d) => d.precipitation != null) as (WeatherOsloRow & { precipitation: number })[];
+
+			if (statusTemp) statusTemp.textContent = withTemp.length ? `${withTemp.length} days (temperature).` : 'No temperature data.';
+			if (statusPrecip) statusPrecip.textContent = withPrecip.length ? `${withPrecip.length} days (precipitation).` : 'No precipitation data.';
+
+			renderTemperatureChart(withTemp);
+			renderPrecipitationChart(withPrecip);
+		} catch (err) {
+			const msg = err instanceof Error ? err.message : String(err);
+			if (statusTemp) statusTemp.textContent = `Error: ${msg}`;
+			if (statusPrecip) statusPrecip.textContent = '';
+		}
+	}
+
+	function getContainer(id: string): HTMLDivElement {
+		const el = document.getElementById(id);
+		if (!el) throw new Error(`Container ${id} not found`);
+		return el as HTMLDivElement;
+	}
+
+	function renderTemperatureChart(rows: Array<{ date: string; temperature: number }>) {
+		const container = getContainer('chart-temperature');
+		container.innerHTML = '';
+		if (!rows.length) return;
+
+		const width = container.clientWidth - margin.left - margin.right;
+		const height = chartHeight - margin.top - margin.bottom;
+
+		const parseDate = d3.timeParse('%Y-%m-%d');
+		const data = rows.map((d) => ({ date: parseDate(d.date) as Date, value: d.temperature })).filter((d) => d.date != null);
+
+		const x = d3.scaleTime()
+			.domain(d3.extent(data, (d) => d.date) as [Date, Date])
+			.range([0, width]);
+		const y = d3.scaleLinear()
+			.domain([d3.min(data, (d) => d.value) ?? 0, d3.max(data, (d) => d.value) ?? 20])
+			.nice()
+			.range([height, 0]);
+
+		const line = d3.line<{ date: Date; value: number }>()
+			.x((d) => x(d.date))
+			.y((d) => y(d.value));
+
+		const svg = d3
+			.select(container)
+			.append('svg')
+			.attr('width', width + margin.left + margin.right)
+			.attr('height', height + margin.top + margin.bottom)
+			.append('g')
+			.attr('transform', `translate(${margin.left},${margin.top})`);
+
+		svg.append('g')
+			.attr('transform', `translate(0,${height})`)
+			.call(d3.axisBottom(x))
+			.selectAll('text')
+			.attr('transform', 'rotate(-45)')
+			.style('text-anchor', 'end');
+		svg.append('g').call(d3.axisLeft(y));
+
+		svg.append('path')
+			.datum(data)
+			.attr('fill', 'none')
+			.attr('stroke', 'steelblue')
+			.attr('stroke-width', 1.5)
+			.attr('d', line);
+	}
+
+	function renderPrecipitationChart(rows: Array<{ date: string; precipitation: number }>) {
+		const container = getContainer('chart-precipitation');
+		container.innerHTML = '';
+		if (!rows.length) return;
+
+		const width = container.clientWidth - margin.left - margin.right;
+		const height = chartHeight - margin.top - margin.bottom;
+
+		const parseDate = d3.timeParse('%Y-%m-%d');
+		const data = rows.map((d) => ({ date: parseDate(d.date) as Date, value: d.precipitation })).filter((d) => d.date != null);
+
+		const x = d3.scaleTime()
+			.domain(d3.extent(data, (d) => d.date) as [Date, Date])
+			.range([0, width]);
+		const y = d3.scaleLinear()
+			.domain([0, d3.max(data, (d) => d.value) ?? 10])
+			.nice()
+			.range([height, 0]);
+
+		const svg = d3
+			.select(container)
+			.append('svg')
+			.attr('width', width + margin.left + margin.right)
+			.attr('height', height + margin.top + margin.bottom)
+			.append('g')
+			.attr('transform', `translate(${margin.left},${margin.top})`);
+
+		svg.append('g')
+			.attr('transform', `translate(0,${height})`)
+			.call(d3.axisBottom(x))
+			.selectAll('text')
+			.attr('transform', 'rotate(-45)')
+			.style('text-anchor', 'end');
+		svg.append('g').call(d3.axisLeft(y));
+
+		svg.selectAll('rect')
+			.data(data)
+			.join('rect')
+			.attr('x', (d) => x(d.date))
+			.attr('y', (d) => y(d.value))
+			.attr('width', Math.max(1, width / data.length - 1))
+			.attr('height', (d) => height - y(d.value))
+			.attr('fill', '#2e7d32')
+			.attr('opacity', 0.8);
+	}
+
+	render();
+</script>
