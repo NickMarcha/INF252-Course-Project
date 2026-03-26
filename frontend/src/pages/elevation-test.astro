@@ -1,0 +1,213 @@
+---
+import Layout from '../layouts/Layout.astro';
+import 'leaflet/dist/leaflet.css';
+---
+
+<Layout>
+	<div class="p-6 max-w-6xl mx-auto space-y-4">
+		<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Elevation Test</h1>
+		<p class="text-slate-600 dark:text-slate-400">
+			50 m grid elevation data over Oslo, derived from the DOM1 height model. Station markers show per-station elevation.
+		</p>
+		<p id="status" class="text-sm text-slate-500 dark:text-slate-400">Loading elevation data...</p>
+		<div id="map" class="w-full h-[600px] rounded-lg border border-slate-200 dark:border-slate-700"></div>
+
+		<div class="flex flex-wrap gap-4 items-center">
+			<label class="text-sm text-slate-600 dark:text-slate-400">
+				Opacity:
+				<input id="opacity-slider" type="range" min="0" max="100" value="60" class="ml-2 align-middle" />
+				<span id="opacity-value" class="ml-1">60%</span>
+			</label>
+			<label class="text-sm text-slate-600 dark:text-slate-400">
+				<input id="toggle-stations" type="checkbox" checked class="mr-1 align-middle" />
+				Show stations
+			</label>
+		</div>
+
+		<div id="legend" class="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400">
+			<span>1 m</span>
+			<div class="h-4 w-48 rounded-l" style="background: linear-gradient(to right, #313695, #4575b4, #74add1, #abd9e9, #e0f3f8, #ffffbf, #fee090, #fdae61, #f46d43, #d73027, #a50026);"></div>
+			<span>100 m</span>
+			<div class="h-4 w-24 rounded-r" style="background: linear-gradient(to right, #5a5a5a, #828282, #aaaaaa, #d2d2d2, #f0f0f0);"></div>
+			<span>500 m</span>
+		</div>
+	</div>
+</Layout>
+
+<script>
+	import L from 'leaflet';
+	import { loadPreparedData } from '../data/load-prepared-data.js';
+
+	/* ---------- colour ramp (Spectral-11 reversed: blue=low, red=high) ---------- */
+	const RAMP = [
+		[49, 54, 149],
+		[69, 117, 180],
+		[116, 173, 209],
+		[171, 217, 233],
+		[224, 243, 248],
+		[255, 255, 191],
+		[254, 224, 144],
+		[253, 174, 97],
+		[244, 109, 67],
+		[215, 48, 39],
+		[165, 0, 38],
+	];
+
+	// Grey-to-white ramp for elevations above 100 m (100 m = dark grey, 500 m = white)
+	const HIGH_RAMP = [
+		[90, 90, 90],
+		[130, 130, 130],
+		[170, 170, 170],
+		[210, 210, 210],
+		[240, 240, 240],
+	];
+
+	const FOCUS_MIN = 1;
+	const FOCUS_MAX = 100;
+	const HIGH_MAX = 500;
+
+	function interpolateRamp(ramp: number[][], t: number): string {
+		const idx = Math.max(0, Math.min(1, t)) * (ramp.length - 1);
+		const lo = Math.floor(idx);
+		const hi = Math.min(lo + 1, ramp.length - 1);
+		const f = idx - lo;
+		const r = Math.round(ramp[lo][0] * (1 - f) + ramp[hi][0] * f);
+		const g = Math.round(ramp[lo][1] * (1 - f) + ramp[hi][1] * f);
+		const b = Math.round(ramp[lo][2] * (1 - f) + ramp[hi][2] * f);
+		return `rgb(${r},${g},${b})`;
+	}
+
+	function elevColor(h: number): string {
+		if (h <= FOCUS_MIN) return interpolateRamp(RAMP, 0);
+		if (h <= FOCUS_MAX) return interpolateRamp(RAMP, (h - FOCUS_MIN) / (FOCUS_MAX - FOCUS_MIN));
+		// Above 100 m: separate grey ramp
+		return interpolateRamp(HIGH_RAMP, (h - FOCUS_MAX) / (HIGH_MAX - FOCUS_MAX));
+	}
+
+	/* ---------- types ---------- */
+	interface ElevationGrid {
+		crs: string;
+		origin_easting: number;
+		origin_northing: number;
+		cell_size_m: number;
+		nrows: number;
+		ncols: number;
+		wgs84_bounds: { min_lat: number; max_lat: number; min_lon: number; max_lon: number };
+		heights: number[][];
+	}
+
+	interface StationRow {
+		id: string;
+		name: string;
+		lat: number;
+		lon: number;
+		elevation_m?: number;
+	}
+
+	/* ---------- init ---------- */
+	const mapEl = document.getElementById('map')!;
+	const statusEl = document.getElementById('status')!;
+	const opacitySlider = document.getElementById('opacity-slider') as HTMLInputElement;
+	const opacityValue = document.getElementById('opacity-value')!;
+	const toggleStations = document.getElementById('toggle-stations') as HTMLInputElement;
+
+	const OSLO_CENTER: [number, number] = [59.92, 10.75];
+	const map = L.map(mapEl).setView(OSLO_CENTER, 13);
+
+	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+	}).addTo(map);
+
+	// Custom panes
+	map.createPane('elevationPane');
+	map.getPane('elevationPane')!.style.zIndex = '300';
+	map.createPane('stationPane');
+	map.getPane('stationPane')!.style.zIndex = '450';
+
+	/* ---------- load data & render ---------- */
+	try {
+		const [gridResp, stationsResp] = await Promise.all([
+			loadPreparedData<ElevationGrid>('elevation_grid.json'),
+			loadPreparedData<{ stations: StationRow[] }>('stations.json'),
+		]);
+
+		const grid = gridResp.data;
+		const stations = stationsResp.data.stations;
+
+		// Find height range for colour mapping
+		let minH = Infinity,
+			maxH = -Infinity;
+		for (const row of grid.heights) {
+			for (const h of row) {
+				if (h < minH) minH = h;
+				if (h > maxH) maxH = h;
+			}
+		}
+
+		statusEl.textContent = `Grid: ${grid.ncols}x${grid.nrows} cells, ${grid.cell_size_m} m resolution. Elevation range: ${minH.toFixed(0)}–${maxH.toFixed(0)} m`;
+
+		// Build grid rectangles on a canvas overlay for performance
+		// We use Leaflet imageOverlay with a rendered canvas
+		const canvas = document.createElement('canvas');
+		canvas.width = grid.ncols;
+		canvas.height = grid.nrows;
+		const ctx = canvas.getContext('2d')!;
+
+		for (let r = 0; r < grid.nrows; r++) {
+			for (let c = 0; c < grid.ncols; c++) {
+				const h = grid.heights[r][c];
+				ctx.fillStyle = elevColor(h);
+				// Row 0 = northernmost (top of image)
+				ctx.fillRect(c, r, 1, 1);
+			}
+		}
+
+		// Use pre-computed WGS84 bounds from the Python pipeline
+		const b = grid.wgs84_bounds;
+		const bounds = L.latLngBounds(
+			L.latLng(b.min_lat, b.min_lon),
+			L.latLng(b.max_lat, b.max_lon)
+		);
+
+		const elevOverlay = L.imageOverlay(canvas.toDataURL(), bounds, {
+			opacity: 0.6,
+			pane: 'elevationPane',
+		}).addTo(map);
+
+		// Opacity control
+		opacitySlider.addEventListener('input', () => {
+			const val = Number(opacitySlider.value) / 100;
+			elevOverlay.setOpacity(val);
+			opacityValue.textContent = `${opacitySlider.value}%`;
+		});
+
+		// Station markers
+		const stationLayerGroup = L.layerGroup([], { pane: 'stationPane' }).addTo(map);
+		for (const s of stations) {
+			const elev = s.elevation_m != null ? `${s.elevation_m.toFixed(1)} m` : 'N/A';
+			L.circleMarker([s.lat, s.lon], {
+				radius: 5,
+				fillColor: '#fff',
+				color: '#334155',
+				weight: 1.5,
+				fillOpacity: 0.9,
+				pane: 'stationPane',
+			})
+				.bindTooltip(`<b>${s.name}</b><br/>Elevation: ${elev}`, { direction: 'top', offset: [0, -6] })
+				.addTo(stationLayerGroup);
+		}
+
+		toggleStations.addEventListener('change', () => {
+			if (toggleStations.checked) {
+				stationLayerGroup.addTo(map);
+			} else {
+				stationLayerGroup.remove();
+			}
+		});
+
+		map.fitBounds(bounds);
+	} catch (err: any) {
+		statusEl.textContent = `Error: ${err.message}`;
+		console.error(err);
+	}
+</script>
