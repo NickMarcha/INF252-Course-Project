@@ -97,12 +97,12 @@ import 'leaflet/dist/leaflet.css';
 				// EDA data optional
 			}
 
-			let regionByStationId: Record<string, { bydel?: string; delbydel?: string }> = {};
+			let regionByStationId: Record<string, { bydel?: string; delbydel?: string; elevation_m?: number }> = {};
 			try {
-				const { data: stationsData } = await loadPreparedData<{ stations: Array<{ id: string; bydel?: string; delbydel?: string }> }>('stations.json');
+				const { data: stationsData } = await loadPreparedData<{ stations: Array<{ id: string; bydel?: string; delbydel?: string; elevation_m?: number }> }>('stations.json');
 				if (stationsData?.stations) {
 					for (const s of stationsData.stations) {
-						regionByStationId[s.id] = { bydel: s.bydel, delbydel: s.delbydel };
+						regionByStationId[s.id] = { bydel: s.bydel, delbydel: s.delbydel, elevation_m: s.elevation_m };
 					}
 				}
 			} catch {
@@ -262,9 +262,13 @@ import 'leaflet/dist/leaflet.css';
 				const regionLine = region && (region.bydel || region.delbydel)
 					? `<p class="text-slate-500 dark:text-slate-400">${[region.bydel, region.delbydel].filter(Boolean).join(' · ')}</p>`
 					: '';
+				const elevationLine = region?.elevation_m != null
+					? `<p>Elevation: ${region.elevation_m} m</p>`
+					: '';
 				infoContent.innerHTML = `
 					<p><strong>${station.name}</strong></p>
 					${regionLine}
+					${elevationLine}
 					<p>${tripCount != null ? `Trip count: ${tripCount.toLocaleString()}` : 'N/A'}</p>
 				`;
 			}

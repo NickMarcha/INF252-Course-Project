@@ -1,19 +1,26 @@
 {
   "last_execution": {
-    "timestamp": "2026-03-17T07:08:21"
+    "timestamp": "2026-03-26T08:44:37.147017",
+    "os": "macOS-26.3.1-arm64-arm-64bit-Mach-O",
+    "cpu_count": 12,
+    "processor": "arm",
+    "ram_gb": 32.0,
+    "ram_used_pct": 61.5,
+    "duration_seconds": 2
   },
   "data": {
     "stations": [
       {
         "id": "377",
-        "name": "Tøyenparken",
+        "name": "T\u00f8yenparken",
         "lat": 59.915667,
         "lon": 10.7775665,
         "trips_as_origin": 27511,
         "trips_as_dest": 25232,
         "total_trips": 52743,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sofienberg"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sofienberg",
+        "elevation_m": 38.9
       },
       {
         "id": "378",
@@ -24,7 +31,8 @@
         "trips_as_dest": 24567,
         "total_trips": 49471,
         "bydel": "Frogner",
-        "delbydel": "Majorstuen nord"
+        "delbydel": "Majorstuen nord",
+        "elevation_m": 47.0
       },
       {
         "id": "380",
@@ -35,18 +43,20 @@
         "trips_as_dest": 31937,
         "total_trips": 86924,
         "bydel": "Sagene",
-        "delbydel": "Bjølsen"
+        "delbydel": "Bj\u00f8lsen",
+        "elevation_m": 75.0
       },
       {
         "id": "381",
-        "name": "Grønlands torg",
+        "name": "Gr\u00f8nlands torg",
         "lat": 59.91252,
         "lon": 10.76224,
         "trips_as_origin": 53565,
         "trips_as_dest": 60388,
         "total_trips": 113953,
         "bydel": "Gamle Oslo",
-        "delbydel": "Grønland"
+        "delbydel": "Gr\u00f8nland",
+        "elevation_m": 3.2
       },
       {
         "id": "382",
@@ -57,7 +67,8 @@
         "trips_as_dest": 29847,
         "total_trips": 60155,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Fagerborg"
+        "delbydel": "Fagerborg",
+        "elevation_m": 52.2
       },
       {
         "id": "383",
@@ -68,29 +79,32 @@
         "trips_as_dest": 21363,
         "total_trips": 69984,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Lindern"
+        "delbydel": "Lindern",
+        "elevation_m": 62.2
       },
       {
         "id": "384",
-        "name": "Vår Frelsers gravlund sør",
+        "name": "V\u00e5r Frelsers gravlund s\u00f8r",
         "lat": 59.919463,
         "lon": 10.743829,
         "trips_as_origin": 85120,
         "trips_as_dest": 82866,
         "total_trips": 167986,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Ila"
+        "delbydel": "Ila",
+        "elevation_m": 31.9
       },
       {
         "id": "385",
-        "name": "Søndre gate",
+        "name": "S\u00f8ndre gate",
         "lat": 59.918632,
         "lon": 10.757867,
         "trips_as_origin": 49901,
         "trips_as_dest": 54931,
         "total_trips": 104832,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka øst"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka \u00f8st",
+        "elevation_m": 9.7
       },
       {
         "id": "386",
@@ -101,7 +115,8 @@
         "trips_as_dest": 12578,
         "total_trips": 26782,
         "bydel": "Frogner",
-        "delbydel": "Majorstuen nord"
+        "delbydel": "Majorstuen nord",
+        "elevation_m": 50.3
       },
       {
         "id": "387",
@@ -112,7 +127,8 @@
         "trips_as_dest": 46513,
         "total_trips": 88930,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 11.8
       },
       {
         "id": "388",
@@ -123,7 +139,8 @@
         "trips_as_dest": 36869,
         "total_trips": 74081,
         "bydel": "Frogner",
-        "delbydel": "Uranienborg"
+        "delbydel": "Uranienborg",
+        "elevation_m": 25.7
       },
       {
         "id": "389",
@@ -134,7 +151,8 @@
         "trips_as_dest": 20263,
         "total_trips": 40646,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Hammersborg"
+        "delbydel": "Hammersborg",
+        "elevation_m": 23.1
       },
       {
         "id": "390",
@@ -145,7 +163,8 @@
         "trips_as_dest": 74974,
         "total_trips": 132020,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 8.7
       },
       {
         "id": "391",
@@ -156,18 +175,20 @@
         "trips_as_dest": 21500,
         "total_trips": 64398,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Bislett"
+        "delbydel": "Bislett",
+        "elevation_m": 53.3
       },
       {
         "id": "392",
-        "name": "Sjøsiden vest",
+        "name": "Sj\u00f8siden vest",
         "lat": 59.910178,
         "lon": 10.751224,
         "trips_as_origin": 30150,
         "trips_as_dest": 75858,
         "total_trips": 106008,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 2.1
       },
       {
         "id": "393",
@@ -178,18 +199,20 @@
         "trips_as_dest": 22187,
         "total_trips": 64531,
         "bydel": "Sagene",
-        "delbydel": "Torshov"
+        "delbydel": "Torshov",
+        "elevation_m": 94.3
       },
       {
         "id": "394",
-        "name": "Bjølsen Studentby",
+        "name": "Bj\u00f8lsen Studentby",
         "lat": 59.94375,
         "lon": 10.7603062,
         "trips_as_origin": 52063,
         "trips_as_dest": 30575,
         "total_trips": 82638,
         "bydel": "Sagene",
-        "delbydel": "Bjølsen"
+        "delbydel": "Bj\u00f8lsen",
+        "elevation_m": 91.7
       },
       {
         "id": "395",
@@ -200,7 +223,8 @@
         "trips_as_dest": 16353,
         "total_trips": 32715,
         "bydel": "Frogner",
-        "delbydel": "Frognerparken"
+        "delbydel": "Frognerparken",
+        "elevation_m": 40.8
       },
       {
         "id": "396",
@@ -211,7 +235,8 @@
         "trips_as_dest": 127388,
         "total_trips": 215740,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Hammersborg"
+        "delbydel": "Hammersborg",
+        "elevation_m": 10.3
       },
       {
         "id": "397",
@@ -222,7 +247,8 @@
         "trips_as_dest": 29144,
         "total_trips": 92885,
         "bydel": "Sagene",
-        "delbydel": "Sandaker"
+        "delbydel": "Sandaker",
+        "elevation_m": 108.5
       },
       {
         "id": "398",
@@ -233,7 +259,8 @@
         "trips_as_dest": 124213,
         "total_trips": 249088,
         "bydel": "Sagene",
-        "delbydel": "Iladalen"
+        "delbydel": "Iladalen",
+        "elevation_m": 37.1
       },
       {
         "id": "399",
@@ -244,7 +271,8 @@
         "trips_as_dest": 19986,
         "total_trips": 51850,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Ila"
+        "delbydel": "Ila",
+        "elevation_m": 41.3
       },
       {
         "id": "400",
@@ -255,7 +283,8 @@
         "trips_as_dest": 43046,
         "total_trips": 85688,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 21.7
       },
       {
         "id": "401",
@@ -265,19 +294,21 @@
         "trips_as_origin": 27406,
         "trips_as_dest": 28100,
         "total_trips": 55506,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka øst"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka \u00f8st",
+        "elevation_m": 12.7
       },
       {
         "id": "402",
-        "name": "Lørenveien",
+        "name": "L\u00f8renveien",
         "lat": 59.9311166,
         "lon": 10.7910218,
         "trips_as_origin": 37803,
         "trips_as_dest": 16756,
         "total_trips": 54559,
-        "bydel": "Grünerløkka",
-        "delbydel": "Løren"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "L\u00f8ren",
+        "elevation_m": 108.5
       },
       {
         "id": "403",
@@ -288,7 +319,8 @@
         "trips_as_dest": 38830,
         "total_trips": 77637,
         "bydel": "Frogner",
-        "delbydel": "Homansbyen"
+        "delbydel": "Homansbyen",
+        "elevation_m": 39.6
       },
       {
         "id": "404",
@@ -299,7 +331,8 @@
         "trips_as_dest": 42215,
         "total_trips": 83792,
         "bydel": "Frogner",
-        "delbydel": "Skillebekk"
+        "delbydel": "Skillebekk",
+        "elevation_m": 20.5
       },
       {
         "id": "405",
@@ -310,18 +343,20 @@
         "trips_as_dest": 21170,
         "total_trips": 44415,
         "bydel": "Frogner",
-        "delbydel": "Frognerparken"
+        "delbydel": "Frognerparken",
+        "elevation_m": 43.8
       },
       {
         "id": "406",
-        "name": "Carl Berners plass sør",
+        "name": "Carl Berners plass s\u00f8r",
         "lat": 59.92507,
         "lon": 10.775996,
         "trips_as_origin": 49854,
         "trips_as_dest": 49016,
         "total_trips": 98870,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sofienberg"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sofienberg",
+        "elevation_m": 46.1
       },
       {
         "id": "407",
@@ -332,18 +367,20 @@
         "trips_as_dest": 30186,
         "total_trips": 74308,
         "bydel": "Sagene",
-        "delbydel": "Sagene"
+        "delbydel": "Sagene",
+        "elevation_m": 72.4
       },
       {
         "id": "408",
-        "name": "Tøyen skole",
+        "name": "T\u00f8yen skole",
         "lat": 59.914943,
         "lon": 10.773977,
         "trips_as_origin": 98594,
         "trips_as_dest": 98159,
         "total_trips": 196753,
         "bydel": "Gamle Oslo",
-        "delbydel": "Nedre Tøyen"
+        "delbydel": "Nedre T\u00f8yen",
+        "elevation_m": 27.4
       },
       {
         "id": "409",
@@ -354,7 +391,8 @@
         "trips_as_dest": 11180,
         "total_trips": 38336,
         "bydel": "Nordre Aker",
-        "delbydel": "Ullevål hageby"
+        "delbydel": "Ullev\u00e5l hageby",
+        "elevation_m": 92.3
       },
       {
         "id": "410",
@@ -365,7 +403,8 @@
         "trips_as_dest": 31931,
         "total_trips": 86778,
         "bydel": "Sagene",
-        "delbydel": "Iladalen"
+        "delbydel": "Iladalen",
+        "elevation_m": 34.8
       },
       {
         "id": "411",
@@ -375,8 +414,9 @@
         "trips_as_origin": 28223,
         "trips_as_dest": 16755,
         "total_trips": 44978,
-        "bydel": "Grünerløkka",
-        "delbydel": "Hasle"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Hasle",
+        "elevation_m": 80.0
       },
       {
         "id": "412",
@@ -386,8 +426,9 @@
         "trips_as_origin": 76670,
         "trips_as_dest": 77324,
         "total_trips": 153994,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka vest"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka vest",
+        "elevation_m": 10.5
       },
       {
         "id": "413",
@@ -398,18 +439,20 @@
         "trips_as_dest": 68261,
         "total_trips": 146477,
         "bydel": "Frogner",
-        "delbydel": "Majorstuen syd"
+        "delbydel": "Majorstuen syd",
+        "elevation_m": 49.6
       },
       {
         "id": "414",
-        "name": "Kontraskjæret",
+        "name": "Kontraskj\u00e6ret",
         "lat": 59.910242,
         "lon": 10.73857,
         "trips_as_origin": 37155,
         "trips_as_dest": 37492,
         "total_trips": 74647,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 20.6
       },
       {
         "id": "415",
@@ -419,19 +462,21 @@
         "trips_as_origin": 20217,
         "trips_as_dest": 10781,
         "total_trips": 30998,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sinsen"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sinsen",
+        "elevation_m": 73.0
       },
       {
         "id": "416",
-        "name": "Tannlegehøyskolen",
+        "name": "Tannlegeh\u00f8yskolen",
         "lat": 59.932383,
         "lon": 10.741475,
         "trips_as_origin": 21617,
         "trips_as_dest": 14911,
         "total_trips": 36528,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Lindern"
+        "delbydel": "Lindern",
+        "elevation_m": 75.3
       },
       {
         "id": "417",
@@ -442,7 +487,8 @@
         "trips_as_dest": 18695,
         "total_trips": 48996,
         "bydel": "Frogner",
-        "delbydel": "Uranienborg"
+        "delbydel": "Uranienborg",
+        "elevation_m": 46.9
       },
       {
         "id": "418",
@@ -453,7 +499,8 @@
         "trips_as_dest": 31468,
         "total_trips": 61566,
         "bydel": "Frogner",
-        "delbydel": "Bygdøy"
+        "delbydel": "Bygd\u00f8y",
+        "elevation_m": 26.4
       },
       {
         "id": "419",
@@ -464,18 +511,20 @@
         "trips_as_dest": 9849,
         "total_trips": 19647,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Hammersborg"
+        "delbydel": "Hammersborg",
+        "elevation_m": 8.0
       },
       {
         "id": "420",
-        "name": "Bjølsendumpa",
+        "name": "Bj\u00f8lsendumpa",
         "lat": 59.94034,
         "lon": 10.766079,
         "trips_as_origin": 38185,
         "trips_as_dest": 16858,
         "total_trips": 55043,
         "bydel": "Sagene",
-        "delbydel": "Bjølsen"
+        "delbydel": "Bj\u00f8lsen",
+        "elevation_m": 86.4
       },
       {
         "id": "421",
@@ -485,8 +534,9 @@
         "trips_as_origin": 132928,
         "trips_as_dest": 130417,
         "total_trips": 263345,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka vest"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka vest",
+        "elevation_m": 32.4
       },
       {
         "id": "422",
@@ -497,7 +547,8 @@
         "trips_as_dest": 29214,
         "total_trips": 58643,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Ila"
+        "delbydel": "Ila",
+        "elevation_m": 48.6
       },
       {
         "id": "423",
@@ -507,8 +558,9 @@
         "trips_as_origin": 74906,
         "trips_as_dest": 83420,
         "total_trips": 158326,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka øst"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka \u00f8st",
+        "elevation_m": 23.6
       },
       {
         "id": "424",
@@ -518,8 +570,9 @@
         "trips_as_origin": 80162,
         "trips_as_dest": 80443,
         "total_trips": 160605,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka øst"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka \u00f8st",
+        "elevation_m": 26.6
       },
       {
         "id": "425",
@@ -530,7 +583,8 @@
         "trips_as_dest": 21842,
         "total_trips": 45174,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Lindern"
+        "delbydel": "Lindern",
+        "elevation_m": 74.6
       },
       {
         "id": "426",
@@ -541,7 +595,8 @@
         "trips_as_dest": 33381,
         "total_trips": 86189,
         "bydel": "Frogner",
-        "delbydel": "Frogner"
+        "delbydel": "Frogner",
+        "elevation_m": 42.9
       },
       {
         "id": "427",
@@ -552,7 +607,8 @@
         "trips_as_dest": 28163,
         "total_trips": 64838,
         "bydel": "Frogner",
-        "delbydel": "Uranienborg"
+        "delbydel": "Uranienborg",
+        "elevation_m": 43.9
       },
       {
         "id": "428",
@@ -563,7 +619,8 @@
         "trips_as_dest": 12276,
         "total_trips": 24379,
         "bydel": "Frogner",
-        "delbydel": "Frogner"
+        "delbydel": "Frogner",
+        "elevation_m": 32.5
       },
       {
         "id": "429",
@@ -574,7 +631,8 @@
         "trips_as_dest": 31631,
         "total_trips": 52098,
         "bydel": "Ullern",
-        "delbydel": "Skøyen"
+        "delbydel": "Sk\u00f8yen",
+        "elevation_m": 3.3
       },
       {
         "id": "430",
@@ -585,7 +643,8 @@
         "trips_as_dest": 87563,
         "total_trips": 121191,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 21.9
       },
       {
         "id": "431",
@@ -595,19 +654,21 @@
         "trips_as_origin": 36297,
         "trips_as_dest": 35011,
         "total_trips": 71308,
-        "bydel": "Grünerløkka",
-        "delbydel": "Rodeløkka"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Rodel\u00f8kka",
+        "elevation_m": 51.4
       },
       {
         "id": "432",
-        "name": "St. Hanshaugen park sør",
+        "name": "St. Hanshaugen park s\u00f8r",
         "lat": 59.924821,
         "lon": 10.739909,
         "trips_as_origin": 28248,
         "trips_as_dest": 22686,
         "total_trips": 50934,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Ila"
+        "delbydel": "Ila",
+        "elevation_m": 52.1
       },
       {
         "id": "433",
@@ -618,7 +679,8 @@
         "trips_as_dest": 16664,
         "total_trips": 43883,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Ila"
+        "delbydel": "Ila",
+        "elevation_m": 49.1
       },
       {
         "id": "434",
@@ -629,18 +691,20 @@
         "trips_as_dest": 13040,
         "total_trips": 53605,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Lindern"
+        "delbydel": "Lindern",
+        "elevation_m": 85.4
       },
       {
         "id": "435",
-        "name": "Fram-gården",
+        "name": "Fram-g\u00e5rden",
         "lat": 59.915424,
         "lon": 10.714577,
         "trips_as_origin": 40455,
         "trips_as_dest": 37785,
         "total_trips": 78240,
         "bydel": "Frogner",
-        "delbydel": "Skillebekk"
+        "delbydel": "Skillebekk",
+        "elevation_m": 35.6
       },
       {
         "id": "436",
@@ -651,7 +715,8 @@
         "trips_as_dest": 28185,
         "total_trips": 62258,
         "bydel": "Frogner",
-        "delbydel": "Frognerparken"
+        "delbydel": "Frognerparken",
+        "elevation_m": 50.3
       },
       {
         "id": "437",
@@ -662,7 +727,8 @@
         "trips_as_dest": 98266,
         "total_trips": 153270,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Hammersborg"
+        "delbydel": "Hammersborg",
+        "elevation_m": 17.3
       },
       {
         "id": "438",
@@ -673,18 +739,20 @@
         "trips_as_dest": 28689,
         "total_trips": 84835,
         "bydel": "Nordre Aker",
-        "delbydel": "Tåsen"
+        "delbydel": "T\u00e5sen",
+        "elevation_m": 100.4
       },
       {
         "id": "439",
-        "name": "Mølleparken",
+        "name": "M\u00f8lleparken",
         "lat": 59.9283928,
         "lon": 10.7559693,
         "trips_as_origin": 50010,
         "trips_as_dest": 48092,
         "total_trips": 98102,
         "bydel": "Sagene",
-        "delbydel": "Iladalen"
+        "delbydel": "Iladalen",
+        "elevation_m": 31.4
       },
       {
         "id": "440",
@@ -695,18 +763,20 @@
         "trips_as_dest": 56688,
         "total_trips": 111505,
         "bydel": "Gamle Oslo",
-        "delbydel": "Grønland"
+        "delbydel": "Gr\u00f8nland",
+        "elevation_m": 8.5
       },
       {
         "id": "441",
-        "name": "Vippetangen øst",
+        "name": "Vippetangen \u00f8st",
         "lat": 59.903989,
         "lon": 10.741077,
         "trips_as_origin": 18900,
         "trips_as_dest": 21924,
         "total_trips": 40824,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 3.0
       },
       {
         "id": "442",
@@ -716,19 +786,21 @@
         "trips_as_origin": 65018,
         "trips_as_dest": 68226,
         "total_trips": 133244,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka vest"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka vest",
+        "elevation_m": 18.3
       },
       {
         "id": "443",
-        "name": "Sjøsiden øst",
+        "name": "Sj\u00f8siden \u00f8st",
         "lat": 59.910178,
         "lon": 10.751824,
         "trips_as_origin": 94585,
         "trips_as_dest": 136893,
         "total_trips": 231478,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 2.4
       },
       {
         "id": "444",
@@ -738,19 +810,21 @@
         "trips_as_origin": 73986,
         "trips_as_dest": 74194,
         "total_trips": 148180,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka vest"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka vest",
+        "elevation_m": 19.5
       },
       {
         "id": "445",
-        "name": "Sjølyst",
+        "name": "Sj\u00f8lyst",
         "lat": 59.921673,
         "lon": 10.67666,
         "trips_as_origin": 15576,
         "trips_as_dest": 18019,
         "total_trips": 33595,
         "bydel": "Ullern",
-        "delbydel": "Montebello-Hoff"
+        "delbydel": "Montebello-Hoff",
+        "elevation_m": 5.1
       },
       {
         "id": "446",
@@ -761,18 +835,20 @@
         "trips_as_dest": 77217,
         "total_trips": 176568,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Bislett"
+        "delbydel": "Bislett",
+        "elevation_m": 39.9
       },
       {
         "id": "447",
-        "name": "Kværnerbyen",
+        "name": "Kv\u00e6rnerbyen",
         "lat": 59.904473,
         "lon": 10.786167,
         "trips_as_origin": 66662,
         "trips_as_dest": 63816,
         "total_trips": 130478,
         "bydel": "Gamle Oslo",
-        "delbydel": "Kværnerbyen"
+        "delbydel": "Kv\u00e6rnerbyen",
+        "elevation_m": 19.1
       },
       {
         "id": "448",
@@ -783,18 +859,20 @@
         "trips_as_dest": 33649,
         "total_trips": 65656,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 4.4
       },
       {
         "id": "449",
-        "name": "Ruseløkkgården",
+        "name": "Rusel\u00f8kkg\u00e5rden",
         "lat": 59.913499,
         "lon": 10.72656,
         "trips_as_origin": 32386,
         "trips_as_dest": 39292,
         "total_trips": 71678,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 14.1
       },
       {
         "id": "450",
@@ -805,7 +883,8 @@
         "trips_as_dest": 37504,
         "total_trips": 78883,
         "bydel": "Frogner",
-        "delbydel": "Frognerparken"
+        "delbydel": "Frognerparken",
+        "elevation_m": 32.6
       },
       {
         "id": "451",
@@ -816,7 +895,8 @@
         "trips_as_dest": 25637,
         "total_trips": 54751,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Fagerborg"
+        "delbydel": "Fagerborg",
+        "elevation_m": 59.1
       },
       {
         "id": "452",
@@ -827,7 +907,8 @@
         "trips_as_dest": 65028,
         "total_trips": 111040,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 3.3
       },
       {
         "id": "453",
@@ -838,7 +919,8 @@
         "trips_as_dest": 30264,
         "total_trips": 71043,
         "bydel": "Frogner",
-        "delbydel": "Frognerparken"
+        "delbydel": "Frognerparken",
+        "elevation_m": 56.5
       },
       {
         "id": "454",
@@ -849,18 +931,20 @@
         "trips_as_dest": 6224,
         "total_trips": 13095,
         "bydel": "Ullern",
-        "delbydel": "Ullern"
+        "delbydel": "Ullern",
+        "elevation_m": 45.2
       },
       {
         "id": "455",
-        "name": "Sofienbergparken sør",
+        "name": "Sofienbergparken s\u00f8r",
         "lat": 59.922337,
         "lon": 10.7617503,
         "trips_as_origin": 43954,
         "trips_as_dest": 44118,
         "total_trips": 88072,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sofienberg"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sofienberg",
+        "elevation_m": 17.5
       },
       {
         "id": "456",
@@ -871,7 +955,8 @@
         "trips_as_dest": 53707,
         "total_trips": 104819,
         "bydel": "Frogner",
-        "delbydel": "Skillebekk"
+        "delbydel": "Skillebekk",
+        "elevation_m": 1.8
       },
       {
         "id": "457",
@@ -881,8 +966,9 @@
         "trips_as_origin": 33437,
         "trips_as_dest": 33293,
         "total_trips": 66730,
-        "bydel": "Grünerløkka",
-        "delbydel": "Rodeløkka"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Rodel\u00f8kka",
+        "elevation_m": 33.7
       },
       {
         "id": "458",
@@ -892,8 +978,9 @@
         "trips_as_origin": 36404,
         "trips_as_dest": 24118,
         "total_trips": 60522,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sinsen"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sinsen",
+        "elevation_m": 65.6
       },
       {
         "id": "459",
@@ -904,29 +991,32 @@
         "trips_as_dest": 24101,
         "total_trips": 49307,
         "bydel": "Frogner",
-        "delbydel": "Majorstuen syd"
+        "delbydel": "Majorstuen syd",
+        "elevation_m": 51.3
       },
       {
         "id": "460",
-        "name": "Botanisk Hage sør",
+        "name": "Botanisk Hage s\u00f8r",
         "lat": 59.9152819,
         "lon": 10.7696199,
         "trips_as_origin": 80090,
         "trips_as_dest": 82501,
         "total_trips": 162591,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sofienberg"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sofienberg",
+        "elevation_m": 27.6
       },
       {
         "id": "461",
-        "name": "Vålerenga",
+        "name": "V\u00e5lerenga",
         "lat": 59.908576,
         "lon": 10.786856,
         "trips_as_origin": 21635,
         "trips_as_dest": 18758,
         "total_trips": 40393,
         "bydel": "Gamle Oslo",
-        "delbydel": "Vålerenga"
+        "delbydel": "V\u00e5lerenga",
+        "elevation_m": 44.6
       },
       {
         "id": "462",
@@ -937,7 +1027,8 @@
         "trips_as_dest": 41387,
         "total_trips": 85314,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Fagerborg"
+        "delbydel": "Fagerborg",
+        "elevation_m": 44.6
       },
       {
         "id": "463",
@@ -947,8 +1038,9 @@
         "trips_as_origin": 44011,
         "trips_as_dest": 46746,
         "total_trips": 90757,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka øst"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka \u00f8st",
+        "elevation_m": 13.6
       },
       {
         "id": "464",
@@ -959,29 +1051,32 @@
         "trips_as_dest": 120996,
         "total_trips": 220405,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 1.1
       },
       {
         "id": "465",
-        "name": "Bjørvika",
+        "name": "Bj\u00f8rvika",
         "lat": 59.909006,
         "lon": 10.75618,
         "trips_as_origin": 61381,
         "trips_as_dest": 105020,
         "total_trips": 166401,
         "bydel": "Gamle Oslo",
-        "delbydel": "Bispevika"
+        "delbydel": "Bispevika",
+        "elevation_m": 8.2
       },
       {
         "id": "466",
-        "name": "Ullevålsalléen",
+        "name": "Ullev\u00e5lsall\u00e9en",
         "lat": 59.937913,
         "lon": 10.73048,
         "trips_as_origin": 9765,
         "trips_as_dest": 7186,
         "total_trips": 16951,
         "bydel": "Nordre Aker",
-        "delbydel": "Ullevål hageby"
+        "delbydel": "Ullev\u00e5l hageby",
+        "elevation_m": 87.7
       },
       {
         "id": "468",
@@ -992,7 +1087,8 @@
         "trips_as_dest": 51179,
         "total_trips": 102227,
         "bydel": "Frogner",
-        "delbydel": "Skillebekk"
+        "delbydel": "Skillebekk",
+        "elevation_m": 8.3
       },
       {
         "id": "469",
@@ -1003,7 +1099,8 @@
         "trips_as_dest": 31581,
         "total_trips": 63692,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Bislett"
+        "delbydel": "Bislett",
+        "elevation_m": 26.4
       },
       {
         "id": "470",
@@ -1014,7 +1111,8 @@
         "trips_as_dest": 13145,
         "total_trips": 36325,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Ila"
+        "delbydel": "Ila",
+        "elevation_m": 68.6
       },
       {
         "id": "471",
@@ -1025,7 +1123,8 @@
         "trips_as_dest": 12992,
         "total_trips": 27427,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Lindern"
+        "delbydel": "Lindern",
+        "elevation_m": 56.6
       },
       {
         "id": "472",
@@ -1036,7 +1135,8 @@
         "trips_as_dest": 27464,
         "total_trips": 59952,
         "bydel": "Sagene",
-        "delbydel": "Sagene"
+        "delbydel": "Sagene",
+        "elevation_m": 73.1
       },
       {
         "id": "473",
@@ -1047,7 +1147,8 @@
         "trips_as_dest": 25270,
         "total_trips": 51367,
         "bydel": "Frogner",
-        "delbydel": "Majorstuen syd"
+        "delbydel": "Majorstuen syd",
+        "elevation_m": 58.0
       },
       {
         "id": "474",
@@ -1058,7 +1159,8 @@
         "trips_as_dest": 9329,
         "total_trips": 32230,
         "bydel": "Nordre Aker",
-        "delbydel": "Ullevål hageby"
+        "delbydel": "Ullev\u00e5l hageby",
+        "elevation_m": 91.3
       },
       {
         "id": "475",
@@ -1069,7 +1171,8 @@
         "trips_as_dest": 28964,
         "total_trips": 53763,
         "bydel": "Gamle Oslo",
-        "delbydel": "Grønland"
+        "delbydel": "Gr\u00f8nland",
+        "elevation_m": 18.0
       },
       {
         "id": "476",
@@ -1080,18 +1183,20 @@
         "trips_as_dest": 46954,
         "total_trips": 92551,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 19.1
       },
       {
         "id": "477",
-        "name": "Møllergata",
+        "name": "M\u00f8llergata",
         "lat": 59.9154413,
         "lon": 10.7485819,
         "trips_as_origin": 18000,
         "trips_as_dest": 27821,
         "total_trips": 45821,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Hammersborg"
+        "delbydel": "Hammersborg",
+        "elevation_m": 15.2
       },
       {
         "id": "478",
@@ -1102,7 +1207,8 @@
         "trips_as_dest": 89535,
         "total_trips": 174143,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 4.3
       },
       {
         "id": "479",
@@ -1113,7 +1219,8 @@
         "trips_as_dest": 122152,
         "total_trips": 222466,
         "bydel": "Frogner",
-        "delbydel": "Skillebekk"
+        "delbydel": "Skillebekk",
+        "elevation_m": 3.5
       },
       {
         "id": "480",
@@ -1124,18 +1231,20 @@
         "trips_as_dest": 134949,
         "total_trips": 245850,
         "bydel": "Gamle Oslo",
-        "delbydel": "Enerhaugen"
+        "delbydel": "Enerhaugen",
+        "elevation_m": 3.9
       },
       {
         "id": "481",
-        "name": "Rådhusgata",
+        "name": "R\u00e5dhusgata",
         "lat": 59.910924,
         "lon": 10.736215,
         "trips_as_origin": 29173,
         "trips_as_dest": 51055,
         "total_trips": 80228,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 5.2
       },
       {
         "id": "482",
@@ -1146,7 +1255,8 @@
         "trips_as_dest": 6641,
         "total_trips": 18583,
         "bydel": "Nordre Aker",
-        "delbydel": "Tåsen"
+        "delbydel": "T\u00e5sen",
+        "elevation_m": 116.3
       },
       {
         "id": "483",
@@ -1156,19 +1266,21 @@
         "trips_as_origin": 27682,
         "trips_as_dest": 32286,
         "total_trips": 59968,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka vest"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka vest",
+        "elevation_m": 15.6
       },
       {
         "id": "484",
-        "name": "Karenlyst allé",
+        "name": "Karenlyst all\u00e9",
         "lat": 59.92033,
         "lon": 10.683814,
         "trips_as_origin": 48517,
         "trips_as_dest": 63660,
         "total_trips": 112177,
         "bydel": "Ullern",
-        "delbydel": "Skøyen"
+        "delbydel": "Sk\u00f8yen",
+        "elevation_m": 2.5
       },
       {
         "id": "485",
@@ -1179,7 +1291,8 @@
         "trips_as_dest": 53820,
         "total_trips": 110465,
         "bydel": "Gamle Oslo",
-        "delbydel": "Nedre Tøyen"
+        "delbydel": "Nedre T\u00f8yen",
+        "elevation_m": 28.1
       },
       {
         "id": "486",
@@ -1190,7 +1303,8 @@
         "trips_as_dest": 15498,
         "total_trips": 42199,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Lindern"
+        "delbydel": "Lindern",
+        "elevation_m": 79.9
       },
       {
         "id": "487",
@@ -1200,8 +1314,9 @@
         "trips_as_origin": 21387,
         "trips_as_dest": 18315,
         "total_trips": 39702,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sinsen"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sinsen",
+        "elevation_m": 52.9
       },
       {
         "id": "488",
@@ -1212,7 +1327,8 @@
         "trips_as_dest": 9494,
         "total_trips": 42688,
         "bydel": "Sagene",
-        "delbydel": "Torshov"
+        "delbydel": "Torshov",
+        "elevation_m": 75.9
       },
       {
         "id": "489",
@@ -1223,7 +1339,8 @@
         "trips_as_dest": 157030,
         "total_trips": 257818,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Hammersborg"
+        "delbydel": "Hammersborg",
+        "elevation_m": 16.2
       },
       {
         "id": "491",
@@ -1233,8 +1350,9 @@
         "trips_as_origin": 27925,
         "trips_as_dest": 34604,
         "total_trips": 62529,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka vest"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka vest",
+        "elevation_m": 8.6
       },
       {
         "id": "492",
@@ -1245,7 +1363,8 @@
         "trips_as_dest": 2525,
         "total_trips": 4689,
         "bydel": "Gamle Oslo",
-        "delbydel": "Grønland"
+        "delbydel": "Gr\u00f8nland",
+        "elevation_m": 3.4
       },
       {
         "id": "493",
@@ -1255,19 +1374,21 @@
         "trips_as_origin": 75262,
         "trips_as_dest": 73205,
         "total_trips": 148467,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sofienberg"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sofienberg",
+        "elevation_m": 23.3
       },
       {
         "id": "494",
-        "name": "Rådhusbrygge 4",
+        "name": "R\u00e5dhusbrygge 4",
         "lat": 59.9108469,
         "lon": 10.7303766,
         "trips_as_origin": 64880,
         "trips_as_dest": 102968,
         "total_trips": 167848,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 2.2
       },
       {
         "id": "495",
@@ -1278,7 +1399,8 @@
         "trips_as_dest": 94284,
         "total_trips": 137026,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 10.2
       },
       {
         "id": "496",
@@ -1289,7 +1411,8 @@
         "trips_as_dest": 13613,
         "total_trips": 40427,
         "bydel": "Nordre Aker",
-        "delbydel": "Ullevål hageby"
+        "delbydel": "Ullev\u00e5l hageby",
+        "elevation_m": 80.8
       },
       {
         "id": "497",
@@ -1299,8 +1422,9 @@
         "trips_as_origin": 29376,
         "trips_as_dest": 25224,
         "total_trips": 54600,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sofienberg"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sofienberg",
+        "elevation_m": 32.6
       },
       {
         "id": "498",
@@ -1310,8 +1434,9 @@
         "trips_as_origin": 10299,
         "trips_as_dest": 3889,
         "total_trips": 14188,
-        "bydel": "Grünerløkka",
-        "delbydel": "Løren"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "L\u00f8ren",
+        "elevation_m": 92.8
       },
       {
         "id": "499",
@@ -1322,7 +1447,8 @@
         "trips_as_dest": 61936,
         "total_trips": 124667,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Ila"
+        "delbydel": "Ila",
+        "elevation_m": 37.1
       },
       {
         "id": "500",
@@ -1332,8 +1458,9 @@
         "trips_as_origin": 38830,
         "trips_as_dest": 41396,
         "total_trips": 80226,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka vest"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka vest",
+        "elevation_m": 10.0
       },
       {
         "id": "501",
@@ -1344,18 +1471,20 @@
         "trips_as_dest": 22927,
         "total_trips": 50374,
         "bydel": "Sagene",
-        "delbydel": "Torshov"
+        "delbydel": "Torshov",
+        "elevation_m": 73.8
       },
       {
         "id": "502",
-        "name": "Ullevål sykehus",
+        "name": "Ullev\u00e5l sykehus",
         "lat": 59.9360307,
         "lon": 10.7364516,
         "trips_as_origin": 44458,
         "trips_as_dest": 22437,
         "total_trips": 66895,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Lindern"
+        "delbydel": "Lindern",
+        "elevation_m": 72.5
       },
       {
         "id": "503",
@@ -1365,8 +1494,9 @@
         "trips_as_origin": 71294,
         "trips_as_dest": 52568,
         "total_trips": 123862,
-        "bydel": "Grünerløkka",
-        "delbydel": "Rodeløkka"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Rodel\u00f8kka",
+        "elevation_m": 35.4
       },
       {
         "id": "505",
@@ -1377,7 +1507,8 @@
         "trips_as_dest": 24277,
         "total_trips": 55873,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Lindern"
+        "delbydel": "Lindern",
+        "elevation_m": 57.7
       },
       {
         "id": "506",
@@ -1387,8 +1518,9 @@
         "trips_as_origin": 27387,
         "trips_as_dest": 26479,
         "total_trips": 53866,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sofienberg"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sofienberg",
+        "elevation_m": 20.5
       },
       {
         "id": "507",
@@ -1398,8 +1530,9 @@
         "trips_as_origin": 78449,
         "trips_as_dest": 79065,
         "total_trips": 157514,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sofienberg"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sofienberg",
+        "elevation_m": 10.9
       },
       {
         "id": "508",
@@ -1410,7 +1543,8 @@
         "trips_as_dest": 7318,
         "total_trips": 17197,
         "bydel": "Frogner",
-        "delbydel": "Majorstuen nord"
+        "delbydel": "Majorstuen nord",
+        "elevation_m": 49.1
       },
       {
         "id": "509",
@@ -1421,7 +1555,8 @@
         "trips_as_dest": 18146,
         "total_trips": 35313,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 4.8
       },
       {
         "id": "511",
@@ -1432,29 +1567,32 @@
         "trips_as_dest": 51046,
         "total_trips": 101906,
         "bydel": "Frogner",
-        "delbydel": "Skillebekk"
+        "delbydel": "Skillebekk",
+        "elevation_m": 23.7
       },
       {
         "id": "512",
-        "name": "Ensjø T-Bane",
+        "name": "Ensj\u00f8 T-Bane",
         "lat": 59.9131891,
         "lon": 10.7897605,
         "trips_as_origin": 39264,
         "trips_as_dest": 20554,
         "total_trips": 59818,
         "bydel": "Gamle Oslo",
-        "delbydel": "Ensjø"
+        "delbydel": "Ensj\u00f8",
+        "elevation_m": 57.3
       },
       {
         "id": "513",
-        "name": "Bøkkerveien",
+        "name": "B\u00f8kkerveien",
         "lat": 59.9273747,
         "lon": 10.7960147,
         "trips_as_origin": 12771,
         "trips_as_dest": 7165,
         "total_trips": 19936,
-        "bydel": "Grünerløkka",
-        "delbydel": "Løren"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "L\u00f8ren",
+        "elevation_m": 98.3
       },
       {
         "id": "514",
@@ -1464,8 +1602,9 @@
         "trips_as_origin": 42216,
         "trips_as_dest": 42047,
         "total_trips": 84263,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sofienberg"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sofienberg",
+        "elevation_m": 25.5
       },
       {
         "id": "515",
@@ -1476,7 +1615,8 @@
         "trips_as_dest": 9757,
         "total_trips": 15312,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 5.5
       },
       {
         "id": "516",
@@ -1486,30 +1626,33 @@
         "trips_as_origin": 22563,
         "trips_as_dest": 21941,
         "total_trips": 44504,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sofienberg"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sofienberg",
+        "elevation_m": 47.6
       },
       {
         "id": "517",
-        "name": "Tåsenløkka",
+        "name": "T\u00e5senl\u00f8kka",
         "lat": 59.9433939,
         "lon": 10.7482848,
         "trips_as_origin": 15448,
         "trips_as_dest": 10781,
         "total_trips": 26229,
         "bydel": "Nordre Aker",
-        "delbydel": "Ullevål hageby"
+        "delbydel": "Ullev\u00e5l hageby",
+        "elevation_m": 82.9
       },
       {
         "id": "518",
-        "name": "Ullevålsveien",
+        "name": "Ullev\u00e5lsveien",
         "lat": 59.9246852,
         "lon": 10.7395045,
         "trips_as_origin": 26313,
         "trips_as_dest": 16859,
         "total_trips": 43172,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Bislett"
+        "delbydel": "Bislett",
+        "elevation_m": 51.8
       },
       {
         "id": "519",
@@ -1520,7 +1663,8 @@
         "trips_as_dest": 38760,
         "total_trips": 91339,
         "bydel": "Frogner",
-        "delbydel": "Frogner"
+        "delbydel": "Frogner",
+        "elevation_m": 27.7
       },
       {
         "id": "521",
@@ -1531,7 +1675,8 @@
         "trips_as_dest": 69052,
         "total_trips": 137531,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Hammersborg"
+        "delbydel": "Hammersborg",
+        "elevation_m": 12.5
       },
       {
         "id": "522",
@@ -1542,18 +1687,20 @@
         "trips_as_dest": 33804,
         "total_trips": 66824,
         "bydel": "Gamle Oslo",
-        "delbydel": "Grønland"
+        "delbydel": "Gr\u00f8nland",
+        "elevation_m": 3.3
       },
       {
         "id": "523",
-        "name": "Tøyenbekken",
+        "name": "T\u00f8yenbekken",
         "lat": 59.9115945,
         "lon": 10.7617736,
         "trips_as_origin": 27688,
         "trips_as_dest": 79366,
         "total_trips": 107054,
         "bydel": "Gamle Oslo",
-        "delbydel": "Grønland"
+        "delbydel": "Gr\u00f8nland",
+        "elevation_m": 6.0
       },
       {
         "id": "524",
@@ -1564,18 +1711,20 @@
         "trips_as_dest": 9998,
         "total_trips": 26246,
         "bydel": "Vestre Aker",
-        "delbydel": "Vinderen"
+        "delbydel": "Vinderen",
+        "elevation_m": 59.2
       },
       {
         "id": "525",
-        "name": "Myraløkka Øst",
+        "name": "Myral\u00f8kka \u00d8st",
         "lat": 59.937205,
         "lon": 10.7605813,
         "trips_as_origin": 37305,
         "trips_as_dest": 33537,
         "total_trips": 70842,
         "bydel": "Sagene",
-        "delbydel": "Sagene"
+        "delbydel": "Sagene",
+        "elevation_m": 67.1
       },
       {
         "id": "526",
@@ -1586,7 +1735,8 @@
         "trips_as_dest": 58107,
         "total_trips": 114090,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 16.2
       },
       {
         "id": "527",
@@ -1597,7 +1747,8 @@
         "trips_as_dest": 25690,
         "total_trips": 50022,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 13.4
       },
       {
         "id": "528",
@@ -1608,7 +1759,8 @@
         "trips_as_dest": 18249,
         "total_trips": 35564,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 13.2
       },
       {
         "id": "529",
@@ -1619,7 +1771,8 @@
         "trips_as_dest": 13346,
         "total_trips": 28674,
         "bydel": "Frogner",
-        "delbydel": "Majorstuen nord"
+        "delbydel": "Majorstuen nord",
+        "elevation_m": 53.7
       },
       {
         "id": "530",
@@ -1630,7 +1783,8 @@
         "trips_as_dest": 40035,
         "total_trips": 80043,
         "bydel": "Frogner",
-        "delbydel": "Homansbyen"
+        "delbydel": "Homansbyen",
+        "elevation_m": 21.3
       },
       {
         "id": "531",
@@ -1641,7 +1795,8 @@
         "trips_as_dest": 8442,
         "total_trips": 20250,
         "bydel": "Ullern",
-        "delbydel": "Skøyen"
+        "delbydel": "Sk\u00f8yen",
+        "elevation_m": 59.9
       },
       {
         "id": "532",
@@ -1652,18 +1807,20 @@
         "trips_as_dest": 6646,
         "total_trips": 19309,
         "bydel": "Gamle Oslo",
-        "delbydel": "Etterstad"
+        "delbydel": "Etterstad",
+        "elevation_m": 90.5
       },
       {
         "id": "533",
-        "name": "Sørvest for Slottsparken",
+        "name": "S\u00f8rvest for Slottsparken",
         "lat": 59.915262,
         "lon": 10.7253157,
         "trips_as_origin": 14374,
         "trips_as_dest": 14439,
         "total_trips": 28813,
         "bydel": "Frogner",
-        "delbydel": "Skillebekk"
+        "delbydel": "Skillebekk",
+        "elevation_m": 24.0
       },
       {
         "id": "534",
@@ -1674,7 +1831,8 @@
         "trips_as_dest": 75638,
         "total_trips": 117471,
         "bydel": "Frogner",
-        "delbydel": "Skillebekk"
+        "delbydel": "Skillebekk",
+        "elevation_m": 3.0
       },
       {
         "id": "535",
@@ -1685,7 +1843,8 @@
         "trips_as_dest": 46808,
         "total_trips": 95830,
         "bydel": "Frogner",
-        "delbydel": "Homansbyen"
+        "delbydel": "Homansbyen",
+        "elevation_m": 32.7
       },
       {
         "id": "536",
@@ -1696,7 +1855,8 @@
         "trips_as_dest": 7491,
         "total_trips": 17425,
         "bydel": "Vestre Aker",
-        "delbydel": "Vinderen"
+        "delbydel": "Vinderen",
+        "elevation_m": 76.3
       },
       {
         "id": "537",
@@ -1707,7 +1867,8 @@
         "trips_as_dest": 66787,
         "total_trips": 132080,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Hammersborg"
+        "delbydel": "Hammersborg",
+        "elevation_m": 22.0
       },
       {
         "id": "538",
@@ -1718,7 +1879,8 @@
         "trips_as_dest": 10383,
         "total_trips": 19342,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Hammersborg"
+        "delbydel": "Hammersborg",
+        "elevation_m": 6.2
       },
       {
         "id": "540",
@@ -1729,7 +1891,8 @@
         "trips_as_dest": 30722,
         "total_trips": 74070,
         "bydel": "Sagene",
-        "delbydel": "Torshov"
+        "delbydel": "Torshov",
+        "elevation_m": 75.7
       },
       {
         "id": "541",
@@ -1740,18 +1903,20 @@
         "trips_as_dest": 23843,
         "total_trips": 46406,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 2.5
       },
       {
         "id": "542",
-        "name": "Grünerhagen Nord",
+        "name": "Gr\u00fcnerhagen Nord",
         "lat": 59.9224256,
         "lon": 10.7554274,
         "trips_as_origin": 42077,
         "trips_as_dest": 42928,
         "total_trips": 85005,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka vest"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka vest",
+        "elevation_m": 22.1
       },
       {
         "id": "543",
@@ -1762,18 +1927,20 @@
         "trips_as_dest": 11918,
         "total_trips": 36392,
         "bydel": "Gamle Oslo",
-        "delbydel": "Ensjø"
+        "delbydel": "Ensj\u00f8",
+        "elevation_m": 81.5
       },
       {
         "id": "545",
-        "name": "Arkaden Sør",
+        "name": "Arkaden S\u00f8r",
         "lat": 59.9119691,
         "lon": 10.7478583,
         "trips_as_origin": 12799,
         "trips_as_dest": 35127,
         "total_trips": 47926,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 4.5
       },
       {
         "id": "546",
@@ -1784,7 +1951,8 @@
         "trips_as_dest": 1,
         "total_trips": 1,
         "bydel": "Frogner",
-        "delbydel": "Bygdøy"
+        "delbydel": "Bygd\u00f8y",
+        "elevation_m": 3.8
       },
       {
         "id": "547",
@@ -1795,18 +1963,20 @@
         "trips_as_dest": 31723,
         "total_trips": 55042,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 3.3
       },
       {
         "id": "548",
-        "name": "Colbjørnsens gate",
+        "name": "Colbj\u00f8rnsens gate",
         "lat": 59.917293,
         "lon": 10.716796,
         "trips_as_origin": 26208,
         "trips_as_dest": 25291,
         "total_trips": 51499,
         "bydel": "Frogner",
-        "delbydel": "Uranienborg"
+        "delbydel": "Uranienborg",
+        "elevation_m": 29.6
       },
       {
         "id": "549",
@@ -1817,7 +1987,8 @@
         "trips_as_dest": 39966,
         "total_trips": 74356,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Hammersborg"
+        "delbydel": "Hammersborg",
+        "elevation_m": 11.1
       },
       {
         "id": "550",
@@ -1828,7 +1999,8 @@
         "trips_as_dest": 12268,
         "total_trips": 24626,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Fagerborg"
+        "delbydel": "Fagerborg",
+        "elevation_m": 41.5
       },
       {
         "id": "551",
@@ -1838,8 +2010,9 @@
         "trips_as_origin": 120790,
         "trips_as_dest": 138737,
         "total_trips": 259527,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka øst"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka \u00f8st",
+        "elevation_m": 26.1
       },
       {
         "id": "552",
@@ -1850,29 +2023,32 @@
         "trips_as_dest": 41543,
         "total_trips": 71536,
         "bydel": "Gamle Oslo",
-        "delbydel": "Bispevika"
+        "delbydel": "Bispevika",
+        "elevation_m": 4.3
       },
       {
         "id": "553",
-        "name": "Skråninga",
+        "name": "Skr\u00e5ninga",
         "lat": 59.9139786,
         "lon": 10.7474667,
         "trips_as_origin": 30262,
         "trips_as_dest": 44759,
         "total_trips": 75021,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Hammersborg"
+        "delbydel": "Hammersborg",
+        "elevation_m": 9.5
       },
       {
         "id": "554",
-        "name": "Tåsen Senter",
+        "name": "T\u00e5sen Senter",
         "lat": 59.952659,
         "lon": 10.751165,
         "trips_as_origin": 20129,
         "trips_as_dest": 7407,
         "total_trips": 27536,
         "bydel": "Nordre Aker",
-        "delbydel": "Nordberg"
+        "delbydel": "Nordberg",
+        "elevation_m": 120.8
       },
       {
         "id": "555",
@@ -1883,7 +2059,8 @@
         "trips_as_dest": 19686,
         "total_trips": 40732,
         "bydel": "Sagene",
-        "delbydel": "Iladalen"
+        "delbydel": "Iladalen",
+        "elevation_m": 56.8
       },
       {
         "id": "556",
@@ -1894,7 +2071,8 @@
         "trips_as_dest": 21434,
         "total_trips": 44033,
         "bydel": "Frogner",
-        "delbydel": "Homansbyen"
+        "delbydel": "Homansbyen",
+        "elevation_m": 49.7
       },
       {
         "id": "557",
@@ -1905,7 +2083,8 @@
         "trips_as_dest": 66078,
         "total_trips": 114065,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Hammersborg"
+        "delbydel": "Hammersborg",
+        "elevation_m": 17.0
       },
       {
         "id": "558",
@@ -1916,7 +2095,8 @@
         "trips_as_dest": 55012,
         "total_trips": 108237,
         "bydel": "Frogner",
-        "delbydel": "Skillebekk"
+        "delbydel": "Skillebekk",
+        "elevation_m": 3.8
       },
       {
         "id": "559",
@@ -1927,7 +2107,8 @@
         "trips_as_dest": 26511,
         "total_trips": 49582,
         "bydel": "Ullern",
-        "delbydel": "Montebello-Hoff"
+        "delbydel": "Montebello-Hoff",
+        "elevation_m": 6.8
       },
       {
         "id": "560",
@@ -1938,7 +2119,8 @@
         "trips_as_dest": 2806,
         "total_trips": 7451,
         "bydel": "Vestre Aker",
-        "delbydel": "Vinderen"
+        "delbydel": "Vinderen",
+        "elevation_m": 103.4
       },
       {
         "id": "561",
@@ -1949,18 +2131,20 @@
         "trips_as_dest": 11693,
         "total_trips": 37187,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Lindern"
+        "delbydel": "Lindern",
+        "elevation_m": 65.3
       },
       {
         "id": "562",
-        "name": "Slottsparken Øst",
+        "name": "Slottsparken \u00d8st",
         "lat": 59.917485,
         "lon": 10.732128,
         "trips_as_origin": 40226,
         "trips_as_dest": 41306,
         "total_trips": 81532,
         "bydel": "Frogner",
-        "delbydel": "Homansbyen"
+        "delbydel": "Homansbyen",
+        "elevation_m": 21.6
       },
       {
         "id": "563",
@@ -1971,7 +2155,8 @@
         "trips_as_dest": 49217,
         "total_trips": 97683,
         "bydel": "Frogner",
-        "delbydel": "Skillebekk"
+        "delbydel": "Skillebekk",
+        "elevation_m": 10.0
       },
       {
         "id": "564",
@@ -1982,7 +2167,8 @@
         "trips_as_dest": 53968,
         "total_trips": 109788,
         "bydel": "Frogner",
-        "delbydel": "Homansbyen"
+        "delbydel": "Homansbyen",
+        "elevation_m": 37.1
       },
       {
         "id": "565",
@@ -1992,8 +2178,9 @@
         "trips_as_origin": 9952,
         "trips_as_dest": 6835,
         "total_trips": 16787,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sinsen"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sinsen",
+        "elevation_m": 67.8
       },
       {
         "id": "566",
@@ -2004,7 +2191,8 @@
         "trips_as_dest": 13932,
         "total_trips": 27310,
         "bydel": "Ullern",
-        "delbydel": "Montebello-Hoff"
+        "delbydel": "Montebello-Hoff",
+        "elevation_m": 12.6
       },
       {
         "id": "567",
@@ -2015,7 +2203,8 @@
         "trips_as_dest": 11625,
         "total_trips": 40067,
         "bydel": "Vestre Aker",
-        "delbydel": "Vinderen"
+        "delbydel": "Vinderen",
+        "elevation_m": 106.4
       },
       {
         "id": "568",
@@ -2026,51 +2215,56 @@
         "trips_as_dest": 26431,
         "total_trips": 56542,
         "bydel": "Frogner",
-        "delbydel": "Uranienborg"
+        "delbydel": "Uranienborg",
+        "elevation_m": 29.0
       },
       {
         "id": "569",
-        "name": "Botanisk hage sør-vest",
+        "name": "Botanisk hage s\u00f8r-vest",
         "lat": 59.9177943,
         "lon": 10.7662784,
         "trips_as_origin": 27784,
         "trips_as_dest": 29001,
         "total_trips": 56785,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sofienberg"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sofienberg",
+        "elevation_m": 9.9
       },
       {
         "id": "570",
-        "name": "Frøen T-bane",
+        "name": "Fr\u00f8en T-bane",
         "lat": 59.9347352,
         "lon": 10.7096985,
         "trips_as_origin": 10061,
         "trips_as_dest": 8097,
         "total_trips": 18158,
         "bydel": "Vestre Aker",
-        "delbydel": "Vinderen"
+        "delbydel": "Vinderen",
+        "elevation_m": 67.1
       },
       {
         "id": "571",
-        "name": "Over Rådhusgata",
+        "name": "Over R\u00e5dhusgata",
         "lat": 59.9101207,
         "lon": 10.7407129,
         "trips_as_origin": 31927,
         "trips_as_dest": 35713,
         "total_trips": 67640,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 6.1
       },
       {
         "id": "572",
-        "name": "Skøyen",
+        "name": "Sk\u00f8yen",
         "lat": 59.922247,
         "lon": 10.679738,
         "trips_as_origin": 34243,
         "trips_as_dest": 54336,
         "total_trips": 88579,
         "bydel": "Ullern",
-        "delbydel": "Skøyen"
+        "delbydel": "Sk\u00f8yen",
+        "elevation_m": 8.6
       },
       {
         "id": "573",
@@ -2081,7 +2275,8 @@
         "trips_as_dest": 15704,
         "total_trips": 26035,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 2.7
       },
       {
         "id": "574",
@@ -2092,7 +2287,8 @@
         "trips_as_dest": 37830,
         "total_trips": 74705,
         "bydel": "Gamle Oslo",
-        "delbydel": "Bispevika"
+        "delbydel": "Bispevika",
+        "elevation_m": 11.0
       },
       {
         "id": "575",
@@ -2103,7 +2299,8 @@
         "trips_as_dest": 21018,
         "total_trips": 53813,
         "bydel": "Nordre Aker",
-        "delbydel": "Ullevål hageby"
+        "delbydel": "Ullev\u00e5l hageby",
+        "elevation_m": 113.7
       },
       {
         "id": "576",
@@ -2114,7 +2311,8 @@
         "trips_as_dest": 16523,
         "total_trips": 31126,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 4.4
       },
       {
         "id": "577",
@@ -2125,7 +2323,8 @@
         "trips_as_dest": 44133,
         "total_trips": 59919,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 4.5
       },
       {
         "id": "578",
@@ -2136,7 +2335,8 @@
         "trips_as_dest": 32924,
         "total_trips": 74627,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Bislett"
+        "delbydel": "Bislett",
+        "elevation_m": 57.2
       },
       {
         "id": "579",
@@ -2147,7 +2347,8 @@
         "trips_as_dest": 66604,
         "total_trips": 134043,
         "bydel": "Frogner",
-        "delbydel": "Homansbyen"
+        "delbydel": "Homansbyen",
+        "elevation_m": 47.0
       },
       {
         "id": "580",
@@ -2158,7 +2359,8 @@
         "trips_as_dest": 16773,
         "total_trips": 54447,
         "bydel": "Nordre Aker",
-        "delbydel": "Ullevål hageby"
+        "delbydel": "Ullev\u00e5l hageby",
+        "elevation_m": 84.0
       },
       {
         "id": "581",
@@ -2169,7 +2371,8 @@
         "trips_as_dest": 26527,
         "total_trips": 65956,
         "bydel": "Gamle Oslo",
-        "delbydel": "Vålerenga"
+        "delbydel": "V\u00e5lerenga",
+        "elevation_m": 36.1
       },
       {
         "id": "582",
@@ -2180,7 +2383,8 @@
         "trips_as_dest": 27738,
         "total_trips": 89594,
         "bydel": "Sagene",
-        "delbydel": "Bjølsen"
+        "delbydel": "Bj\u00f8lsen",
+        "elevation_m": 90.2
       },
       {
         "id": "583",
@@ -2191,18 +2395,20 @@
         "trips_as_dest": 38347,
         "total_trips": 80458,
         "bydel": "Gamle Oslo",
-        "delbydel": "Enerhaugen"
+        "delbydel": "Enerhaugen",
+        "elevation_m": 34.8
       },
       {
         "id": "584",
-        "name": "Henrik Wergelands allé",
+        "name": "Henrik Wergelands all\u00e9",
         "lat": 59.9268942,
         "lon": 10.7207894,
         "trips_as_origin": 29884,
         "trips_as_dest": 28326,
         "total_trips": 58210,
         "bydel": "Frogner",
-        "delbydel": "Majorstuen syd"
+        "delbydel": "Majorstuen syd",
+        "elevation_m": 53.7
       },
       {
         "id": "585",
@@ -2212,19 +2418,21 @@
         "trips_as_origin": 37349,
         "trips_as_dest": 45645,
         "total_trips": 82994,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka vest"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka vest",
+        "elevation_m": 7.4
       },
       {
         "id": "586",
-        "name": "Københavngata busstopp",
+        "name": "K\u00f8benhavngata busstopp",
         "lat": 59.9294754,
         "lon": 10.769151,
         "trips_as_origin": 27799,
         "trips_as_dest": 18178,
         "total_trips": 45977,
-        "bydel": "Grünerløkka",
-        "delbydel": "Rodeløkka"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Rodel\u00f8kka",
+        "elevation_m": 48.7
       },
       {
         "id": "587",
@@ -2235,7 +2443,8 @@
         "trips_as_dest": 20011,
         "total_trips": 44322,
         "bydel": "Frogner",
-        "delbydel": "Uranienborg"
+        "delbydel": "Uranienborg",
+        "elevation_m": 37.2
       },
       {
         "id": "588",
@@ -2246,7 +2455,8 @@
         "trips_as_dest": 12734,
         "total_trips": 28584,
         "bydel": "Frogner",
-        "delbydel": "Uranienborg"
+        "delbydel": "Uranienborg",
+        "elevation_m": 32.7
       },
       {
         "id": "589",
@@ -2257,7 +2467,8 @@
         "trips_as_dest": 40909,
         "total_trips": 76124,
         "bydel": "Frogner",
-        "delbydel": "Bygdøy"
+        "delbydel": "Bygd\u00f8y",
+        "elevation_m": 6.5
       },
       {
         "id": "590",
@@ -2268,7 +2479,8 @@
         "trips_as_dest": 36466,
         "total_trips": 92533,
         "bydel": "Frogner",
-        "delbydel": "Majorstuen nord"
+        "delbydel": "Majorstuen nord",
+        "elevation_m": 46.8
       },
       {
         "id": "591",
@@ -2278,8 +2490,9 @@
         "trips_as_origin": 13198,
         "trips_as_dest": 5422,
         "total_trips": 18620,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sofienberg"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sofienberg",
+        "elevation_m": 70.4
       },
       {
         "id": "592",
@@ -2290,29 +2503,32 @@
         "trips_as_dest": 14476,
         "total_trips": 33770,
         "bydel": "Nordre Aker",
-        "delbydel": "Tåsen"
+        "delbydel": "T\u00e5sen",
+        "elevation_m": 94.4
       },
       {
         "id": "593",
-        "name": "Bjølsen mølle",
+        "name": "Bj\u00f8lsen m\u00f8lle",
         "lat": 59.9392,
         "lon": 10.768774,
         "trips_as_origin": 30055,
         "trips_as_dest": 12702,
         "total_trips": 42757,
         "bydel": "Sagene",
-        "delbydel": "Torshov"
+        "delbydel": "Torshov",
+        "elevation_m": 82.7
       },
       {
         "id": "594",
-        "name": "Kampen park Øst",
+        "name": "Kampen park \u00d8st",
         "lat": 59.915182,
         "lon": 10.782129,
         "trips_as_origin": 23775,
         "trips_as_dest": 7779,
         "total_trips": 31554,
         "bydel": "Gamle Oslo",
-        "delbydel": "Kampen"
+        "delbydel": "Kampen",
+        "elevation_m": 66.2
       },
       {
         "id": "595",
@@ -2323,7 +2539,8 @@
         "trips_as_dest": 11836,
         "total_trips": 23153,
         "bydel": "Frogner",
-        "delbydel": "Frogner"
+        "delbydel": "Frogner",
+        "elevation_m": 4.7
       },
       {
         "id": "596",
@@ -2334,7 +2551,8 @@
         "trips_as_dest": 17238,
         "total_trips": 41256,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Lindern"
+        "delbydel": "Lindern",
+        "elevation_m": 64.9
       },
       {
         "id": "597",
@@ -2345,7 +2563,8 @@
         "trips_as_dest": 61232,
         "total_trips": 121406,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Hammersborg"
+        "delbydel": "Hammersborg",
+        "elevation_m": 20.5
       },
       {
         "id": "598",
@@ -2355,19 +2574,21 @@
         "trips_as_origin": 70604,
         "trips_as_dest": 66955,
         "total_trips": 137559,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sofienberg"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sofienberg",
+        "elevation_m": 24.6
       },
       {
         "id": "599",
-        "name": "Paléhaven",
+        "name": "Pal\u00e9haven",
         "lat": 59.910331,
         "lon": 10.75011,
         "trips_as_origin": 38141,
         "trips_as_dest": 86028,
         "total_trips": 124169,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 12.5
       },
       {
         "id": "600",
@@ -2378,18 +2599,20 @@
         "trips_as_dest": 38413,
         "total_trips": 78479,
         "bydel": "Gamle Oslo",
-        "delbydel": "Kværnerbyen"
+        "delbydel": "Kv\u00e6rnerbyen",
+        "elevation_m": 18.4
       },
       {
         "id": "601",
-        "name": "Rolf Wickstrøms vei",
+        "name": "Rolf Wickstr\u00f8ms vei",
         "lat": 59.9534114,
         "lon": 10.7577241,
         "trips_as_origin": 8983,
         "trips_as_dest": 2586,
         "total_trips": 11569,
         "bydel": "Nordre Aker",
-        "delbydel": "Tåsen"
+        "delbydel": "T\u00e5sen",
+        "elevation_m": 131.0
       },
       {
         "id": "602",
@@ -2400,7 +2623,8 @@
         "trips_as_dest": 4053,
         "total_trips": 9322,
         "bydel": "Ullern",
-        "delbydel": "Montebello-Hoff"
+        "delbydel": "Montebello-Hoff",
+        "elevation_m": 32.0
       },
       {
         "id": "603",
@@ -2411,18 +2635,20 @@
         "trips_as_dest": 52643,
         "total_trips": 105543,
         "bydel": "Frogner",
-        "delbydel": "Frognerparken"
+        "delbydel": "Frognerparken",
+        "elevation_m": 32.5
       },
       {
         "id": "605",
-        "name": "Økernveien",
+        "name": "\u00d8kernveien",
         "lat": 59.9167376,
         "lon": 10.779916,
         "trips_as_origin": 17304,
         "trips_as_dest": 9717,
         "total_trips": 27021,
-        "bydel": "Grünerløkka",
-        "delbydel": "Sofienberg"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Sofienberg",
+        "elevation_m": 57.5
       },
       {
         "id": "606",
@@ -2433,7 +2659,8 @@
         "trips_as_dest": 10867,
         "total_trips": 22828,
         "bydel": "Sagene",
-        "delbydel": "Sagene"
+        "delbydel": "Sagene",
+        "elevation_m": 56.8
       },
       {
         "id": "607",
@@ -2444,7 +2671,8 @@
         "trips_as_dest": 60655,
         "total_trips": 137062,
         "bydel": "Sagene",
-        "delbydel": "Iladalen"
+        "delbydel": "Iladalen",
+        "elevation_m": 55.6
       },
       {
         "id": "608",
@@ -2455,7 +2683,8 @@
         "trips_as_dest": 12429,
         "total_trips": 34353,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Ila"
+        "delbydel": "Ila",
+        "elevation_m": 60.2
       },
       {
         "id": "609",
@@ -2466,18 +2695,20 @@
         "trips_as_dest": 53883,
         "total_trips": 86870,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 2.3
       },
       {
         "id": "610",
-        "name": "Sotahjørnet",
+        "name": "Sotahj\u00f8rnet",
         "lat": 59.9099822,
         "lon": 10.7914482,
         "trips_as_origin": 27664,
         "trips_as_dest": 16948,
         "total_trips": 44612,
         "bydel": "Gamle Oslo",
-        "delbydel": "Vålerenga"
+        "delbydel": "V\u00e5lerenga",
+        "elevation_m": 56.6
       },
       {
         "id": "611",
@@ -2488,18 +2719,20 @@
         "trips_as_dest": 93130,
         "total_trips": 135877,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 17.8
       },
       {
         "id": "612",
-        "name": "Ensjøveien",
+        "name": "Ensj\u00f8veien",
         "lat": 59.9167033,
         "lon": 10.7833627,
         "trips_as_origin": 19967,
         "trips_as_dest": 8968,
         "total_trips": 28935,
         "bydel": "Gamle Oslo",
-        "delbydel": "Ensjø"
+        "delbydel": "Ensj\u00f8",
+        "elevation_m": 65.8
       },
       {
         "id": "613",
@@ -2510,7 +2743,8 @@
         "trips_as_dest": 21461,
         "total_trips": 52718,
         "bydel": "Frogner",
-        "delbydel": "Uranienborg"
+        "delbydel": "Uranienborg",
+        "elevation_m": 34.7
       },
       {
         "id": "614",
@@ -2521,7 +2755,8 @@
         "trips_as_dest": 13871,
         "total_trips": 45480,
         "bydel": "Sagene",
-        "delbydel": "Torshov"
+        "delbydel": "Torshov",
+        "elevation_m": 104.5
       },
       {
         "id": "615",
@@ -2532,7 +2767,8 @@
         "trips_as_dest": 20478,
         "total_trips": 37540,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 6.1
       },
       {
         "id": "616",
@@ -2543,29 +2779,32 @@
         "trips_as_dest": 29401,
         "total_trips": 58057,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 2.6
       },
       {
         "id": "617",
-        "name": "Bjerregaardsgate Øst",
+        "name": "Bjerregaardsgate \u00d8st",
         "lat": 59.9272161,
         "lon": 10.7497787,
         "trips_as_origin": 40498,
         "trips_as_dest": 36311,
         "total_trips": 76809,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Ila"
+        "delbydel": "Ila",
+        "elevation_m": 27.5
       },
       {
         "id": "618",
-        "name": "Bak Niels Treschows hus sør",
+        "name": "Bak Niels Treschows hus s\u00f8r",
         "lat": 59.9424323,
         "lon": 10.723903,
         "trips_as_origin": 17837,
         "trips_as_dest": 9325,
         "total_trips": 27162,
         "bydel": "Nordre Aker",
-        "delbydel": "Ullevål hageby"
+        "delbydel": "Ullev\u00e5l hageby",
+        "elevation_m": 92.9
       },
       {
         "id": "619",
@@ -2576,7 +2815,8 @@
         "trips_as_dest": 10873,
         "total_trips": 31280,
         "bydel": "Nordre Aker",
-        "delbydel": "Ullevål hageby"
+        "delbydel": "Ullev\u00e5l hageby",
+        "elevation_m": 92.9
       },
       {
         "id": "620",
@@ -2587,18 +2827,20 @@
         "trips_as_dest": 57699,
         "total_trips": 136806,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Bislett"
+        "delbydel": "Bislett",
+        "elevation_m": 38.2
       },
       {
         "id": "621",
-        "name": "Torshovdalen øst",
+        "name": "Torshovdalen \u00f8st",
         "lat": 59.9328069,
         "lon": 10.7774484,
         "trips_as_origin": 18949,
         "trips_as_dest": 11071,
         "total_trips": 30020,
         "bydel": "Sagene",
-        "delbydel": "Torshov"
+        "delbydel": "Torshov",
+        "elevation_m": 97.9
       },
       {
         "id": "622",
@@ -2609,7 +2851,8 @@
         "trips_as_dest": 30139,
         "total_trips": 61665,
         "bydel": "Frogner",
-        "delbydel": "Homansbyen"
+        "delbydel": "Homansbyen",
+        "elevation_m": 36.4
       },
       {
         "id": "623",
@@ -2620,29 +2863,32 @@
         "trips_as_dest": 56893,
         "total_trips": 106394,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 15.2
       },
       {
         "id": "624",
-        "name": "Dælenenggata",
+        "name": "D\u00e6lenenggata",
         "lat": 59.928716,
         "lon": 10.7675618,
         "trips_as_origin": 34847,
         "trips_as_dest": 33333,
         "total_trips": 68180,
-        "bydel": "Grünerløkka",
-        "delbydel": "Rodeløkka"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Rodel\u00f8kka",
+        "elevation_m": 42.9
       },
       {
         "id": "625",
-        "name": "Spikersuppa Øst",
+        "name": "Spikersuppa \u00d8st",
         "lat": 59.91336,
         "lon": 10.737663,
         "trips_as_origin": 35942,
         "trips_as_dest": 62274,
         "total_trips": 98216,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 13.6
       },
       {
         "id": "626",
@@ -2653,18 +2899,20 @@
         "trips_as_dest": 19454,
         "total_trips": 35629,
         "bydel": "Frogner",
-        "delbydel": "Frogner"
+        "delbydel": "Frogner",
+        "elevation_m": 20.4
       },
       {
         "id": "627",
-        "name": "Skøyen Stasjon",
+        "name": "Sk\u00f8yen Stasjon",
         "lat": 59.9226729,
         "lon": 10.6788129,
         "trips_as_origin": 10205,
         "trips_as_dest": 17113,
         "total_trips": 27318,
         "bydel": "Ullern",
-        "delbydel": "Montebello-Hoff"
+        "delbydel": "Montebello-Hoff",
+        "elevation_m": 3.5
       },
       {
         "id": "734",
@@ -2675,7 +2923,8 @@
         "trips_as_dest": 21746,
         "total_trips": 41615,
         "bydel": "Gamle Oslo",
-        "delbydel": "Grønland"
+        "delbydel": "Gr\u00f8nland",
+        "elevation_m": 8.7
       },
       {
         "id": "735",
@@ -2686,7 +2935,8 @@
         "trips_as_dest": 53374,
         "total_trips": 106530,
         "bydel": "Gamle Oslo",
-        "delbydel": "Kværnerbyen"
+        "delbydel": "Kv\u00e6rnerbyen",
+        "elevation_m": 19.5
       },
       {
         "id": "737",
@@ -2697,7 +2947,8 @@
         "trips_as_dest": 67864,
         "total_trips": 130713,
         "bydel": "Gamle Oslo",
-        "delbydel": "Bispevika"
+        "delbydel": "Bispevika",
+        "elevation_m": 6.6
       },
       {
         "id": "738",
@@ -2708,7 +2959,8 @@
         "trips_as_dest": 15754,
         "total_trips": 31975,
         "bydel": "Gamle Oslo",
-        "delbydel": "Kværnerbyen"
+        "delbydel": "Kv\u00e6rnerbyen",
+        "elevation_m": 23.5
       },
       {
         "id": "739",
@@ -2719,7 +2971,8 @@
         "trips_as_dest": 41745,
         "total_trips": 80939,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Hammersborg"
+        "delbydel": "Hammersborg",
+        "elevation_m": 17.4
       },
       {
         "id": "742",
@@ -2729,30 +2982,33 @@
         "trips_as_origin": 25372,
         "trips_as_dest": 6255,
         "total_trips": 31627,
-        "bydel": "Grünerløkka",
-        "delbydel": "Hasle"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Hasle",
+        "elevation_m": 86.7
       },
       {
         "id": "744",
-        "name": "Hallénparken",
+        "name": "Hall\u00e9nparken",
         "lat": 59.9315302,
         "lon": 10.762169,
         "trips_as_origin": 34464,
         "trips_as_dest": 32740,
         "total_trips": 67204,
-        "bydel": "Grünerløkka",
-        "delbydel": "Dælenenga"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "D\u00e6lenenga",
+        "elevation_m": 53.5
       },
       {
         "id": "746",
-        "name": "Bygdøy allé",
+        "name": "Bygd\u00f8y all\u00e9",
         "lat": 59.919001,
         "lon": 10.692321,
         "trips_as_origin": 16976,
         "trips_as_dest": 17176,
         "total_trips": 34152,
         "bydel": "Frogner",
-        "delbydel": "Frogner"
+        "delbydel": "Frogner",
+        "elevation_m": 15.3
       },
       {
         "id": "748",
@@ -2763,7 +3019,8 @@
         "trips_as_dest": 28325,
         "total_trips": 56819,
         "bydel": "Frogner",
-        "delbydel": "Skillebekk"
+        "delbydel": "Skillebekk",
+        "elevation_m": 19.4
       },
       {
         "id": "787",
@@ -2774,7 +3031,8 @@
         "trips_as_dest": 33797,
         "total_trips": 66189,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 26.0
       },
       {
         "id": "970",
@@ -2785,7 +3043,8 @@
         "trips_as_dest": 24922,
         "total_trips": 50059,
         "bydel": "Gamle Oslo",
-        "delbydel": "Enerhaugen"
+        "delbydel": "Enerhaugen",
+        "elevation_m": 23.3
       },
       {
         "id": "1009",
@@ -2796,7 +3055,8 @@
         "trips_as_dest": 6795,
         "total_trips": 14762,
         "bydel": "Vestre Aker",
-        "delbydel": "Vinderen"
+        "delbydel": "Vinderen",
+        "elevation_m": 87.0
       },
       {
         "id": "1023",
@@ -2807,7 +3067,8 @@
         "trips_as_dest": 40421,
         "total_trips": 77159,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 13.1
       },
       {
         "id": "1101",
@@ -2818,7 +3079,8 @@
         "trips_as_dest": 13170,
         "total_trips": 20140,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 7.5
       },
       {
         "id": "1755",
@@ -2829,29 +3091,32 @@
         "trips_as_dest": 82590,
         "total_trips": 127893,
         "bydel": "Frogner",
-        "delbydel": "Skillebekk"
+        "delbydel": "Skillebekk",
+        "elevation_m": 2.8
       },
       {
         "id": "1919",
-        "name": "Kværnerveien",
+        "name": "Kv\u00e6rnerveien",
         "lat": 59.90591083488326,
         "lon": 10.778592132296495,
         "trips_as_origin": 4711,
         "trips_as_dest": 3293,
         "total_trips": 8004,
         "bydel": "Gamle Oslo",
-        "delbydel": "Kværnerbyen"
+        "delbydel": "Kv\u00e6rnerbyen",
+        "elevation_m": 24.2
       },
       {
         "id": "2270",
-        "name": "Lørenporten",
+        "name": "L\u00f8renporten",
         "lat": 59.92883258499495,
         "lon": 10.799770383800876,
         "trips_as_origin": 10154,
         "trips_as_dest": 4021,
         "total_trips": 14175,
-        "bydel": "Grünerløkka",
-        "delbydel": "Løren"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "L\u00f8ren",
+        "elevation_m": 99.6
       },
       {
         "id": "2280",
@@ -2862,7 +3127,8 @@
         "trips_as_dest": 16442,
         "total_trips": 31931,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 5.9
       },
       {
         "id": "2304",
@@ -2873,7 +3139,8 @@
         "trips_as_dest": 7545,
         "total_trips": 20439,
         "bydel": "Gamle Oslo",
-        "delbydel": "Vålerenga"
+        "delbydel": "V\u00e5lerenga",
+        "elevation_m": 53.8
       },
       {
         "id": "2305",
@@ -2883,19 +3150,21 @@
         "trips_as_origin": 18632,
         "trips_as_dest": 18497,
         "total_trips": 37129,
-        "bydel": "Grünerløkka",
-        "delbydel": "Dælenenga"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "D\u00e6lenenga",
+        "elevation_m": 34.7
       },
       {
         "id": "2306",
-        "name": "Økern Portal",
+        "name": "\u00d8kern Portal",
         "lat": 59.93097164065915,
         "lon": 10.801829756346933,
         "trips_as_origin": 7273,
         "trips_as_dest": 4215,
         "total_trips": 11488,
-        "bydel": "Grünerløkka",
-        "delbydel": "Løren"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "L\u00f8ren",
+        "elevation_m": 101.4
       },
       {
         "id": "2307",
@@ -2906,7 +3175,8 @@
         "trips_as_dest": 9804,
         "total_trips": 23184,
         "bydel": "Nordre Aker",
-        "delbydel": "Ullevål hageby"
+        "delbydel": "Ullev\u00e5l hageby",
+        "elevation_m": 94.4
       },
       {
         "id": "2308",
@@ -2917,7 +3187,8 @@
         "trips_as_dest": 18589,
         "total_trips": 37057,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Hammersborg"
+        "delbydel": "Hammersborg",
+        "elevation_m": 6.2
       },
       {
         "id": "2309",
@@ -2928,7 +3199,8 @@
         "trips_as_dest": 2600,
         "total_trips": 7773,
         "bydel": "Bjerke",
-        "delbydel": "Ulven"
+        "delbydel": "Ulven",
+        "elevation_m": 100.3
       },
       {
         "id": "2315",
@@ -2939,7 +3211,8 @@
         "trips_as_dest": 41572,
         "total_trips": 79715,
         "bydel": "Gamle Oslo",
-        "delbydel": "Bispevika"
+        "delbydel": "Bispevika",
+        "elevation_m": 4.0
       },
       {
         "id": "2328",
@@ -2950,7 +3223,8 @@
         "trips_as_dest": 51651,
         "total_trips": 82226,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 3.8
       },
       {
         "id": "2329",
@@ -2961,7 +3235,8 @@
         "trips_as_dest": 9134,
         "total_trips": 17958,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 10.8
       },
       {
         "id": "2330",
@@ -2972,7 +3247,8 @@
         "trips_as_dest": 20365,
         "total_trips": 39321,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 4.9
       },
       {
         "id": "2332",
@@ -2982,8 +3258,9 @@
         "trips_as_origin": 4059,
         "trips_as_dest": 4368,
         "total_trips": 8427,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka vest"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka vest",
+        "elevation_m": 9.1
       },
       {
         "id": "2333",
@@ -2994,7 +3271,8 @@
         "trips_as_dest": 30628,
         "total_trips": 58428,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 2.2
       },
       {
         "id": "2334",
@@ -3004,8 +3282,9 @@
         "trips_as_origin": 8384,
         "trips_as_dest": 8708,
         "total_trips": 17092,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka vest"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka vest",
+        "elevation_m": 9.2
       },
       {
         "id": "2337",
@@ -3016,7 +3295,8 @@
         "trips_as_dest": 18149,
         "total_trips": 35778,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 10.3
       },
       {
         "id": "2339",
@@ -3027,7 +3307,8 @@
         "trips_as_dest": 18689,
         "total_trips": 33997,
         "bydel": "Gamle Oslo",
-        "delbydel": "Grønland"
+        "delbydel": "Gr\u00f8nland",
+        "elevation_m": 7.5
       },
       {
         "id": "2340",
@@ -3037,8 +3318,9 @@
         "trips_as_origin": 10635,
         "trips_as_dest": 5844,
         "total_trips": 16479,
-        "bydel": "Grünerløkka",
-        "delbydel": "Hasle"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Hasle",
+        "elevation_m": 76.1
       },
       {
         "id": "2347",
@@ -3049,7 +3331,8 @@
         "trips_as_dest": 15258,
         "total_trips": 27975,
         "bydel": "Frogner",
-        "delbydel": "Bygdøy"
+        "delbydel": "Bygd\u00f8y",
+        "elevation_m": 7.3
       },
       {
         "id": "2349",
@@ -3060,7 +3343,8 @@
         "trips_as_dest": 8482,
         "total_trips": 16315,
         "bydel": "Frogner",
-        "delbydel": "Bygdøy"
+        "delbydel": "Bygd\u00f8y",
+        "elevation_m": 3.6
       },
       {
         "id": "2350",
@@ -3071,7 +3355,8 @@
         "trips_as_dest": 3942,
         "total_trips": 9571,
         "bydel": "Nordre Aker",
-        "delbydel": "Ullevål hageby"
+        "delbydel": "Ullev\u00e5l hageby",
+        "elevation_m": 75.5
       },
       {
         "id": "2351",
@@ -3082,29 +3367,32 @@
         "trips_as_dest": 3359,
         "total_trips": 9284,
         "bydel": "Nordre Aker",
-        "delbydel": "Nordberg"
+        "delbydel": "Nordberg",
+        "elevation_m": 114.4
       },
       {
         "id": "2355",
-        "name": "Økern T-bane",
+        "name": "\u00d8kern T-bane",
         "lat": 59.928894918817605,
         "lon": 10.806234776281599,
         "trips_as_origin": 2845,
         "trips_as_dest": 1640,
         "total_trips": 4485,
         "bydel": "Bjerke",
-        "delbydel": "Ulven"
+        "delbydel": "Ulven",
+        "elevation_m": 96.1
       },
       {
         "id": "2357",
-        "name": "Aker Brygge 2 mot Rådhusplassen",
+        "name": "Aker Brygge 2 mot R\u00e5dhusplassen",
         "lat": 59.9112013908412,
         "lon": 10.730126804554885,
         "trips_as_origin": 21612,
         "trips_as_dest": 27859,
         "total_trips": 49471,
         "bydel": "Frogner",
-        "delbydel": "Skillebekk"
+        "delbydel": "Skillebekk",
+        "elevation_m": 2.7
       },
       {
         "id": "2358",
@@ -3115,7 +3403,8 @@
         "trips_as_dest": 25985,
         "total_trips": 51604,
         "bydel": "Frogner",
-        "delbydel": "Skillebekk"
+        "delbydel": "Skillebekk",
+        "elevation_m": 2.6
       },
       {
         "id": "3725",
@@ -3126,7 +3415,8 @@
         "trips_as_dest": 2367,
         "total_trips": 6929,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Lindern"
+        "delbydel": "Lindern",
+        "elevation_m": 76.8
       },
       {
         "id": "4552",
@@ -3137,7 +3427,8 @@
         "trips_as_dest": 879,
         "total_trips": 2648,
         "bydel": "Alna",
-        "delbydel": "Teisen"
+        "delbydel": "Teisen",
+        "elevation_m": 92.5
       },
       {
         "id": "4683",
@@ -3148,7 +3439,8 @@
         "trips_as_dest": 1915,
         "total_trips": 4684,
         "bydel": "Gamle Oslo",
-        "delbydel": "Ensjø"
+        "delbydel": "Ensj\u00f8",
+        "elevation_m": 92.9
       },
       {
         "id": "5113",
@@ -3158,8 +3450,9 @@
         "trips_as_origin": 7770,
         "trips_as_dest": 7805,
         "total_trips": 15575,
-        "bydel": "Grünerløkka",
-        "delbydel": "Grünerløkka øst"
+        "bydel": "Gr\u00fcnerl\u00f8kka",
+        "delbydel": "Gr\u00fcnerl\u00f8kka \u00f8st",
+        "elevation_m": 11.6
       },
       {
         "id": "5217",
@@ -3170,7 +3463,8 @@
         "trips_as_dest": 7992,
         "total_trips": 14625,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 13.6
       },
       {
         "id": "5220",
@@ -3181,7 +3475,8 @@
         "trips_as_dest": 724,
         "total_trips": 1819,
         "bydel": "Nordre Aker",
-        "delbydel": "Nordberg"
+        "delbydel": "Nordberg",
+        "elevation_m": 98.6
       },
       {
         "id": "5424",
@@ -3192,7 +3487,8 @@
         "trips_as_dest": 747,
         "total_trips": 1583,
         "bydel": "Vestre Aker",
-        "delbydel": "Hovseter"
+        "delbydel": "Hovseter",
+        "elevation_m": 100.1
       },
       {
         "id": "5431",
@@ -3203,18 +3499,20 @@
         "trips_as_dest": 2025,
         "total_trips": 4508,
         "bydel": "St. Hanshaugen",
-        "delbydel": "Lindern"
+        "delbydel": "Lindern",
+        "elevation_m": 57.6
       },
       {
         "id": "6026",
-        "name": "Østbanehallen",
+        "name": "\u00d8stbanehallen",
         "lat": 59.910499184043516,
         "lon": 10.750505532434318,
         "trips_as_origin": 52,
         "trips_as_dest": 55,
         "total_trips": 107,
         "bydel": "Sentrum",
-        "delbydel": "Sentrum"
+        "delbydel": "Sentrum",
+        "elevation_m": 2.5
       }
     ]
   }

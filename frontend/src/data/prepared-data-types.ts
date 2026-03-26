@@ -75,6 +75,8 @@ export interface IsochroneStation {
   bydel?: string;
   /** Delbydel (sub-district) from stations_prepare region assignment */
   delbydel?: string;
+  /** Elevation in meters above sea level from DOM1 height data */
+  elevation_m?: number;
 }
 
 export interface IsochronesData {

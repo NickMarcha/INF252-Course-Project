@@ -15,3 +15,4 @@ dependencies:
   - pyarrow>=14.0
   - shapely
   - pyproj
+  - rasterio>=1.3
