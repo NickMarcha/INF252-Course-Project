@@ -1,0 +1,495 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<style>
+  /* ── Layout ──────────────────────────────────────────────────────────── */
+  #story-loading {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: #64748b;
+    background: white;
+    z-index: 100;
+  }
+  :global(.dark) #story-loading,
+  @media (prefers-color-scheme: dark) {
+    #story-loading {
+      background: #0f172a;
+      color: #94a3b8;
+    }
+  }
+
+  #story {
+    width: 100%;
+  }
+
+  .story-chapter {
+    position: relative;
+    min-height: 300vh;
+  }
+
+  .sticky-graphic {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #f8fafc;
+  }
+  @media (prefers-color-scheme: dark) {
+    .sticky-graphic { background: #0f172a; }
+  }
+
+  .sticky-graphic svg {
+    width: 100%;
+    height: 90vh;
+  }
+
+  /* D3 axis text picks up current text color */
+  .sticky-graphic text {
+    fill: currentColor;
+    font-family: inherit;
+  }
+  .sticky-graphic .domain,
+  .sticky-graphic .tick line {
+    stroke: currentColor;
+  }
+
+  /* ── Scroll steps ────────────────────────────────────────────────────── */
+  .scroll-steps {
+    position: absolute;
+    top: 0;
+    right: 2rem;
+    width: 32%;
+    pointer-events: none;
+  }
+
+  .step {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    pointer-events: auto;
+  }
+
+  .step-card {
+    background: rgba(255, 255, 255, 0.93);
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: #1e293b;
+    border-left: 3px solid transparent;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  @media (prefers-color-scheme: dark) {
+    .step-card {
+      background: rgba(15, 23, 42, 0.93);
+      color: #e2e8f0;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  .step.is-active .step-card {
+    border-left-color: #3b82f6;
+  }
+
+  .step-card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0 0 0.4rem;
+    color: #0f172a;
+  }
+  @media (prefers-color-scheme: dark) {
+    .step-card h3 { color: #f1f5f9; }
+  }
+
+  .step-card .stat {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #3b82f6;
+    display: block;
+    margin: 0.25rem 0;
+  }
+
+  /* ── Chapter titles ──────────────────────────────────────────────────── */
+  .chapter-title {
+    position: absolute;
+    top: 1.5rem;
+    left: 2rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0f172a;
+    z-index: 10;
+    pointer-events: none;
+  }
+  @media (prefers-color-scheme: dark) {
+    .chapter-title { color: #f1f5f9; }
+  }
+
+  /* ── Tooltips ────────────────────────────────────────────────────────── */
+  #map-tooltip,
+  #stations-tooltip {
+    position: fixed;
+    display: none;
+    background: rgba(15, 23, 42, 0.95);
+    color: #f1f5f9;
+    font-size: 0.8rem;
+    padding: 0.6rem 0.85rem;
+    border-radius: 0.5rem;
+    pointer-events: none;
+    z-index: 200;
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    border: 1px solid rgba(148,163,184,0.2);
+    line-height: 1.5;
+  }
+
+  #map-tooltip { white-space: nowrap; }
+
+  #stations-tooltip :global(strong) { display: block; font-size: 0.85rem; margin-bottom: 0.2rem; }
+  #stations-tooltip :global(.tt-district) {
+    display: block;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-bottom: 0.35rem;
+  }
+  #stations-tooltip :global(.tt-row) {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: space-between;
+    font-size: 0.78rem;
+  }
+  #stations-tooltip :global(.tt-label) { color: #94a3b8; }
+  #stations-tooltip :global(.tt-value) { font-weight: 600; color: #e2e8f0; }
+
+  /* ── Intro chapter ───────────────────────────────────────────────────── */
+  #chapter-intro .sticky-graphic {
+    background: #f0f6ff;
+  }
+  @media (prefers-color-scheme: dark) {
+    #chapter-intro .sticky-graphic { background: #0c1629; }
+  }
+
+  /* ── Responsive ──────────────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .story-chapter { min-height: unset; }
+    .sticky-graphic { position: relative; height: 60vw; min-height: 280px; }
+    .scroll-steps {
+      position: static;
+      width: 100%;
+      padding: 0 1rem 2rem;
+    }
+    .step { min-height: unset; padding: 0.5rem 0; }
+    .chapter-title { font-size: 1rem; }
+  }
+</style>
+
+<Layout>
+  <div id="story-loading">Loading data…</div>
+  <div id="map-tooltip"></div>
+  <div id="stations-tooltip"></div>
+
+  <main id="story" class="text-slate-800 dark:text-slate-200">
+
+    <!-- ── Chapter 1: Introduction / Station Map ── -->
+    <section class="story-chapter" id="chapter-intro">
+      <div class="sticky-graphic">
+        <span class="chapter-title">01 — Oslo's Bike Network</span>
+        <svg id="viz-map"></svg>
+      </div>
+      <div class="scroll-steps">
+
+        <div class="step" data-chapter="intro" data-step="0">
+          <div class="step-card">
+            <h3>Oslo Bysykkel</h3>
+            <p>
+              Oslo's city bike scheme launched in April 2019 with
+              <strong>292 stations</strong> spread across the inner city.
+              Each dot on the map represents one docking station.
+            </p>
+            <p style="margin-top:0.5rem; font-size:0.8rem; color:#64748b;">
+              Background shows Oslo's sub-districts (delbydeler).
+            </p>
+          </div>
+        </div>
+
+        <div class="step" data-chapter="intro" data-step="1">
+          <div class="step-card">
+            <h3>Station popularity</h3>
+            <p>
+              Not all stations are equally busy. Circle size now reflects
+              total trip volume — the largest circles mark the true hubs
+              of Oslo's bike network.
+            </p>
+            <p style="margin-top:0.5rem;">
+              Hover over any station to see its name and total trip count.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Chapter 2: Temporal / Yearly totals ── -->
+    <section class="story-chapter" id="chapter-temporal">
+      <div class="sticky-graphic">
+        <span class="chapter-title">02 — Ridership Over the Years</span>
+        <svg id="viz-yearly"></svg>
+      </div>
+      <div class="scroll-steps">
+
+        <div class="step" data-chapter="temporal" data-step="0">
+          <div class="step-card">
+            <h3>2019 — Launch year</h3>
+            <span class="stat">~2.2M trips</span>
+            <p>
+              Oslo Bysykkel opened to great enthusiasm in April 2019.
+              Over two million trips were recorded in the scheme's
+              first season — a high-water mark that has not been matched since.
+            </p>
+          </div>
+        </div>
+
+        <div class="step" data-chapter="temporal" data-step="1">
+          <div class="step-card">
+            <h3>2020 — Pandemic year</h3>
+            <span class="stat">~1.7M trips</span>
+            <p>
+              COVID-19 lockdowns emptied city streets and ridership fell sharply.
+              The decline from 2019 was the steepest single-year drop in the network's history.
+            </p>
+          </div>
+        </div>
+
+        <div class="step" data-chapter="temporal" data-step="2">
+          <div class="step-card">
+            <h3>2021 — Continued decline</h3>
+            <span class="stat">~1.4M trips</span>
+            <p>
+              Despite restrictions easing, ridership kept falling.
+              Usage did not bounce back — it appears 2019 attracted
+              a wave of curious first-time users who did not return.
+            </p>
+          </div>
+        </div>
+
+        <div class="step" data-chapter="temporal" data-step="3">
+          <div class="step-card">
+            <h3>2022 — Still sliding</h3>
+            <span class="stat">~1.3M trips</span>
+            <p>
+              A further drop despite a return to normalcy in Oslo.
+              The data suggest a structural shift, not a temporary disruption.
+            </p>
+          </div>
+        </div>
+
+        <div class="step" data-chapter="temporal" data-step="4">
+          <div class="step-card">
+            <h3>2023 — Levelling off</h3>
+            <span class="stat">~1.1M trips</span>
+            <p>
+              Ridership stabilises around one million trips per year —
+              roughly half the 2019 peak. This may represent the network's
+              steady-state loyal user base.
+            </p>
+          </div>
+        </div>
+
+        <div class="step" data-chapter="temporal" data-step="5">
+          <div class="step-card">
+            <h3>2024 — Plateau</h3>
+            <span class="stat">~1.1M trips</span>
+            <p>
+              For the second year running, totals hold near 1.1 million.
+              The decline appears to have bottomed out.
+            </p>
+          </div>
+        </div>
+
+        <div class="step" data-chapter="temporal" data-step="6">
+          <div class="step-card">
+            <h3>2025 — Partial year</h3>
+            <p>
+              Data through spring 2025 tracks the same seasonal pattern
+              as recent years, with no sign of a recovery to 2019 levels.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Chapter 3: Seasonal patterns ── -->
+    <section class="story-chapter" id="chapter-seasonal">
+      <div class="sticky-graphic">
+        <span class="chapter-title">03 — The Rhythm of the Seasons</span>
+        <svg id="viz-seasonal"></svg>
+      </div>
+      <div class="scroll-steps">
+
+        <div class="step" data-chapter="seasonal" data-step="0">
+          <div class="step-card">
+            <h3>A summer sport</h3>
+            <p>
+              Oslo's bike season is strikingly short. In 2019, nearly all
+              trips happened between <strong>May and October</strong>.
+              The January–March period is almost silent.
+            </p>
+          </div>
+        </div>
+
+        <div class="step" data-chapter="seasonal" data-step="1">
+          <div class="step-card">
+            <h3>2020 — Lower peaks</h3>
+            <p>
+              The pandemic year's summer peak dropped to ~298k trips in June —
+              well below 2019's ~399k August peak.
+              The seasonal shape remains, but everything shifts down.
+            </p>
+          </div>
+        </div>
+
+        <div class="step" data-chapter="seasonal" data-step="2">
+          <div class="step-card">
+            <h3>2021–2022 — Peaks keep falling</h3>
+            <p>
+              Even as lockdowns ended, summer peaks continued to shrink —
+              217k in 2021, then 207k in 2022.
+              The network never recovered its 2019 heights.
+            </p>
+          </div>
+        </div>
+
+        <div class="step" data-chapter="seasonal" data-step="3">
+          <div class="step-card">
+            <h3>All years compared</h3>
+            <p>
+              The <strong>shape</strong> of the curve is consistent across all years —
+              a sharp spring ramp, a broad summer plateau, a rapid autumn decline.
+              But each successive year's curve sits lower than the last.
+            </p>
+          </div>
+        </div>
+
+        <div class="step" data-chapter="seasonal" data-step="4">
+          <div class="step-card">
+            <h3>2023–2025 — Settling at a lower level</h3>
+            <p>
+              Recent years cluster near 175–192k trips at peak, roughly
+              <strong>half</strong> the 2019 maximum.
+              The seasonal rhythm is unchanged — the audience has shrunk.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Chapter 4: Top stations ── -->
+    <section class="story-chapter" id="chapter-stations">
+      <div class="sticky-graphic">
+        <span class="chapter-title">04 — Where People Ride</span>
+        <svg id="viz-stations"></svg>
+      </div>
+      <div class="scroll-steps">
+
+        <div class="step" data-chapter="stations" data-step="0">
+          <div class="step-card">
+            <h3>Top 5 stations</h3>
+            <p>
+              The five busiest stations are all neighbourhood hubs —
+              lively squares and parks that attract both commuters and leisure riders.
+            </p>
+          </div>
+        </div>
+
+        <div class="step" data-chapter="stations" data-step="1">
+          <div class="step-card">
+            <h3>Top 10 stations</h3>
+            <p>
+              The gap between rank 1 and rank 10 is already large.
+              A power-law distribution is emerging — a handful of locations
+              dominate total trip volume.
+            </p>
+          </div>
+        </div>
+
+        <div class="step" data-chapter="stations" data-step="2">
+          <div class="step-card">
+            <h3>Top 20 stations</h3>
+            <p>
+              Even at 20 stations, the long tail of the distribution is clear.
+              The top 20 stations (out of 292) account for a disproportionate
+              share of all trips made in the system.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Chapter 5: Trip duration ── -->
+    <section class="story-chapter" id="chapter-duration">
+      <div class="sticky-graphic">
+        <span class="chapter-title">05 — How Long Do People Ride?</span>
+        <svg id="viz-duration"></svg>
+      </div>
+      <div class="scroll-steps">
+
+        <div class="step" data-chapter="duration" data-step="0">
+          <div class="step-card">
+            <h3>Average trip duration</h3>
+            <p>
+              Trip duration follows a clear seasonal rhythm.
+              Summer trips average <strong>~14 minutes</strong>,
+              while winter trips drop to around <strong>10 minutes</strong>.
+            </p>
+          </div>
+        </div>
+
+        <div class="step" data-chapter="duration" data-step="1">
+          <div class="step-card">
+            <h3>Volume vs. duration</h3>
+            <p>
+              Adding trip counts reveals that
+              <span style="color:#f59e0b; font-weight:600">volume</span> and
+              <span style="color:#3b82f6; font-weight:600">duration</span>
+              move <em>together</em> — both peak in summer, both drop in winter.
+            </p>
+            <p style="margin-top:0.5rem;">
+              Winter riders are the few committed commuters taking quick trips.
+              Summer brings recreational riders who stay out longer.
+            </p>
+          </div>
+        </div>
+
+        <div class="step" data-chapter="duration" data-step="2">
+          <div class="step-card">
+            <h3>Summer months highlighted</h3>
+            <p>
+              The shaded bands mark June–August each year.
+              Both trip volume and average duration are highest in this window —
+              Oslo's summer cyclists ride more often <em>and</em> for longer.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</Layout>
+
+<script>
+  import '../scripts/story/story-main';
+</script>
