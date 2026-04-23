@@ -4,3 +4,5 @@ env/
 weather-cache/
 prepared-data/routes.json
 frontend/public/prepared-data/routes.json
+# Large pipeline artifact; exceeds GitHub's 100 MiB limit — build locally for notebooks.
+prepared-data/cycling/trips_with_context.parquet
