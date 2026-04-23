@@ -1,0 +1,213 @@
+---
+import Layout from '../layouts/Layout.astro';
+import 'leaflet/dist/leaflet.css';
+---
+
+<Layout>
+	<div class="p-4 md:p-6 max-w-[1600px] mx-auto space-y-4 text-slate-900 dark:text-slate-100">
+		<h1 class="text-2xl font-bold">Regional trip flow (Oslo Bysykkel)</h1>
+		<p class="text-slate-600 dark:text-slate-400 text-sm max-w-3xl">
+			Pick a <strong>day</strong> and an inclusive <strong>first / last hour</strong> (if last is earlier than first, the range wraps over midnight).
+			Flows are drawn <strong>straight</strong> between area centers (district or sub-district). Moving dots share one <strong>trips-per-dot</strong> scale on every link (default Auto) so flows are comparable—see controls and the note under the map. Dot speed reflects how busy the link is and how long the hop is.
+			All trip counts use <em>trip start</em> time within your chosen hours.
+		</p>
+
+		<div
+			class="flex flex-col xl:flex-row gap-4 xl:items-start"
+		>
+			<div class="flex-1 min-w-0 space-y-3">
+				<div
+					class="flex flex-wrap gap-4 items-end p-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50"
+				>
+					<div class="flex flex-col gap-1">
+						<label for="rf-date" class="text-sm font-medium text-slate-700 dark:text-slate-300">Day</label>
+						<input
+							id="rf-date"
+							type="date"
+							class="px-3 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+						/>
+					</div>
+					<div class="flex flex-wrap gap-4 items-end min-w-0">
+						<div class="flex flex-col gap-1">
+							<label for="rf-hour-start" class="text-sm font-medium text-slate-700 dark:text-slate-300">
+								First hour
+							</label>
+							<input
+								id="rf-hour-start"
+								type="number"
+								min="0"
+								max="23"
+								step="1"
+								value="7"
+								class="w-[4.5rem] px-2 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+							/>
+						</div>
+						<div class="flex flex-col gap-1">
+							<label for="rf-hour-end" class="text-sm font-medium text-slate-700 dark:text-slate-300">
+								Last hour
+							</label>
+							<input
+								id="rf-hour-end"
+								type="number"
+								min="0"
+								max="23"
+								step="1"
+								value="9"
+								class="w-[4.5rem] px-2 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+							/>
+						</div>
+						<p class="text-sm text-slate-600 dark:text-slate-400 flex-1 min-w-[12rem]">
+							<span class="font-medium text-slate-800 dark:text-slate-200">Span:</span>
+							<span id="rf-hour-label" class="ml-1 font-mono">7:00–9:59</span>
+						</p>
+					</div>
+					<button
+						type="button"
+						id="rf-play"
+						class="px-4 py-2 rounded-md bg-sky-600 hover:bg-sky-500 text-white text-sm font-medium"
+					>
+						Play day
+					</button>
+				</div>
+
+				<div
+					class="flex flex-wrap gap-6 p-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/30"
+				>
+					<fieldset class="flex gap-4">
+						<legend class="text-sm font-medium text-slate-700 dark:text-slate-300 sr-only">Region level</legend>
+						<label class="flex items-center gap-2 text-sm cursor-pointer">
+							<input id="rf-gran-bydel" type="radio" name="rf-gran" value="bydel" checked class="accent-sky-600" />
+							Bydel
+						</label>
+						<label class="flex items-center gap-2 text-sm cursor-pointer">
+							<input id="rf-gran-delbydel" type="radio" name="rf-gran" value="delbydel" class="accent-sky-600" />
+							Delbydel
+						</label>
+					</fieldset>
+					<label class="flex items-center gap-2 text-sm cursor-pointer">
+						<input id="rf-cross-only" type="checkbox" class="accent-sky-600" />
+						Cross-region only
+					</label>
+					<label class="flex items-center gap-2 text-sm cursor-pointer">
+						<input id="rf-color-regions" type="checkbox" checked class="accent-sky-600" />
+						Color bydel by net flow
+					</label>
+					<div class="flex flex-col gap-1">
+						<label for="rf-min-count" class="text-sm font-medium text-slate-700 dark:text-slate-300">
+							Min trips (edge)
+						</label>
+						<input
+							id="rf-min-count"
+							type="number"
+							min="1"
+							max="50"
+							value="1"
+							class="w-20 px-2 py-1 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800"
+						/>
+					</div>
+					<div class="flex flex-col gap-1">
+						<label for="rf-top-n" class="text-sm font-medium text-slate-700 dark:text-slate-300">
+							Max arcs on map
+						</label>
+						<input
+							id="rf-top-n"
+							type="number"
+							min="10"
+							max="200"
+							value="45"
+							class="w-20 px-2 py-1 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800"
+						/>
+					</div>
+					<div class="flex flex-col gap-1 min-w-[11rem]">
+						<label for="rf-dot-scale-mode" class="text-sm font-medium text-slate-700 dark:text-slate-300">
+							Dot scale (all links)
+						</label>
+						<select
+							id="rf-dot-scale-mode"
+							class="px-2 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm"
+						>
+							<option value="auto" selected>Auto (fair comparison)</option>
+							<option value="custom">Manual trips/dot</option>
+						</select>
+					</div>
+					<div class="flex flex-col gap-1">
+						<label for="rf-dot-trips-per" class="text-sm font-medium text-slate-700 dark:text-slate-300">
+							Trips per dot
+						</label>
+						<input
+							id="rf-dot-trips-per"
+							type="number"
+							min="1"
+							max="200"
+							step="1"
+							value="1"
+							disabled
+							class="w-[4.5rem] px-2 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 opacity-50 cursor-not-allowed"
+						/>
+					</div>
+				</div>
+
+				<div
+					id="rf-map"
+					class="w-full h-[min(52vh,520px)] rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 z-0"
+				></div>
+				<p
+					id="rf-dot-legend"
+					class="text-xs text-slate-600 dark:text-slate-400 rounded-md border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/60 px-3 py-2 max-w-3xl"
+					aria-live="polite"
+				></p>
+				<p id="rf-status" class="text-sm text-amber-700 dark:text-amber-300 min-h-[1.25rem]"></p>
+			</div>
+
+			<div class="w-full xl:w-[420px] shrink-0 space-y-4">
+				<section
+					class="rounded-lg border border-slate-200 dark:border-slate-700 p-3 bg-slate-50 dark:bg-slate-800/40"
+				>
+					<h2 class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">Chord (bydel, ≤14 nodes)</h2>
+					<div id="rf-chord" class="min-h-[120px] overflow-x-auto chart-container text-slate-700 dark:text-slate-300"></div>
+				</section>
+				<section
+					class="rounded-lg border border-slate-200 dark:border-slate-700 p-3 bg-slate-50 dark:bg-slate-800/40 overflow-x-auto"
+				>
+					<h2 class="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">Matrix (linked hover)</h2>
+					<div id="rf-matrix" class="chart-container text-slate-700 dark:text-slate-300"></div>
+				</section>
+			</div>
+		</div>
+	</div>
+</Layout>
+
+<style is:global>
+	.leaflet-tooltip.rf-flow-tooltip {
+		padding: 0.5rem 0.65rem;
+		border-radius: 0.375rem;
+		border: 1px solid rgb(51 65 85);
+		background: rgb(15 23 42);
+		color: rgb(241 245 249);
+		box-shadow: 0 4px 14px rgb(0 0 0 / 0.35);
+		font-size: 0.75rem;
+		line-height: 1.35;
+		max-width: 16rem;
+	}
+	.leaflet-tooltip.rf-flow-tooltip .rf-tip-title {
+		font-weight: 600;
+		margin-bottom: 0.35rem;
+		color: rgb(255 255 255);
+	}
+	.leaflet-tooltip.rf-flow-tooltip .rf-tip-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.25rem 0.35rem;
+		margin-top: 0.2rem;
+	}
+	.leaflet-tooltip.rf-flow-tooltip .rf-tip-muted {
+		color: rgb(148 163 184);
+		font-weight: 400;
+	}
+</style>
+
+<script>
+	import { initRegionFlowPage } from '../scripts/region-flow/region-flow-main';
+	void initRegionFlowPage();
+</script>
