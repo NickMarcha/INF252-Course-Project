@@ -242,3 +242,27 @@ export interface NewsPredictionArticle {
 export interface NewsPredictionArticlesPayload {
   articles: NewsPredictionArticle[];
 }
+
+/** Per-station averages from export_station_in_out_month.py (stations/station_in_out_latest_full_month.json) */
+export interface StationInOutDatum {
+  id: string;
+  avg_weekday_departures: number;
+  avg_weekday_destinations: number;
+  avg_weekend_departures: number;
+  avg_weekend_destinations: number;
+  /** Avg trips ending at this station in that clock hour on a typical weekday (24 values). */
+  hourly_weekday_destinations?: number[];
+  hourly_weekday_departures?: number[];
+  hourly_weekend_destinations?: number[];
+  hourly_weekend_departures?: number[];
+}
+
+export interface StationInOutLatestFullMonthData {
+  month_label: string;
+  max_period_in_data?: string;
+  n_weekdays: number;
+  n_weekend_days: number;
+  day_coverage_in_month?: number;
+  warnings?: string[];
+  stations: StationInOutDatum[];
+}
