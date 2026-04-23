@@ -13,6 +13,8 @@ export default defineConfig({
     optimizeDeps: {
       include: ['leaflet', 'leaflet-polylinedecorator'],
       exclude: ['parquet-wasm'],
+      // Pre-bundled deps often ship incomplete source maps → Firefox "No sources are declared" noise.
+      esbuildOptions: { sourcemap: false },
     },
     ssr: { external: ['leaflet', 'leaflet-polylinedecorator'] },
   },

@@ -18,6 +18,12 @@ const WARN_50 = 50 * MIB;
 const FAIL_100 = 100 * MIB;
 const TOTAL_WARN = 100 * MIB;
 
+/** Large pipeline outputs: keep in prepared-data/ for Python but do not copy to frontend/public. */
+const EXCLUDE_FROM_PUBLIC_SYNC = new Set([
+  'cycling/trips_with_context.parquet',
+  'cycling/cycling_daily_panel.parquet',
+]);
+
 function collectFiles(dir, base = dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   const files = [];
@@ -38,6 +44,9 @@ function validateSizes() {
   let hasFail = false;
 
   for (const rel of files) {
+    if (EXCLUDE_FROM_PUBLIC_SYNC.has(rel.replace(/\\/g, '/'))) {
+      continue;
+    }
     const full = path.join(sourceDir, rel);
     const stat = fs.statSync(full);
     if (!stat.isFile()) continue;
@@ -71,5 +80,24 @@ if (!fs.existsSync(sourceDir)) {
 
 validateSizes();
 fs.mkdirSync(targetDir, { recursive: true });
-fs.cpSync(sourceDir, targetDir, { recursive: true });
-console.log('Synced prepared-data to frontend/public/prepared-data');
+
+function copyFiltered(src, dest, baseRel = '') {
+  const entries = fs.readdirSync(src, { withFileTypes: true });
+  for (const e of entries) {
+    const srcPath = path.join(src, e.name);
+    const rel = path.join(baseRel, e.name).replace(/\\/g, '/');
+    if (e.isDirectory()) {
+      copyFiltered(srcPath, path.join(dest, e.name), rel);
+    } else {
+      if (EXCLUDE_FROM_PUBLIC_SYNC.has(rel)) {
+        continue;
+      }
+      const destPath = path.join(dest, e.name);
+      fs.mkdirSync(path.dirname(destPath), { recursive: true });
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+}
+
+copyFiltered(sourceDir, targetDir);
+console.log('Synced prepared-data to frontend/public/prepared-data (excluded large cycling Parquet)');

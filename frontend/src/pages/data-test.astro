@@ -65,6 +65,29 @@ import Layout from '../layouts/Layout.astro';
 			<p id="status-nulls" class="mt-2 text-sm text-slate-500 dark:text-slate-400">Loading…</p>
 		</section>
 
+		<section id="cycling-weather-section">
+			<h2 class="text-lg font-semibold mb-2 text-slate-800 dark:text-slate-200">Cycling × weather / holidays (pipeline summaries)</h2>
+			<p class="text-sm text-slate-500 dark:text-slate-400 mb-4">
+				Trip-level Ridge on log(duration); daily totals vs empirical norm. Full trip Parquet stays in Python only.
+			</p>
+			<div id="cycling-metrics" class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4"></div>
+			<div id="cycling-coefs" class="mb-6 text-sm overflow-x-auto text-slate-800 dark:text-slate-200"></div>
+			<div>
+				<h3 class="text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">Median trip duration by time-of-day bucket</h3>
+				<p class="text-xs text-slate-500 dark:text-slate-400 mb-2">
+					Fill: weekday vs weekend; stroke: public holiday (Norway). Buckets are trip start hour (Europe/Oslo): morning commute
+					07–09, midday 10–14, afternoon commute 15–18, evening 19–22, night 23–06.
+				</p>
+				<div id="chart-cycling-context" class="chart-container w-full min-h-[320px] text-slate-700 dark:text-slate-300"></div>
+			</div>
+			<div class="mt-8">
+				<h3 class="text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">Daily total cycling time vs norm</h3>
+				<p id="cycling-norm-def" class="text-xs text-slate-500 dark:text-slate-400 mb-2"></p>
+				<div id="chart-cycling-daily" class="chart-container w-full min-h-[280px] text-slate-700 dark:text-slate-300"></div>
+			</div>
+			<p id="status-cycling" class="mt-2 text-sm text-slate-500 dark:text-slate-400">Loading…</p>
+		</section>
+
 		<section>
 			<h2 class="text-lg font-semibold mb-2 text-slate-800 dark:text-slate-200">Outlier Detection (Duration)</h2>
 			<p class="text-sm text-slate-500 dark:text-slate-400 mb-2">Exported as image (raw data too large)</p>
@@ -76,7 +99,16 @@ import Layout from '../layouts/Layout.astro';
 <script>
 	import * as d3 from 'd3';
 	import { loadPreparedData } from '../data/load-prepared-data';
-	import type { EdaSummaryStats, DatasetInfo, SummaryStats } from '../data/prepared-data-types';
+	import type {
+		EdaSummaryStats,
+		DatasetInfo,
+		SummaryStats,
+		CyclingRegressionSummaries,
+		CyclingDurationByContextData,
+		CyclingDailyNormSeriesData,
+		CyclingDurationContextRow,
+		CyclingDailyNormPoint,
+	} from '../data/prepared-data-types';
 
 	const base = import.meta.env.BASE_URL ?? '/';
 
@@ -113,6 +145,8 @@ import Layout from '../layouts/Layout.astro';
 
 			// Outlier figure (static image)
 			renderOutlierFigure();
+
+			await renderCyclingSummaries();
 		} catch (err) {
 			updateStatus(`Error: ${err instanceof Error ? err.message : String(err)}`);
 		}
@@ -458,6 +492,225 @@ import Layout from '../layouts/Layout.astro';
 			.attr('height', (d) => height - y(d[1]))
 			.attr('fill', '#c62828')
 			.attr('opacity', 0.8);
+	}
+
+	const bucketOrder = [
+		'morning_commute',
+		'midday',
+		'afternoon_commute',
+		'evening',
+		'night',
+	];
+
+	/** Matches `BUCKET_DEFS` in data-pipeline/cycling_trip_table.py (trip start, Europe/Oslo). */
+	const bucketAxisLabel: Record<string, string> = {
+		morning_commute: 'Morning commute (07–09)',
+		midday: 'Midday (10–14)',
+		afternoon_commute: 'Afternoon commute (15–18)',
+		evening: 'Evening (19–22)',
+		night: 'Night (23–06)',
+	};
+
+	async function renderCyclingSummaries() {
+		const status = document.getElementById('status-cycling');
+		const metricsEl = document.getElementById('cycling-metrics');
+		const coefEl = document.getElementById('cycling-coefs');
+		const normDef = document.getElementById('cycling-norm-def');
+		if (!status || !metricsEl || !coefEl) return;
+		try {
+			const [regRes, ctxRes, dailyRes] = await Promise.all([
+				loadPreparedData<CyclingRegressionSummaries>('cycling/cycling_regression_summaries.json'),
+				loadPreparedData<CyclingDurationByContextData>('cycling/cycling_duration_by_context.json'),
+				loadPreparedData<CyclingDailyNormSeriesData>('cycling/cycling_daily_norm_series.json'),
+			]);
+			const reg = regRes.data;
+			const ctxRows = ctxRes.data?.duration_by_context ?? [];
+			const daily = dailyRes.data;
+			status.textContent = '';
+
+			metricsEl.innerHTML = '';
+			const splits: Array<{ label: string; m: { n: number; rmse_log_duration: number; r2: number } }> = [
+				{ label: 'Train (≤2022)', m: reg.metrics.train },
+				{ label: 'Val 2023', m: reg.metrics.val_2023 },
+				{ label: 'Test (≥2024)', m: reg.metrics.test_2024_plus },
+			];
+			for (const { label, m } of splits) {
+				const card = document.createElement('div');
+				card.className =
+					'rounded-lg border border-slate-200 dark:border-slate-600 p-3 bg-slate-50 dark:bg-slate-800';
+				card.innerHTML = `
+					<div class="text-xs text-slate-500 dark:text-slate-400">${label}</div>
+					<div class="text-lg font-semibold text-slate-900 dark:text-slate-100">n=${m.n.toLocaleString()}</div>
+					<div class="text-sm text-slate-700 dark:text-slate-300">RMSE (log s) ${m.rmse_log_duration.toFixed(3)}</div>
+					<div class="text-sm text-slate-700 dark:text-slate-300">R² ${m.r2.toFixed(3)}</div>
+				`;
+				metricsEl.appendChild(card);
+			}
+
+			const coefEntries = Object.entries(reg.coefficients).slice(0, 14);
+			coefEl.innerHTML = `
+				<p class="mb-2 text-slate-600 dark:text-slate-400">${reg.model} · α=${reg.ridge_alpha} · intercept(log)=${reg.intercept_log.toFixed(3)}</p>
+				<table class="min-w-full text-xs border border-slate-200 dark:border-slate-600 rounded-lg overflow-hidden bg-white dark:bg-slate-800">
+					<thead class="bg-slate-100 dark:bg-slate-700"><tr><th class="text-left p-2">Feature</th><th class="text-right p-2">Coef</th></tr></thead>
+					<tbody class="divide-y divide-slate-200 dark:divide-slate-600">
+						${coefEntries.map(([k, v]) => `<tr><td class="p-2 font-mono break-all">${k}</td><td class="p-2 text-right">${v.toFixed(4)}</td></tr>`).join('')}
+					</tbody>
+				</table>
+			`;
+
+			renderCyclingContextBars(ctxRows);
+			if (normDef && daily?.norm_definition) {
+				normDef.textContent = daily.norm_definition;
+			}
+			renderCyclingDailyLine(daily?.series ?? []);
+		} catch (e) {
+			status.textContent =
+				'Cycling summaries not loaded (run Python pipeline + npm run prepare:data). ' +
+				(e instanceof Error ? e.message : String(e));
+		}
+	}
+
+	function renderCyclingContextBars(rows: CyclingDurationContextRow[]) {
+		const container = getContainer('chart-cycling-context');
+		container.innerHTML = '';
+		if (!rows.length) return;
+
+		const ctxMargin = { ...margin, bottom: 72 };
+		const width = container.clientWidth - ctxMargin.left - ctxMargin.right;
+		const height = 300 - ctxMargin.top - ctxMargin.bottom;
+
+		const svg = d3
+			.select(container)
+			.append('svg')
+			.attr('width', width + ctxMargin.left + ctxMargin.right)
+			.attr('height', height + ctxMargin.top + ctxMargin.bottom)
+			.append('g')
+			.attr('transform', `translate(${ctxMargin.left},${ctxMargin.top})`);
+
+		const seriesKeys = [
+			{ weekend: false, holiday: false, label: 'Weekday', fill: '#1565c0' },
+			{ weekend: false, holiday: true, label: 'Weekday · holiday', fill: '#6a1b9a' },
+			{ weekend: true, holiday: false, label: 'Weekend', fill: '#2e7d32' },
+			{ weekend: true, holiday: true, label: 'Weekend · holiday', fill: '#e65100' },
+		];
+
+		const x0 = d3.scaleBand().domain(bucketOrder).range([0, width]).paddingOuter(0.1).paddingInner(0.15);
+		const x1 = d3.scaleBand().domain(seriesKeys.map((d) => d.label)).range([0, x0.bandwidth()]).padding(0.05);
+
+		const maxMed = d3.max(rows, (d) => d.median_sec / 60) ?? 30;
+		const y = d3.scaleLinear().domain([0, maxMed]).nice().range([height, 0]);
+
+		svg
+			.append('g')
+			.attr('transform', `translate(0,${height})`)
+			.call(d3.axisBottom(x0).tickFormat((d) => bucketAxisLabel[String(d)] ?? String(d)))
+			.selectAll('text')
+			.attr('transform', 'rotate(-30)')
+			.style('text-anchor', 'end')
+			.attr('dx', '-0.35em')
+			.attr('dy', '0.45em')
+			.attr('font-size', 10);
+		svg.append('g').call(d3.axisLeft(y).ticks(6).tickFormat((d) => `${d} min`));
+
+		for (const b of bucketOrder) {
+			for (const sk of seriesKeys) {
+				const row = rows.find(
+					(r) =>
+						r.time_of_day_bucket === b &&
+						r.is_weekend === sk.weekend &&
+						r.is_public_holiday === sk.holiday,
+				);
+				if (!row) continue;
+				const minutes = row.median_sec / 60;
+				const xb = x0(b);
+				if (xb === undefined) continue;
+				svg
+					.append('rect')
+					.attr('x', xb + (x1(sk.label) ?? 0))
+					.attr('y', y(minutes))
+					.attr('width', x1.bandwidth())
+					.attr('height', height - y(minutes))
+					.attr('fill', sk.fill)
+					.attr('stroke', sk.holiday ? '#fff' : 'none')
+					.attr('stroke-width', sk.holiday ? 2 : 0)
+					.attr('opacity', 0.88);
+			}
+		}
+
+		const legendY = height + 50;
+		const legend = svg.append('g').attr('transform', `translate(0,${legendY})`);
+		seriesKeys.forEach((sk, i) => {
+			const g = legend.append('g').attr('transform', `translate(${i * 148},0)`);
+			g.append('rect').attr('width', 12).attr('height', 12).attr('fill', sk.fill);
+			g.append('text').attr('x', 16).attr('y', 10).text(sk.label).attr('font-size', 10);
+		});
+	}
+
+	function renderCyclingDailyLine(series: CyclingDailyNormPoint[]) {
+		const container = getContainer('chart-cycling-daily');
+		container.innerHTML = '';
+		if (!series.length) return;
+
+		const parse = (s: string) => new Date(s + 'T12:00:00');
+		const width = container.clientWidth - margin.left - margin.right;
+		const height = 260 - margin.top - margin.bottom;
+
+		const svg = d3
+			.select(container)
+			.append('svg')
+			.attr('width', width + margin.left + margin.right)
+			.attr('height', height + margin.top + margin.bottom)
+			.append('g')
+			.attr('transform', `translate(${margin.left},${margin.top})`);
+
+		const x = d3
+			.scaleTime()
+			.domain(d3.extent(series, (d) => parse(d.date)) as [Date, Date])
+			.range([0, width]);
+
+		const y = d3
+			.scaleLinear()
+			.domain([
+				0,
+				d3.max(series, (d) => Math.max(d.total_duration_min, d.norm_total_min ?? 0)) ?? 1,
+			])
+			.nice()
+			.range([height, 0]);
+
+		const lineActual = d3
+			.line<CyclingDailyNormPoint>()
+			.x((d) => x(parse(d.date)))
+			.y((d) => y(d.total_duration_min))
+			.defined((d) => d.total_duration_min != null);
+
+		const lineNorm = d3
+			.line<CyclingDailyNormPoint>()
+			.x((d) => x(parse(d.date)))
+			.y((d) => y(d.norm_total_min ?? 0))
+			.defined((d) => d.norm_total_min != null);
+
+		svg.append('path').datum(series).attr('fill', 'none').attr('stroke', '#1565c0').attr('stroke-width', 1.5).attr('d', lineActual);
+
+		svg.append('path').datum(series).attr('fill', 'none').attr('stroke', '#78909c').attr('stroke-width', 1).attr('stroke-dasharray', '4 3').attr('d', lineNorm);
+
+		svg
+			.selectAll('circle.flag')
+			.data(series.filter((d) => d.any_holiday))
+			.join('circle')
+			.attr('class', 'flag')
+			.attr('cx', (d) => x(parse(d.date)))
+			.attr('cy', (d) => y(d.total_duration_min))
+			.attr('r', 3)
+			.attr('fill', '#e65100');
+
+		svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x).ticks(8));
+		svg.append('g').call(d3.axisLeft(y).ticks(6));
+
+		const leg = svg.append('g').attr('transform', `translate(${width - 160}, 8)`);
+		leg.append('line').attr('x1', 0).attr('x2', 24).attr('stroke', '#1565c0').attr('stroke-width', 2);
+		leg.append('text').attr('x', 28).attr('y', 4).attr('font-size', 10).text('Actual total (min)');
+		leg.append('line').attr('x1', 0).attr('x2', 24).attr('y1', 16).attr('y2', 16).attr('stroke', '#78909c').attr('stroke-dasharray', '4 3');
+		leg.append('text').attr('x', 28).attr('y', 20).attr('font-size', 10).text('Norm (min)');
 	}
 
 	function renderOutlierFigure() {

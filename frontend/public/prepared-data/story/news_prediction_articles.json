@@ -1,0 +1,156 @@
+{
+  "data": {
+    "articles": [
+      {
+        "id": "foodora-partner-2024",
+        "url": "https://www.kampanje.com/markedsforing/foodora-farger-over-3000-bysykkler-rosa-oslo-byra-star-bak-lanseringskampanje/826926",
+        "publishedDate": "2024-04-11",
+        "title": "Foodora replaces OBOS as Oslo Bysykkel partner",
+        "summary": "After six years with OBOS as commercial partner, Clear Channel (with Oslo) signed Foodora. Bikes and docks gained high-visibility pink branding, and Foodora Pro riders and couriers were offered discounted passes. OBOS had also held bike partnerships in Trondheim and Bergen; Foodora started with Oslo only.",
+        "question": "A high-visibility campaign and a new commercial partner: in the two weeks around the launch, do you expect total system trip counts to go up, go down, or stay roughly steady compared to the same calendar days the year before?",
+        "relatedUrls": [],
+        "comparison": {
+          "type": "tri_year_range",
+          "start": "2024-04-04",
+          "end": "2024-04-18"
+        },
+        "notesForReveal": [
+          "A partner swap (OBOS → Foodora, after OBOS took over from Telia) does not by itself guarantee higher ridership.",
+          "The chart compares the same calendar window across three years; any change is descriptive only, not proof the campaign caused it."
+        ]
+      },
+      {
+        "id": "winter-price-2022",
+        "url": "https://journalen.oslomet.no/nb/2022/11/oslo-bysykkel-mer-enn-dobler-prisen",
+        "publishedDate": "2022-11-08",
+        "title": "Winter pass price more than doubles",
+        "summary": "Oslo Bysykkel’s studded winter bikes saw the monthly pass rise from 29 NOK/month (2020/21, when Bymiljøetaten subsidised it) to 79 NOK/month. The operator cited withdrawn municipal support and fewer bikes on the street in winter. Studded-bike seasons are most visible in trip data from mid-autumn through winter and early spring.",
+        "question": "After this price jump for the winter offering, do you expect total trip counts in November (first full month after the news) to go up, go down, or stay steady compared to November the year before?",
+        "relatedUrls": [],
+        "comparison": {
+          "type": "tri_year_month",
+          "focalYear": 2022,
+          "month": 11
+        },
+        "notesForReveal": [
+          "November captures autumn uptake before deep winter; studded-bike volumes are smaller than summer but comparable year-on-year.",
+          "Subsidy and fleet-size changes confound a simple price story."
+        ]
+      },
+      {
+        "id": "oya-opplev-oslo-2025",
+        "url": "https://www.oyafestivalen.no/nyheter/gjor-deg-klar-forr-oya-2025?lang=nb-NO",
+        "publishedDate": "2025-08-01",
+        "title": "Øya festival: discounted Opplev Oslo pass",
+        "summary": "The Øya festival promoted cycling to the site with large bike parking and a 50% discount on Oslo Bysykkel’s “Opplev Oslo” pass using a festival code, valid Wednesday 6 August through Saturday 9 August 2025.",
+        "question": "Across twelve days in early August (including the four when Opplev Oslo was half-price for festival goers), do you expect total trips in 2025 to be higher, lower, or about the same as on the same calendar dates in 2024?",
+        "relatedUrls": [],
+        "comparison": {
+          "type": "tri_year_range",
+          "start": "2025-08-01",
+          "end": "2025-08-12",
+          "highlightRange": { "start": "2025-08-06", "end": "2025-08-09" },
+          "linesOnly": true,
+          "xAxisLineCaption": "1–12 August each year; amber band = 6–9 August (discount window, same calendar dates in each line)."
+        },
+        "notesForReveal": [
+          "Weather, school holidays, and other events also move daily counts.",
+          "The chart compares 1–12 August across three years; the amber band marks Aug 6–9 (the pass offer window) on each line."
+        ]
+      },
+      {
+        "id": "replacement-fee-debate",
+        "disabled": true,
+        "url": "https://www.nab.no/oslo-bysykkel-kjorer-en-hard-linje-med-7500-kroner-i-bot/o/5-143-209987",
+        "publishedDate": "2019-06-28",
+        "title": "Debate: 7500 NOK if a bike is missing 14+ days",
+        "summary": "Commentary described Oslo Bysykkel’s terms: if a bike is gone more than 14 days, users owe 7500 NOK replacement regardless of circumstances. The piece questioned fairness and transparency and drew wide discussion.",
+        "question": "The news story is from June 2019; this chart shows April 2019—the first full calendar month in our processed daily feed. Day by day, do trip counts look higher, lower, or about even across that month?",
+        "relatedUrls": [
+          "https://www.sageneavis.no/et-vennlig-klapp-pa-hodet-stillhet-og-innkreving-av-bot/o/5-144-41564",
+          "https://www.sageneavis.no/det-star-ikke-pa-om-oslo-bysykkel-onsker-a-tilby-forsikring-eller-ikke-til-sine-kunder/o/5-144-41654"
+        ],
+        "comparison": {
+          "type": "single_year_month_line",
+          "year": 2019,
+          "month": 4
+        },
+        "notesForReveal": []
+      },
+      {
+        "id": "catrin-alhaug-2021",
+        "url": "https://www.aftenposten.no/oslo/i/Ga9kM4/catrin-alhaug-mistet-benet-i-sykkelulykke-naa-er-lastebilsjaafoeren-doemt-til-fengsel",
+        "publishedDate": "2021-04-29",
+        "title": "Serious injury involving a city bike (headline case)",
+        "summary": "Aftenposten reported a truck collision in Grønlandsleiret in which a woman who had just taken out a city bike suffered severe injuries; coverage included a later conviction of the driver.",
+        "question": "One shocking incident rarely moves city-wide totals. Still, for the two weeks after the article date, compared to the same calendar days the year before, do you expect aggregate trip counts to go up, go down, or stay steady?",
+        "relatedUrls": [],
+        "comparison": {
+          "type": "tri_year_range",
+          "start": "2021-04-29",
+          "end": "2021-05-12"
+        },
+        "notesForReveal": [
+          "Single incidents should not be read as structural breaks in the time series.",
+          "Late April is shoulder season; weather year-to-year dominates small windows."
+        ]
+      },
+      {
+        "id": "ridership-halved-narrative",
+        "url": "https://www.aftenposten.no/oslo/i/y4zrLr/paa-tre-aar-er-bruken-av-bysyklene-mer-enn-halvert",
+        "publishedDate": "2021-08-27",
+        "title": "Press: ridership down sharply vs peak years",
+        "summary": "Aftenposten reported that by August 2021 monthly trip volumes were far below August 2018 levels (article is paywalled; framing follows the public headline and dek). Our prepared trip data align with a long decline after the 2019 launch peak.",
+        "question": "Looking only at August in our data: from 2019 to 2021, is the pattern in total trips up, down, or roughly steady?",
+        "relatedUrls": [],
+        "comparison": {
+          "type": "explicit_month_three_bars",
+          "month": 8,
+          "years": [2019, 2020, 2021],
+          "truthCompare": "last_vs_first"
+        },
+        "notesForReveal": [
+          "This compares August totals only; seasonal shape differs from annual totals.",
+          "El scooters and habit shifts are outside what this chart shows."
+        ]
+      },
+      {
+        "id": "covid-mar-dec-2020",
+        "url": "",
+        "publishedDate": "2020-03-12",
+        "title": "COVID-19: March–December 2020 vs 2019",
+        "summary": "Norway entered pandemic restrictions in March 2020. For Oslo Bysykkel, lockdowns and behaviour change coincided with fewer trips than in the same months before.",
+        "question": "For March through December, do you expect total trips in 2020 to be higher than, lower than, or about the same as in the same months of 2019?",
+        "relatedUrls": [],
+        "comparison": {
+          "type": "two_year_month_span",
+          "left": { "year": 2019, "startMonth": 3, "endMonth": 12 },
+          "right": { "year": 2020, "startMonth": 3, "endMonth": 12 },
+          "truthCompare": "right_vs_left"
+        },
+        "notesForReveal": [
+          "This is a blunt before/after block comparison, not a causal model of COVID alone.",
+          "2019 was also the scheme’s launch year, which lifts 2019 counts in spring."
+        ]
+      },
+      {
+        "id": "covid-summer-2020",
+        "url": "",
+        "publishedDate": "2020-06-01",
+        "title": "COVID-19: summer 2020 vs summer 2019",
+        "summary": "Summer usually brings the highest monthly trip volumes. In 2020, restrictions eased in phases but tourism and office routines were still unusual.",
+        "question": "For June–August inclusive, do you expect total trips in 2020 to be higher than, lower than, or about the same as in the same months of 2019?",
+        "relatedUrls": [],
+        "comparison": {
+          "type": "two_year_month_span",
+          "left": { "year": 2019, "startMonth": 6, "endMonth": 8 },
+          "right": { "year": 2020, "startMonth": 6, "endMonth": 8 },
+          "truthCompare": "right_vs_left"
+        },
+        "notesForReveal": [
+          "June–August 2019 included the post-launch boom; 2020 summer was still below that peak in our data."
+        ]
+      }
+    ]
+  }
+}

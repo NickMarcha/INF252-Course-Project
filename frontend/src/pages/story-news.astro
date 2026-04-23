@@ -1,0 +1,407 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<!--
+  Client-injected article markup (story-news-main.ts) never gets Astro’s data-astro-* scope attributes.
+  Scoped CSS therefore did not match those nodes — buttons/cards inherited body text color and looked invisible.
+  All rules below are global but limited to #story-news / #story-news-loading.
+-->
+<style is:global>
+  #story-news-loading {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: #64748b;
+    background: white;
+    z-index: 100;
+  }
+  html.dark #story-news-loading {
+    background: #0f172a;
+    color: #94a3b8;
+  }
+  @media (prefers-color-scheme: dark) {
+    #story-news-loading {
+      background: #0f172a;
+      color: #94a3b8;
+    }
+  }
+
+  #story-news {
+    width: 100%;
+    color: #0f172a;
+  }
+  html.dark #story-news {
+    color: #e2e8f0;
+  }
+  @media (prefers-color-scheme: dark) {
+    #story-news {
+      color: #e2e8f0;
+    }
+  }
+
+  #story-news .story-chapter {
+    position: relative;
+    min-height: 300vh;
+  }
+
+  #story-news .sticky-graphic {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #f8fafc;
+    color: #0f172a;
+  }
+  html.dark #story-news .sticky-graphic {
+    background: #0f172a;
+    color: #e2e8f0;
+  }
+  @media (prefers-color-scheme: dark) {
+    #story-news .sticky-graphic {
+      background: #0f172a;
+      color: #e2e8f0;
+    }
+  }
+
+  #story-news .sticky-graphic svg {
+    width: 100%;
+    max-width: 80%;
+    align-self: self-start;
+    height: auto;
+    min-height: min(55vh, 360px);
+    max-height: min(88vh, 980px);
+  }
+
+  #story-news .sticky-graphic text {
+    fill: currentColor;
+    font-family: inherit;
+  }
+  #story-news .sticky-graphic .domain,
+  #story-news .sticky-graphic .tick line {
+    stroke: currentColor;
+  }
+
+  #story-news .scroll-steps {
+    position: absolute;
+    top: 0;
+    right: 2rem;
+    width: 34%;
+    max-width: 28rem;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  #story-news .step {
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    pointer-events: auto;
+  }
+
+  #story-news .step-card {
+    background: rgba(255, 255, 255, 0.97);
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: #0f172a;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    border-left: 3px solid transparent;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  html.dark #story-news .step-card {
+    background: rgba(30, 41, 59, 0.98);
+    color: #e2e8f0;
+    border-color: rgba(71, 85, 105, 0.6);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+  }
+  @media (prefers-color-scheme: dark) {
+    #story-news .step-card {
+      background: rgba(30, 41, 59, 0.98);
+      color: #e2e8f0;
+      border-color: rgba(71, 85, 105, 0.6);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+    }
+  }
+
+  #story-news .step.is-active .step-card {
+    border-left-color: #3b82f6;
+  }
+
+  #story-news .step-card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0 0 0.4rem;
+    color: #0f172a;
+  }
+  html.dark #story-news .step-card h3 {
+    color: #f1f5f9;
+  }
+  @media (prefers-color-scheme: dark) {
+    #story-news .step-card h3 {
+      color: #f1f5f9;
+    }
+  }
+
+  #story-news .step-card p {
+    color: inherit;
+    margin: 0.35rem 0 0;
+  }
+
+  #story-news .step-card .meta {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+  }
+  html.dark #story-news .step-card .meta {
+    color: #94a3b8;
+  }
+  @media (prefers-color-scheme: dark) {
+    #story-news .step-card .meta {
+      color: #94a3b8;
+    }
+  }
+
+  #story-news .step-card a.source-link {
+    color: #2563eb;
+    word-break: break-all;
+  }
+  html.dark #story-news .step-card a.source-link {
+    color: #60a5fa;
+  }
+  @media (prefers-color-scheme: dark) {
+    #story-news .step-card a.source-link {
+      color: #60a5fa;
+    }
+  }
+
+  #story-news .pred-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  #story-news .pred-buttons button {
+    cursor: pointer;
+    text-align: left;
+    padding: 0.6rem 0.85rem;
+    border-radius: 0.5rem;
+    border: 1px solid #94a3b8;
+    background: #f1f5f9;
+    color: #0f172a;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  #story-news .pred-buttons button:hover {
+    border-color: #3b82f6;
+    background: #e0f2fe;
+    color: #0c4a6e;
+  }
+  html.dark #story-news .pred-buttons button {
+    background: #334155;
+    color: #f8fafc;
+    border-color: #64748b;
+  }
+  html.dark #story-news .pred-buttons button:hover {
+    background: #475569;
+    border-color: #60a5fa;
+    color: #fff;
+  }
+  @media (prefers-color-scheme: dark) {
+    #story-news .pred-buttons button {
+      background: #334155;
+      color: #f8fafc;
+      border-color: #64748b;
+    }
+    #story-news .pred-buttons button:hover {
+      background: #475569;
+      border-color: #60a5fa;
+      color: #fff;
+    }
+  }
+
+  #story-news .pred-buttons button.is-selected {
+    border-color: #2563eb;
+    background: #dbeafe;
+    color: #1e3a8a;
+  }
+  html.dark #story-news .pred-buttons button.is-selected {
+    background: #1e40af;
+    border-color: #60a5fa;
+    color: #eff6ff;
+  }
+  @media (prefers-color-scheme: dark) {
+    #story-news .pred-buttons button.is-selected {
+      background: #1e40af;
+      border-color: #60a5fa;
+      color: #eff6ff;
+    }
+  }
+
+  #story-news .chapter-title {
+    position: absolute;
+    top: 1.5rem;
+    left: 2rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0f172a;
+    z-index: 10;
+    pointer-events: none;
+    max-width: 55%;
+  }
+  html.dark #story-news .chapter-title {
+    color: #f1f5f9;
+  }
+  @media (prefers-color-scheme: dark) {
+    #story-news .chapter-title {
+      color: #f1f5f9;
+    }
+  }
+
+  #story-news .intro-blurb {
+    max-width: 36rem;
+    padding: 0 1.5rem;
+    text-align: center;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #475569;
+  }
+  html.dark #story-news .intro-blurb {
+    color: #94a3b8;
+  }
+  @media (prefers-color-scheme: dark) {
+    #story-news .intro-blurb {
+      color: #94a3b8;
+    }
+  }
+
+  #story-news .intro-blurb strong {
+    color: #0f172a;
+  }
+  html.dark #story-news .intro-blurb strong {
+    color: #e2e8f0;
+  }
+  @media (prefers-color-scheme: dark) {
+    #story-news .intro-blurb strong {
+      color: #e2e8f0;
+    }
+  }
+
+  #story-news .reveal-data-truth.reveal-truth {
+    font-weight: 700;
+    color: #2563eb;
+    margin: 0.35rem 0;
+  }
+  html.dark #story-news .reveal-data-truth.reveal-truth {
+    color: #60a5fa;
+  }
+  @media (prefers-color-scheme: dark) {
+    #story-news .reveal-data-truth.reveal-truth {
+      color: #60a5fa;
+    }
+  }
+
+  #story-news .reveal-user-guess,
+  #story-news .reveal-match {
+    font-size: 0.88rem;
+    margin-top: 0.35rem;
+    color: inherit;
+  }
+
+  #story-news .reveal-notes,
+  #story-news .reveal-notes ul {
+    margin: 0.5rem 0 0;
+    padding-left: 1.1rem;
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+  html.dark #story-news .reveal-notes,
+  html.dark #story-news .reveal-notes ul {
+    color: #94a3b8;
+  }
+  @media (prefers-color-scheme: dark) {
+    #story-news .reveal-notes,
+    #story-news .reveal-notes ul {
+      color: #94a3b8;
+    }
+  }
+
+  @media (max-width: 768px) {
+    #story-news .story-chapter {
+      min-height: unset;
+    }
+    #story-news .sticky-graphic {
+      position: relative;
+      height: auto;
+      min-height: 220px;
+      padding: 1rem 0;
+    }
+    #story-news .scroll-steps {
+      position: static;
+      width: 100%;
+      max-width: none;
+      padding: 0 1rem 2rem;
+    }
+    #story-news .step {
+      min-height: unset;
+      padding: 0.5rem 0;
+    }
+    #story-news .chapter-title {
+      position: static;
+      max-width: none;
+      margin-bottom: 0.5rem;
+    }
+  }
+</style>
+
+<Layout>
+  <div id="story-news-loading">Loading…</div>
+  <main id="story-news">
+    <section class="story-chapter" id="chapter-preface">
+      <div class="sticky-graphic">
+        <span class="chapter-title">News vs trip data</span>
+        <p class="intro-blurb">
+          Each card links to a real news item. Pick whether you think Oslo Bysykkel trip counts in our
+          dataset went <strong>up</strong>, <strong>down</strong>, or stayed <strong>steady</strong> for the
+          comparison we define — then see descriptive totals (not causal proof).
+        </p>
+      </div>
+      <div class="scroll-steps">
+        <div class="step is-active" data-chapter="preface" data-step="0">
+          <div class="step-card">
+            <h3>How to read the reveal</h3>
+            <p>
+              Charts sum daily trips from the open trip feed for the windows in each scenario. Where we show
+              three years, the middle bar is usually the focal year; the “answer” compares the focal window to
+              the year before unless the card says otherwise.
+            </p>
+          </div>
+        </div>
+        <div class="step" data-chapter="preface" data-step="1">
+          <div class="step-card">
+            <h3>Scroll on</h3>
+            <p>The next sections each cover one article: context, your prediction, then the numbers.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  import '../scripts/story/story-news-main';
+</script>

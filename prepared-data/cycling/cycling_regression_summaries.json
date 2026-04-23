@@ -1,0 +1,66 @@
+{
+  "last_execution": {
+    "timestamp": "2026-04-21T05:33:16.952642",
+    "os": "Windows-11-10.0.26200-SP0",
+    "cpu_count": 32,
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "ram_gb": 31.1,
+    "ram_used_pct": 79.1,
+    "duration_seconds": 14
+  },
+  "data": {
+    "model": "Ridge on log(duration_sec)",
+    "ridge_alpha": 10.0,
+    "duration_quantile_cap": 0.995,
+    "min_duration_sec": 30,
+    "train_years": "year <= 2022",
+    "val_year": 2023,
+    "test_years": "year >= 2024",
+    "route_target_encoding": "mean log(duration) per route_key on train only; unseen -> train global mean",
+    "metrics": {
+      "train": {
+        "n": 6615760,
+        "rmse_log_duration": 0.49894878157685996,
+        "r2": 0.5202978107470068
+      },
+      "val_2023": {
+        "n": 1117708,
+        "rmse_log_duration": 0.5123660759587803,
+        "r2": 0.49580192802102496
+      },
+      "test_2024_plus": {
+        "n": 2250410,
+        "rmse_log_duration": 0.49979270336882103,
+        "r2": 0.4903307826131753
+      }
+    },
+    "intercept_log": 6.410165649321447,
+    "coefficients": {
+      "num__route_te_log_duration": 0.4924045707298706,
+      "cat__time_of_day_bucket_morning_commute": -0.13711047654070826,
+      "cat__time_of_day_bucket_night": -0.10443616405394039,
+      "cat__month_10": -0.10181319289911749,
+      "cat__month_9": -0.1002775191318295,
+      "cat__month_11": -0.08609630940412011,
+      "cat__month_6": -0.07323438479412334,
+      "cat__month_8": -0.06911897779083057,
+      "cat__month_5": -0.06820689785012944,
+      "cat__month_7": -0.06785742974681212,
+      "cat__year_2022": -0.03179042295657477,
+      "num__is_weekend": 0.030466847555352127,
+      "cat__month_4": -0.030084373035685962,
+      "num__temperature": 0.029218350960507573,
+      "cat__month_12": -0.026038790042876937,
+      "cat__year_2021": -0.021094003963384525,
+      "cat__time_of_day_bucket_midday": 0.02061416660351989,
+      "cat__month_2": -0.0184759986591981,
+      "num__haversine_km": 0.017948399118773647,
+      "cat__year_2020": -0.01425257623758694,
+      "num__is_public_holiday": 0.012681275143888896,
+      "num__relative_humidity": -0.007782617228496177,
+      "cat__month_3": 0.006722001106710844,
+      "num__wind_speed": -0.00608869730161482,
+      "cat__time_of_day_bucket_evening": -0.0008978036371721752
+    }
+  }
+}
