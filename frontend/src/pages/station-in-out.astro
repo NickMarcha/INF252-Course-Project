@@ -1,0 +1,500 @@
+---
+import Layout from '../layouts/Layout.astro';
+import 'leaflet/dist/leaflet.css';
+---
+
+<style>
+	.chart-container text {
+		fill: currentColor;
+	}
+	.chart-container .domain,
+	.chart-container .tick line {
+		stroke: currentColor;
+	}
+	.station-row-rect {
+		cursor: pointer;
+	}
+</style>
+
+<Layout>
+	<div class="p-6 max-w-7xl mx-auto space-y-4">
+		<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">
+			Departures and destinations by station (Oslo Bysykkel)
+		</h1>
+		<p class="text-slate-600 dark:text-slate-400 text-sm max-w-3xl">
+			Average trips <strong>starting</strong> at a station (departures) and <strong>ending</strong> at a station (destinations) per calendar day,
+			split by <strong>weekdays</strong> (Mon–Fri) and <strong>weekends</strong> (Sat–Sun). The time window is the latest <em>complete</em> month in the
+			pipeline data (see subtitle). Inspired by classic transit “entries / exits” views, without turnstiles.
+		</p>
+		<p id="subtitle" class="text-sm font-medium text-slate-700 dark:text-slate-300"></p>
+		<p id="warning-banner" class="hidden text-sm text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-md px-3 py-2"></p>
+
+		<div class="flex flex-wrap gap-6 items-center text-sm">
+			<div class="flex flex-wrap items-center gap-2">
+				<span class="text-slate-600 dark:text-slate-400 font-medium">Show:</span>
+				<select
+					id="metric-select"
+					class="rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-2 py-1 text-sm"
+				>
+					<option value="in">Avg destinations (in)</option>
+					<option value="out" selected>Avg departures (out)</option>
+					<option value="net">Avg net (out − in)</option>
+				</select>
+			</div>
+			<label class="text-slate-600 dark:text-slate-400 flex items-center gap-2">
+				<input type="checkbox" id="show-all" class="rounded border-slate-300 dark:border-slate-600" />
+				Show all stations (default: top 35 by current metric)
+			</label>
+		</div>
+
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+			<div class="space-y-2">
+				<h2 class="text-sm font-semibold text-slate-700 dark:text-slate-300">Map</h2>
+				<p class="text-xs text-slate-500 dark:text-slate-400">
+					Dot color: <strong>diverging</strong> by net flow (avg departures − avg destinations). Dot size: <strong>avg in + out</strong> per day (month-blended).
+				</p>
+				<div
+					id="map-container"
+					class="w-full h-[min(560px,70vh)] min-h-[320px] rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700"
+				></div>
+				<p id="map-status" class="text-xs text-slate-500 dark:text-slate-400"></p>
+			</div>
+			<div class="space-y-2 min-w-0">
+				<h2 class="text-sm font-semibold text-slate-700 dark:text-slate-300">Hourly heatmap + daily average bar</h2>
+				<p class="text-xs text-slate-500 dark:text-slate-400">
+					Each station: <strong>top row</strong> = average trips by start hour on <strong>weekdays</strong>, <strong>bottom row</strong> = same for <strong>weekends</strong> (color = intensity for the selected measure).
+					Grey bar = blended daily average (in / out / net). Map uses its own in/out balance scale (see map caption).
+				</p>
+				<div id="legend-wrap" class="flex flex-wrap items-center gap-3 text-xs text-slate-600 dark:text-slate-400 min-h-[28px]"></div>
+				<div id="chart-wrap" class="chart-container w-full overflow-x-auto overflow-y-auto max-h-[min(560px,70vh)] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-100 dark:bg-slate-900/40 p-2"></div>
+				<p id="chart-status" class="text-xs text-slate-500 dark:text-slate-400"></p>
+			</div>
+		</div>
+	</div>
+</Layout>
+
+<script>
+	import * as d3 from 'd3';
+	import { loadPreparedData } from '../data/load-prepared-data';
+	import type { IsochroneStation, StationInOutLatestFullMonthData } from '../data/prepared-data-types';
+
+	const OSLO_CENTER: [number, number] = [59.92, 10.75];
+	const DEFAULT_ZOOM = 12;
+	const TOP_N = 35;
+
+	type FlowRow = StationInOutLatestFullMonthData['stations'][number];
+	type MetricMode = 'in' | 'out' | 'net';
+
+	function blendedIn(r: FlowRow, nWd: number, nWe: number): number {
+		const d = nWd + nWe;
+		return d > 0 ? (r.avg_weekday_destinations * nWd + r.avg_weekend_destinations * nWe) / d : 0;
+	}
+
+	function blendedOut(r: FlowRow, nWd: number, nWe: number): number {
+		const d = nWd + nWe;
+		return d > 0 ? (r.avg_weekday_departures * nWd + r.avg_weekend_departures * nWe) / d : 0;
+	}
+
+	function metricValue(r: FlowRow, mode: MetricMode, nWd: number, nWe: number): number {
+		const inn = blendedIn(r, nWd, nWe);
+		const out = blendedOut(r, nWd, nWe);
+		if (mode === 'in') return inn;
+		if (mode === 'out') return out;
+		return out - inn;
+	}
+
+	/** Blended calendar-day avg: departures + destinations (for map dot size). */
+	function blendedInOutSum(r: FlowRow, nWd: number, nWe: number): number {
+		return blendedIn(r, nWd, nWe) + blendedOut(r, nWd, nWe);
+	}
+
+	/** Blended net out − in (for map diverging color). */
+	function blendedNetOutIn(r: FlowRow, nWd: number, nWe: number): number {
+		return blendedOut(r, nWd, nWe) - blendedIn(r, nWd, nWe);
+	}
+
+	function hourlyIn(r: FlowRow, wd: boolean, h: number): number {
+		const arr = wd ? r.hourly_weekday_destinations : r.hourly_weekend_destinations;
+		return arr?.[h] ?? 0;
+	}
+
+	function hourlyOut(r: FlowRow, wd: boolean, h: number): number {
+		const arr = wd ? r.hourly_weekday_departures : r.hourly_weekend_departures;
+		return arr?.[h] ?? 0;
+	}
+
+	function hourlyCell(r: FlowRow, mode: MetricMode, wd: boolean, h: number): number {
+		const inn = hourlyIn(r, wd, h);
+		const out = hourlyOut(r, wd, h);
+		if (mode === 'in') return inn;
+		if (mode === 'out') return out;
+		return out - inn;
+	}
+
+	function allHourlyValues(rows: FlowRow[], mode: MetricMode): number[] {
+		const out: number[] = [];
+		for (const r of rows) {
+			for (let h = 0; h < 24; h++) {
+				out.push(hourlyCell(r, mode, true, h), hourlyCell(r, mode, false, h));
+			}
+		}
+		return out;
+	}
+
+	async function init() {
+		const subtitleEl = document.getElementById('subtitle');
+		const warnEl = document.getElementById('warning-banner');
+		const mapEl = document.getElementById('map-container');
+		const mapStatus = document.getElementById('map-status');
+		const chartWrap = document.getElementById('chart-wrap');
+		const chartStatus = document.getElementById('chart-status');
+		const legendWrap = document.getElementById('legend-wrap');
+		const showAllEl = document.getElementById('show-all') as HTMLInputElement | null;
+		const metricSelect = document.getElementById('metric-select') as HTMLSelectElement | null;
+		if (!subtitleEl || !mapEl || !chartWrap || !showAllEl || !metricSelect || !legendWrap) return;
+
+		const L = (await import('leaflet')).default;
+
+		let flowPayload: StationInOutLatestFullMonthData;
+		let stationsMeta: IsochroneStation[];
+		try {
+			const [flowRes, stationsRes] = await Promise.all([
+				loadPreparedData<StationInOutLatestFullMonthData>('stations/station_in_out_latest_full_month.json'),
+				loadPreparedData<{ stations: IsochroneStation[] }>('stations.json'),
+			]);
+			flowPayload = flowRes.data;
+			stationsMeta = stationsRes.data.stations ?? [];
+		} catch (e: unknown) {
+			const msg = e instanceof Error ? e.message : String(e);
+			subtitleEl.textContent = `Could not load data: ${msg}`;
+			return;
+		}
+
+		const flowById = new Map<string, FlowRow>();
+		for (const r of flowPayload.stations) {
+			flowById.set(String(r.id), r);
+		}
+
+		subtitleEl.textContent = `Month ${flowPayload.month_label} (weekdays: ${flowPayload.n_weekdays}, weekend days: ${flowPayload.n_weekend_days})`;
+		if (flowPayload.max_period_in_data) {
+			subtitleEl.textContent += ` · latest trip date in pipeline: ${flowPayload.max_period_in_data}`;
+		}
+		if (warnEl && flowPayload.warnings?.length) {
+			warnEl.classList.remove('hidden');
+			warnEl.textContent = `Note: ${flowPayload.warnings.join(', ')} (day coverage: ${(flowPayload.day_coverage_in_month ?? 0) * 100}%).`;
+		}
+
+		const map = L.map(mapEl).setView(OSLO_CENTER, DEFAULT_ZOOM);
+		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+		}).addTo(map);
+
+		map.createPane('stationPane');
+		map.getPane('stationPane')!.style.zIndex = '450';
+
+		const markersById = new Map<string, L.CircleMarker>();
+		let highlightedId: string | null = null;
+		const nWd = flowPayload.n_weekdays;
+		const nWe = flowPayload.n_weekend_days;
+
+		const mapNetAbsMax = Math.max(
+			d3.max(flowPayload.stations, (r) => Math.abs(blendedNetOutIn(r, nWd, nWe))) ?? 0,
+			1e-6
+		);
+		const mapFlowColor = d3
+			.scaleDiverging<string>(d3.interpolateRdYlBu)
+			.domain([-mapNetAbsMax, 0, mapNetAbsMax]);
+
+		let currentMode: MetricMode = (metricSelect.value as MetricMode) || 'out';
+
+		const cellW = 5;
+		const cellH = 9;
+		const heatGap = 2;
+		const heatmapW = 24 * cellW;
+		const labelStripW = 172;
+
+		function sortedRows(all: boolean, mode: MetricMode): FlowRow[] {
+			const rows = [...flowPayload.stations].sort((a, b) => {
+				const va = metricValue(a, mode, nWd, nWe);
+				const vb = metricValue(b, mode, nWd, nWe);
+				if (mode === 'net') return Math.abs(vb) - Math.abs(va);
+				return vb - va;
+			});
+			return all ? rows : rows.slice(0, TOP_N);
+		}
+
+		function buildHeatColorScale(mode: MetricMode): (v: number) => string {
+			const vals = allHourlyValues(flowPayload.stations, mode);
+			if (mode === 'net') {
+				const ext = Math.max(d3.max(vals, (u) => Math.abs(u)) ?? 0, 1e-6);
+				return d3.scaleDiverging<string>(d3.interpolateRdYlBu).domain([-ext, 0, ext]);
+			}
+			const hi = Math.max(d3.max(vals) ?? 0, 1e-6);
+			return d3.scaleSequential<string>(d3.interpolateViridis).domain([0, hi]);
+		}
+
+		function heatLegendExtent(mode: MetricMode): [number, number] {
+			const vals = allHourlyValues(flowPayload.stations, mode);
+			if (mode === 'net') {
+				const ext = Math.max(d3.max(vals, (u) => Math.abs(u)) ?? 0, 1e-6);
+				return [-ext, ext];
+			}
+			return [0, Math.max(d3.max(vals) ?? 0, 1e-6)];
+		}
+
+		function renderHeatLegend(mode: MetricMode, colorFn: (v: number) => string) {
+			legendWrap.innerHTML = '';
+			const w = 220;
+			const h = 12;
+			const svg = d3.select(legendWrap).append('svg').attr('width', w + 8).attr('height', h + 20).attr('class', 'block');
+			const [a, b] = heatLegendExtent(mode);
+			const gradId = `heat-lg-${mode}-${Math.random().toString(36).slice(2)}`;
+			const defs = svg.append('defs');
+			const grad = defs.append('linearGradient').attr('id', gradId).attr('x1', '0%').attr('x2', '100%');
+			for (let i = 0; i <= 24; i++) {
+				const t = i / 24;
+				grad.append('stop').attr('offset', `${t * 100}%`).attr('stop-color', colorFn(a + t * (b - a)));
+			}
+			svg
+				.append('rect')
+				.attr('x', 0)
+				.attr('y', 2)
+				.attr('width', w)
+				.attr('height', h)
+				.attr('fill', `url(#${gradId})`)
+				.attr('rx', 2)
+				.attr('stroke', 'currentColor')
+				.attr('stroke-opacity', 0.25);
+			const cap =
+				mode === 'net'
+					? 'Hourly cell: net (out − in)'
+					: mode === 'in'
+						? 'Hourly cell: avg destinations (in)'
+						: 'Hourly cell: avg departures (out)';
+			const scaleTxt = mode === 'net' ? `${a.toFixed(2)} … ${b.toFixed(2)}` : `0 … ${b.toFixed(2)}`;
+			svg.append('text').attr('x', 0).attr('y', h + 16).attr('font-size', 10).text(`${cap} · ${scaleTxt}`);
+		}
+
+		function renderChart(all: boolean) {
+			currentMode = metricSelect.value as MetricMode;
+			chartWrap.innerHTML = '';
+			const rows = sortedRows(all, currentMode);
+			const heatColor = buildHeatColorScale(currentMode);
+			renderHeatLegend(currentMode, heatColor);
+			restyleAllMarkers();
+
+			if (chartStatus) {
+				chartStatus.textContent = all ? `Showing all ${rows.length} stations` : `Top ${TOP_N} of ${flowPayload.stations.length} stations`;
+			}
+
+			const heatBlockH = cellH * 2 + heatGap;
+			const rowPad = 3;
+			const rowH = heatBlockH + rowPad * 2;
+			const barH = 8;
+			const margin = { top: 36, right: 48, bottom: 26, left: labelStripW + 10 };
+			const width = Math.max(560, chartWrap.clientWidth || 640);
+			const innerW = width - margin.left - margin.right;
+			const barX0 = heatmapW + 12;
+			const barW = Math.max(40, innerW - barX0 - 36);
+			const vals = rows.map((r) => metricValue(r, currentMode, nWd, nWe));
+			let xBar: d3.ScaleLinear<number, number>;
+			if (currentMode === 'net') {
+				const lo = Math.min(d3.min(vals) ?? 0, 0);
+				const hi = Math.max(d3.max(vals) ?? 0, 0);
+				const pad = (hi - lo) * 0.08 || 0.1;
+				xBar = d3.scaleLinear().domain([lo - pad, hi + pad]).nice().range([0, barW]);
+			} else {
+				const hi = Math.max(d3.max(vals) ?? 0, 1e-6);
+				xBar = d3.scaleLinear().domain([0, hi]).nice().range([0, barW]);
+			}
+
+			const height = margin.top + margin.bottom + rows.length * rowH;
+			const svg = d3
+				.select(chartWrap)
+				.append('svg')
+				.attr('width', width)
+				.attr('height', height)
+				.attr('class', 'block');
+
+			svg
+				.append('text')
+				.attr('x', margin.left)
+				.attr('y', 14)
+				.attr('font-size', 10)
+				.attr('fill', 'currentColor')
+				.text('Weekday · hour (top)   |   Weekend · hour (bottom)');
+
+			const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+			const nameById = new Map(stationsMeta.map((s) => [String(s.id), s.name]));
+
+			rows.forEach((r, i) => {
+				const id = String(r.id);
+				const v = metricValue(r, currentMode, nWd, nWe);
+				const rowG = g.append('g').attr('transform', `translate(0,${i * rowH})`).attr('data-station-id', id);
+
+				rowG
+					.append('rect')
+					.attr('x', -labelStripW)
+					.attr('y', rowPad)
+					.attr('width', labelStripW - 6)
+					.attr('height', rowH - 2 * rowPad)
+					.attr('rx', 4)
+					.attr('fill', '#020617');
+
+				const fullName = nameById.get(id) ?? `Station ${id}`;
+				const label = fullName.length > 30 ? `${fullName.slice(0, 29)}…` : fullName;
+				rowG
+					.append('text')
+					.attr('x', -10)
+					.attr('y', rowH / 2)
+					.attr('text-anchor', 'end')
+					.attr('dominant-baseline', 'middle')
+					.attr('font-size', 11)
+					.attr('fill', '#ffffff')
+					.text(label);
+
+				for (const wd of [true, false] as const) {
+					const y0 = rowPad + (wd ? 0 : cellH + heatGap);
+					const band = wd ? 'Weekday' : 'Weekend';
+					for (let h = 0; h < 24; h++) {
+						const cell = hourlyCell(r, currentMode, wd, h);
+						const crect = rowG
+							.append('rect')
+							.attr('x', h * cellW)
+							.attr('y', y0)
+							.attr('width', cellW - 0.5)
+							.attr('height', cellH)
+							.attr('fill', heatColor(cell));
+						crect.append('title').text(`${band} h${h}: ${cell.toFixed(3)} (${metricSelect.options[metricSelect.selectedIndex]?.text ?? currentMode})`);
+					}
+				}
+
+				const xa = currentMode === 'net' ? xBar(Math.min(0, v)) : 0;
+				const xb = currentMode === 'net' ? xBar(Math.max(0, v)) : xBar(v);
+				const barRect = rowG
+					.append('rect')
+					.attr('class', 'station-row-rect')
+					.attr('x', barX0 + xa)
+					.attr('y', rowH / 2 - barH / 2)
+					.attr('width', Math.max(xb - xa, Math.abs(v) < 1e-9 ? 0 : 2))
+					.attr('height', barH)
+					.attr('rx', 2)
+					.attr('fill', '#64748b');
+				barRect.append('title').text(
+					`Blended daily: ${v.toFixed(3)} (${metricSelect.options[metricSelect.selectedIndex]?.text ?? currentMode})\n` +
+						`Weekday dest/dep: ${r.avg_weekday_destinations.toFixed(2)} / ${r.avg_weekday_departures.toFixed(2)}\n` +
+						`Weekend dest/dep: ${r.avg_weekend_destinations.toFixed(2)} / ${r.avg_weekend_departures.toFixed(2)}`
+				);
+
+				rowG
+					.append('text')
+					.attr('x', barX0 + barW + 6)
+					.attr('y', rowH / 2)
+					.attr('dominant-baseline', 'middle')
+					.attr('font-size', 10)
+					.attr('fill', 'currentColor')
+					.text(v.toFixed(2));
+
+				rowG
+					.on('mouseenter', () => highlight(id))
+					.on('mouseleave', () => highlight(null))
+					.on('click', () => {
+						highlight(id);
+						const mk = markersById.get(id);
+						if (mk) map.panTo(mk.getLatLng(), { animate: true });
+					});
+			});
+
+			const axisY = margin.top + rows.length * rowH + 4;
+			const hx = d3.scaleLinear().domain([0, 23]).range([0, heatmapW]);
+			svg
+				.append('g')
+				.attr('transform', `translate(${margin.left},${axisY})`)
+				.call(d3.axisBottom(hx).ticks(8).tickFormat(d3.format('d')))
+				.call((ga) => {
+					ga.selectAll('text').attr('font-size', 9).attr('fill', 'currentColor');
+					ga.selectAll('path,line').attr('stroke', 'currentColor');
+				});
+		}
+
+		function styleMarker(id: string, active: boolean) {
+			const m = markersById.get(id);
+			const row = flowById.get(id);
+			if (!m) return;
+			const totalIO = row ? blendedInOutSum(row, nWd, nWe) : 0;
+			const net = row ? blendedNetOutIn(row, nWd, nWe) : 0;
+			const rad = row ? 4 + Math.min(18, Math.sqrt(Math.max(totalIO, 0)) * 2.35) : 4;
+			const fill = !row ? '#94a3b8' : active ? '#f97316' : mapFlowColor(net);
+			m.setStyle({
+				radius: active ? rad + 4 : rad,
+				fillColor: fill,
+				color: active ? '#c2410c' : '#0f172a',
+				weight: active ? 2.5 : 1,
+				fillOpacity: row ? 0.9 : 0.45,
+			});
+		}
+
+		function restyleAllMarkers() {
+			for (const id of markersById.keys()) {
+				styleMarker(id, id === highlightedId);
+			}
+		}
+
+		function highlight(id: string | null) {
+			if (highlightedId) styleMarker(highlightedId, false);
+			highlightedId = id;
+			if (highlightedId) styleMarker(highlightedId, true);
+			chartWrap.querySelectorAll<SVGGElement>('[data-station-id]').forEach((el) => {
+				const sid = el.getAttribute('data-station-id');
+				const on = sid === id;
+				el.style.opacity = id && !on ? '0.35' : '1';
+			});
+		}
+
+		const stationLayer = L.layerGroup([], { pane: 'stationPane' }).addTo(map);
+		for (const s of stationsMeta) {
+			const row = flowById.get(String(s.id));
+			const totalIO = row ? blendedInOutSum(row, nWd, nWe) : 0;
+			const net = row ? blendedNetOutIn(row, nWd, nWe) : 0;
+			const bi = row ? blendedIn(row, nWd, nWe) : 0;
+			const bo = row ? blendedOut(row, nWd, nWe) : 0;
+			const radius = row ? 4 + Math.min(18, Math.sqrt(Math.max(totalIO, 0)) * 2.35) : 4;
+			const cm = L.circleMarker([s.lat, s.lon], {
+				pane: 'stationPane',
+				radius,
+				fillColor: row ? mapFlowColor(net) : '#94a3b8',
+				fillOpacity: row ? 0.9 : 0.45,
+				color: '#0f172a',
+				weight: 1,
+			});
+			const wd = row
+				? `Weekday: ${row.avg_weekday_departures.toFixed(2)} dep · ${row.avg_weekday_destinations.toFixed(2)} dest<br/>`
+				: 'No trips this month in export<br/>';
+			const we = row
+				? `Weekend: ${row.avg_weekend_departures.toFixed(2)} dep · ${row.avg_weekend_destinations.toFixed(2)} dest`
+				: '';
+			const blend =
+				row
+					? `<br/>Blended / day: <b>${bi.toFixed(2)}</b> in + <b>${bo.toFixed(2)}</b> out (= ${totalIO.toFixed(2)}), net <b>${net >= 0 ? '+' : ''}${net.toFixed(2)}</b>`
+					: '';
+			cm.bindTooltip(`<b>${s.name}</b><br/>${wd}${we}${blend}`, { direction: 'top' });
+			cm.on('mouseover', () => highlight(String(s.id)));
+			cm.on('mouseout', () => highlight(null));
+			cm.on('click', () => highlight(String(s.id)));
+			cm.addTo(stationLayer);
+			markersById.set(String(s.id), cm);
+		}
+
+		const bounds = L.latLngBounds(stationsMeta.map((s) => [s.lat, s.lon] as [number, number]));
+		if (bounds.isValid()) map.fitBounds(bounds, { padding: [24, 24] });
+		if (mapStatus) {
+			mapStatus.textContent = `${stationsMeta.length} locations · ${flowPayload.stations.length} with trips · color scale ±${mapNetAbsMax.toFixed(1)} net trips/day`;
+		}
+
+		renderChart(false);
+		showAllEl.addEventListener('change', () => renderChart(showAllEl.checked));
+		metricSelect.addEventListener('change', () => renderChart(showAllEl.checked));
+	}
+
+	init();
+</script>
