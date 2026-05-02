@@ -1,0 +1,585 @@
+---
+import 'leaflet/dist/leaflet.css';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Oslo on Two Wheels — an interactive data story about Oslo Bysykkel city bikes." />
+  <title>Oslo on Two Wheels</title>
+  <style>
+    /* ── Reset & base ─────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #fafaf8;
+      color: #1c1c1e;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Loading overlay ──────────────────────────────────────────────────── */
+    #vs-loading {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafaf8;
+      font-size: 1rem;
+      color: #6b7280;
+      z-index: 9999;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Hero ─────────────────────────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+    }
+    #hero-map {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 3rem 4rem;
+      background: linear-gradient(105deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.28) 55%, transparent 80%);
+      pointer-events: none;
+    }
+    .hero-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #f97316;
+      margin-bottom: 1rem;
+    }
+    .hero-title {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.08;
+      margin-bottom: 1rem;
+    }
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: rgba(255,255,255,0.78);
+      max-width: 34rem;
+      margin-bottom: 2.5rem;
+    }
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+    }
+    .hero-stat-value {
+      font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+      font-weight: 700;
+      color: #f97316;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+    }
+    .hero-stat-label {
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-top: 0.15rem;
+    }
+    .scroll-hint {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.05em;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    /* ── Chapter layout ───────────────────────────────────────────────────── */
+    .vs-chapter {
+      position: relative;
+      min-height: 280vh;
+    }
+    .vs-chapter.ch-3step { min-height: 280vh; }
+    .vs-chapter.ch-4step { min-height: 350vh; }
+
+    .vs-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 100%;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .vs-sticky.map-bg { background: #f0f4f8; }
+
+    .chapter-header {
+      position: absolute;
+      z-index: 800;
+      top: 1.5rem;
+      left: 2rem;
+      pointer-events: none;
+    }
+    .chapter-num {
+      font-size: 5rem;
+      font-weight: 800;
+      color: rgba(0,0,0,0.04);
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+    .chapter-title-sm {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #f97316;
+      margin-top: -1rem;
+    }
+
+    .chart-wrap {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      padding: 2.5rem 2.5rem 1rem;
+    }
+    .chart-wrap svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .chart-wrap text {
+      font-family: inherit;
+    }
+
+    .map-wrap {
+      flex: 1;
+      position: relative;
+    }
+    #viz-balance-map,
+    #viz-routes-map {
+      position: absolute;
+      inset: 0;
+    }
+
+    /* Balance legend sits at bottom of sticky map */
+    #balance-legend {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 800;
+      background: rgba(255,255,255,0.92);
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    }
+
+    /* ── Scroll steps ─────────────────────────────────────────────────────── */
+    .vs-steps {
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      right: 2rem;
+      width: 34%;
+    }
+    .vs-step {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+    }
+    .vs-card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 1rem;
+      padding: 1.4rem 1.6rem;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06);
+      width: 100%;
+      border-left: 3px solid transparent;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .vs-step.is-active .vs-card {
+      border-left-color: #f97316;
+      box-shadow: 0 6px 36px rgba(249,115,22,0.12), 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .vs-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+    .vs-card p {
+      font-size: 0.875rem;
+      color: #374151;
+      line-height: 1.65;
+      margin-top: 0.4rem;
+    }
+    .vs-card .stat {
+      display: block;
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: #f97316;
+      letter-spacing: -0.02em;
+      margin: 0.3rem 0;
+    }
+    .vs-card em { color: #f97316; font-style: normal; font-weight: 600; }
+
+    /* ── Divider ──────────────────────────────────────────────────────────── */
+    .section-intro {
+      padding: 4rem 2rem 2rem;
+      max-width: 52rem;
+      margin: 0 auto;
+    }
+    .section-intro h2 {
+      font-family: Georgia, serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 700;
+      color: #111827;
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+    }
+    .section-intro p {
+      font-size: 1rem;
+      color: #6b7280;
+      max-width: 44rem;
+    }
+
+    /* ── Outro ────────────────────────────────────────────────────────────── */
+    #outro {
+      background: #111827;
+      color: #f9fafb;
+      text-align: center;
+      padding: 6rem 2rem;
+    }
+    #outro h2 {
+      font-family: Georgia, serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+    #outro p {
+      font-size: 1.1rem;
+      color: #9ca3af;
+      max-width: 36rem;
+      margin: 0 auto 0.75rem;
+    }
+    .outro-stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin: 2.5rem 0;
+      flex-wrap: wrap;
+    }
+    .outro-stat { text-align: center; }
+    .outro-stat-value { display: block; font-size: 2rem; font-weight: 700; color: #f97316; }
+    .outro-stat-label { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; }
+    .cta-btn {
+      display: inline-block;
+      margin-top: 0.5rem;
+      background: #f97316;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.85rem 2rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      transition: background 0.18s ease;
+    }
+    .cta-btn:hover { background: #ea6b0c; }
+
+    /* ── Tooltip ──────────────────────────────────────────────────────────── */
+    #vs-tooltip {
+      position: fixed;
+      display: none;
+      background: rgba(17,24,39,0.95);
+      color: #f9fafb;
+      font-size: 0.8rem;
+      padding: 0.55rem 0.85rem;
+      border-radius: 0.5rem;
+      pointer-events: none;
+      z-index: 500;
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+
+    /* ── Responsive ───────────────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .hero-overlay { padding: 2rem; }
+      .vs-chapter { min-height: unset; }
+      .vs-sticky { position: relative; height: 65vw; min-height: 300px; }
+      .vs-steps { position: static; width: 100%; padding: 0 1rem 2rem; }
+      .vs-step { min-height: unset; padding: 0.5rem 0; }
+      .chapter-num { font-size: 3rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="vs-loading">Loading story…</div>
+  <div id="vs-tooltip"></div>
+
+  <!-- ── Hero ── -->
+  <section id="hero">
+    <div id="hero-map"></div>
+    <div class="hero-overlay">
+      <span class="hero-label">Oslo Bysykkel · Data Story</span>
+      <h1 class="hero-title">Oslo<br/>on Two Wheels</h1>
+      <p class="hero-sub">Six years of city cycling — where people go, when they ride, and what the data reveals about life on Oslo's streets.</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-value" id="stat-trips">—</span>
+          <span class="hero-stat-label">trips taken</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value" id="stat-stations">—</span>
+          <span class="hero-stat-label">stations</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value">6</span>
+          <span class="hero-stat-label">years of data</span>
+        </div>
+      </div>
+      <div class="scroll-hint">Scroll to explore ↓</div>
+    </div>
+  </section>
+
+  <!-- ── Chapter 1: Yearly trends ── -->
+  <section class="vs-chapter ch-4step" id="ch-yearly">
+    <div class="vs-sticky">
+      <div class="chapter-header">
+        <div class="chapter-num">01</div>
+        <div class="chapter-title-sm">A city in motion</div>
+      </div>
+      <div class="chart-wrap">
+        <svg id="viz-yearly"></svg>
+      </div>
+    </div>
+    <div class="vs-steps">
+
+      <div class="vs-step" data-chapter="yearly" data-step="0">
+        <div class="vs-card">
+          <h3>An enthusiastic launch</h3>
+          <span class="stat">~2.2M trips</span>
+          <p>Oslo Bysykkel launched in April 2019 with 292 stations across the inner city. The debut season attracted over two million trips — a high-water mark for a city that had never had city bikes before.</p>
+        </div>
+      </div>
+
+      <div class="vs-step" data-chapter="yearly" data-step="1">
+        <div class="vs-card">
+          <h3>2020 — pandemic year</h3>
+          <span class="stat">~1.7M trips</span>
+          <p>COVID-19 lockdowns emptied city streets in spring 2020. Ridership fell by nearly a quarter. People still cycled — but far fewer of them.</p>
+        </div>
+      </div>
+
+      <div class="vs-step" data-chapter="yearly" data-step="2">
+        <div class="vs-card">
+          <h3>2021–2022 — slow recovery</h3>
+          <span class="stat">~1.3–1.4M trips</span>
+          <p>As Oslo reopened, many first-time riders from 2019 did not return. Usage settled around 1.3–1.4 million per year — a structural drop, not just a pandemic effect.</p>
+        </div>
+      </div>
+
+      <div class="vs-step" data-chapter="yearly" data-step="3">
+        <div class="vs-card">
+          <h3>2023–2025 — a loyal core</h3>
+          <span class="stat">~1.1M trips/yr</span>
+          <p>By 2023 the decline had stabilised. Around <em>one million trips</em> per year — roughly half the 2019 peak — represents the network's committed, regular user base.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Chapter 2: Seasonal patterns ── -->
+  <section class="vs-chapter ch-4step" id="ch-seasonal">
+    <div class="vs-sticky">
+      <div class="chapter-header">
+        <div class="chapter-num">02</div>
+        <div class="chapter-title-sm">The rhythm of the seasons</div>
+      </div>
+      <div class="chart-wrap">
+        <svg id="viz-seasonal"></svg>
+      </div>
+    </div>
+    <div class="vs-steps">
+
+      <div class="vs-step" data-chapter="seasonal" data-step="0">
+        <div class="vs-card">
+          <h3>A summer sport</h3>
+          <p>Oslo's bike season is strikingly short. In 2019, nearly all trips happened between <em>May and October</em>. The January–March period is almost silent across every year in the data.</p>
+        </div>
+      </div>
+
+      <div class="vs-step" data-chapter="seasonal" data-step="1">
+        <div class="vs-card">
+          <h3>The pattern repeats</h3>
+          <p>Each year follows the same arc: a sharp spring ramp in April–May, a broad summer plateau, then a rapid autumn retreat. The <em>shape</em> is remarkably consistent — even as total volumes have changed.</p>
+        </div>
+      </div>
+
+      <div class="vs-step" data-chapter="seasonal" data-step="2">
+        <div class="vs-card">
+          <h3>Summer peak: June–August</h3>
+          <p>The shaded band marks June, July, and August — Oslo's golden cycling window. Trip counts in this period are roughly <em>three to four times</em> higher than in the quietest winter months.</p>
+        </div>
+      </div>
+
+      <div class="vs-step" data-chapter="seasonal" data-step="3">
+        <div class="vs-card">
+          <h3>Six years, one shape</h3>
+          <p>With all years overlaid, the consistency is striking. What changes year to year is only the scale — the shape barely moves. Oslo's cycling rhythm is deeply tied to its seasons.</p>
+          <p>Hover any point to see the exact monthly trip count.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Chapter 3: Station balance map ── -->
+  <section class="vs-chapter ch-4step" id="ch-balance">
+    <div class="vs-sticky map-bg">
+      <div class="chapter-header">
+        <div class="chapter-num">03</div>
+        <div class="chapter-title-sm">Who departs, who arrives?</div>
+      </div>
+      <div class="map-wrap">
+        <div id="viz-balance-map"></div>
+        <div id="balance-legend"></div>
+      </div>
+    </div>
+    <div class="vs-steps">
+
+      <div class="vs-step" data-chapter="balance" data-step="0">
+        <div class="vs-card">
+          <h3>A network of stations</h3>
+          <p>Oslo Bysykkel has over 200 docking stations spread across the city. Each dot on the map represents one station. The size reflects how busy it is — bigger dots mean more total trips.</p>
+        </div>
+      </div>
+
+      <div class="vs-step" data-chapter="balance" data-step="1">
+        <div class="vs-card">
+          <h3>The flow is uneven</h3>
+          <p>Not all stations are equal. <em style="color:#2563eb">Blue stations</em> send more bikes out than they receive — they're departure hubs, where journeys begin. <em style="color:#dc2626">Red stations</em> receive more bikes than they send — they're where bikes end up.</p>
+          <p>This imbalance is a daily challenge for the operators, who rebalance the fleet with vans overnight.</p>
+        </div>
+      </div>
+
+      <div class="vs-step" data-chapter="balance" data-step="2">
+        <div class="vs-card">
+          <h3>The biggest departure hub</h3>
+          <p>The highlighted station is Oslo's largest net departure point — far more bikes leave than arrive. It likely sits near a residential area where commuters start their morning rides.</p>
+          <p>Hover over it to see the numbers.</p>
+        </div>
+      </div>
+
+      <div class="vs-step" data-chapter="balance" data-step="3">
+        <div class="vs-card">
+          <h3>The biggest arrival hub</h3>
+          <p>Conversely, this station absorbs far more bikes than it releases. It's likely near a transit node or workplace where journeys end — bikes pile up here each morning.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Chapter 4: Routes map ── -->
+  <section class="vs-chapter ch-4step" id="ch-routes">
+    <div class="vs-sticky map-bg">
+      <div class="chapter-header">
+        <div class="chapter-num">04</div>
+        <div class="chapter-title-sm">The most traveled routes</div>
+      </div>
+      <div class="map-wrap">
+        <div id="viz-routes-map"></div>
+      </div>
+    </div>
+    <div class="vs-steps">
+
+      <div class="vs-step" data-chapter="routes" data-step="0">
+        <div class="vs-card">
+          <h3>A web of routes</h3>
+          <p>Each line shows an actual bike route between two stations, calculated using the city's cycling network. Together they trace the skeleton of how Oslo moves on two wheels.</p>
+          <p>Hover over any line to see origin, destination, distance and estimated ride time.</p>
+        </div>
+      </div>
+
+      <div class="vs-step" data-chapter="routes" data-step="1">
+        <div class="vs-card">
+          <h3>The busiest corridors</h3>
+          <p>The <em>highlighted routes</em> are the most frequently used short connections in the network — compact urban trips, typically under 2 km, that fit neatly into a commute or lunch break.</p>
+          <p>These are the arteries of Oslo's cycling city.</p>
+        </div>
+      </div>
+
+      <div class="vs-step" data-chapter="routes" data-step="2">
+        <div class="vs-card">
+          <h3>Concentrated in the core</h3>
+          <p>The busiest routes cluster tightly in central Oslo and the western harbour area. These short, flat connections are ideal for city bikes — no hills, no long distances, just effortless urban movement.</p>
+        </div>
+      </div>
+
+      <div class="vs-step" data-chapter="routes" data-step="3">
+        <div class="vs-card">
+          <h3>Where time is spent</h3>
+          <p>Multiplying trip count by ride duration reveals which corridors account for the most <em>total cycling time</em>. These are not necessarily the most frequent routes — longer rides to more distant destinations contribute disproportionate hours.</p>
+          <p>Highlighted in <span style="color:#10b981;font-weight:600;">teal</span> are the routes where Osloans have collectively spent the most time in the saddle — not necessarily the most frequent, but the ones where long distances add up to outsized hours.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Outro ── -->
+  <section id="outro">
+    <h2>Ready to Ride?</h2>
+    <p>City bikes are Oslo's fastest, cheapest way to cross the city. Every trip is one less car on the road.</p>
+    <div class="outro-stats">
+      <div class="outro-stat">
+        <span class="outro-stat-value">~11 min</span>
+        <span class="outro-stat-label">avg trip duration</span>
+      </div>
+      <div class="outro-stat">
+        <span class="outro-stat-value">253</span>
+        <span class="outro-stat-label">stations citywide</span>
+      </div>
+      <div class="outro-stat">
+        <span class="outro-stat-value">Year-round</span>
+        <span class="outro-stat-label">winter bikes with spiked tires</span>
+      </div>
+    </div>
+    <a href="https://oslobysykkel.no" target="_blank" rel="noopener noreferrer" class="cta-btn">
+      Find a bike near you →
+    </a>
+    <p style="margin-top:3rem; font-size:0.75rem; color:#4b5563;">
+      Data: Oslo Bysykkel open trip data 2019–2025 · Visualisation: INF252 Course Project
+    </p>
+  </section>
+</body>
+
+<script>
+  import '../scripts/visual-story/main';
+</script>
+
+</html>
