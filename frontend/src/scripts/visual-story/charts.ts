@@ -100,7 +100,7 @@ export function initYearlyChart(svgSelector: string, rows: AvgTripTimeByMonthRow
   yearY = d3.scaleLinear().domain([0, (d3.max(yearData, d => d.trips) ?? 0) * 1.12]).range([yearH, 0]);
 
   const axStyle = (ax: d3.Selection<SVGGElement, unknown, HTMLElement, unknown>) => {
-    ax.selectAll('text').attr('font-size', 13).attr('fill', '#374151');
+    ax.selectAll('text').attr('font-size', 16).attr('fill', '#111827');
     ax.select('.domain').attr('stroke', '#d1d5db');
     ax.selectAll('.tick line').attr('stroke', '#d1d5db');
   };
@@ -109,13 +109,13 @@ export function initYearlyChart(svgSelector: string, rows: AvgTripTimeByMonthRow
     .call(d3.axisBottom(yearX)).call(axStyle);
   g.append('g').attr('class', 'y-axis')
     .call(d3.axisLeft(yearY).ticks(5).tickFormat(d => `${(+d / 1_000_000).toFixed(1)}M`))
-    .call(ax => { ax.selectAll('text').attr('font-size', 12).attr('fill', '#6b7280'); ax.select('.domain').remove(); ax.selectAll('.tick line').attr('stroke', '#e5e7eb'); });
+    .call(ax => { ax.selectAll('text').attr('font-size', 15).attr('fill', '#374151'); ax.select('.domain').remove(); ax.selectAll('.tick line').attr('stroke', '#e5e7eb'); });
   g.append('g').attr('class', 'grid')
     .call(d3.axisLeft(yearY).ticks(5).tickSize(-W).tickFormat(() => ''))
     .call(ax => { ax.select('.domain').remove(); ax.selectAll('.tick line').attr('stroke', '#f3f4f6').attr('stroke-dasharray', '3,3'); });
 
-  g.append('text').attr('x', W / 2).attr('y', yearH + 48).attr('text-anchor', 'middle').attr('fill', '#9ca3af').attr('font-size', 12).text('Year');
-  g.append('text').attr('transform', 'rotate(-90)').attr('x', -yearH / 2).attr('y', -58).attr('text-anchor', 'middle').attr('fill', '#9ca3af').attr('font-size', 12).text('Total trips');
+  g.append('text').attr('x', W / 2).attr('y', yearH + 48).attr('text-anchor', 'middle').attr('fill', '#6b7280').attr('font-size', 14).text('Year');
+  g.append('text').attr('transform', 'rotate(-90)').attr('x', -yearH / 2).attr('y', -58).attr('text-anchor', 'middle').attr('fill', '#6b7280').attr('font-size', 14).text('Total trips');
 
   g.selectAll<SVGRectElement, YearRow>('rect.bar')
     .data(yearData, d => String(d.year)).join('rect').attr('class', 'bar')
@@ -125,20 +125,24 @@ export function initYearlyChart(svgSelector: string, rows: AvgTripTimeByMonthRow
   g.selectAll<SVGTextElement, YearRow>('text.bar-label')
     .data(yearData, d => String(d.year)).join('text').attr('class', 'bar-label')
     .attr('x', d => (yearX(String(d.year)) ?? 0) + yearX.bandwidth() / 2)
-    .attr('y', yearH - 6).attr('text-anchor', 'middle').attr('font-size', 12).attr('opacity', 0)
+    .attr('y', yearH - 6).attr('text-anchor', 'middle').attr('font-size', 14).attr('opacity', 0)
     .text(d => `${(d.trips / 1_000_000).toFixed(2)}M`);
 }
 
 export function updateYearlyChart(step: number): void {
-  const activeYear = yearData[step]?.year;
+  const activeYears: Set<number> = step === 3
+    ? new Set([2023, 2024, 2025])
+    : step === 2
+    ? new Set([2021, 2022])
+    : new Set([yearData[step]?.year]);
   const g = yearSvg.select<SVGGElement>('.chart-g');
   g.selectAll<SVGRectElement, YearRow>('rect.bar').transition().duration(480)
     .attr('y', d => yearY(d.trips)).attr('height', d => yearH - yearY(d.trips))
-    .attr('fill', d => d.year === activeYear ? AMBER : MUTED)
-    .attr('opacity', d => d.year === activeYear ? 1 : 0.55);
+    .attr('fill', d => activeYears.has(d.year) ? AMBER : MUTED)
+    .attr('opacity', d => activeYears.has(d.year) ? 1 : 0.55);
   g.selectAll<SVGTextElement, YearRow>('text.bar-label').transition().duration(480)
     .attr('y', d => yearY(d.trips) - 8)
-    .attr('opacity', d => d.year === activeYear ? 1 : 0)
+    .attr('opacity', d => activeYears.has(d.year) ? 1 : 0)
     .attr('fill', () => '#c2410c');
 }
 
@@ -173,10 +177,10 @@ export function initSeasonalChart(svgSelector: string, rows: AvgTripTimeByMonthR
 
   g.append('g').attr('class', 'x-axis').attr('transform', `translate(0,${H})`)
     .call(d3.axisBottom(xScale).ticks(12).tickFormat((_d, i) => monthAbbr[i]))
-    .call(ax => { ax.selectAll('text').attr('font-size', 12).attr('fill', '#374151'); ax.select('.domain').attr('stroke', '#d1d5db'); ax.selectAll('.tick line').attr('stroke', '#d1d5db'); });
+    .call(ax => { ax.selectAll('text').attr('font-size', 14).attr('fill', '#374151'); ax.select('.domain').attr('stroke', '#d1d5db'); ax.selectAll('.tick line').attr('stroke', '#d1d5db'); });
   g.append('g').attr('class', 'y-axis')
     .call(d3.axisLeft(yScale).ticks(5).tickFormat(d => `${(+d / 1000).toFixed(0)}k`))
-    .call(ax => { ax.selectAll('text').attr('font-size', 12).attr('fill', '#6b7280'); ax.select('.domain').remove(); ax.selectAll('.tick line').attr('stroke', '#e5e7eb'); });
+    .call(ax => { ax.selectAll('text').attr('font-size', 14).attr('fill', '#374151'); ax.select('.domain').remove(); ax.selectAll('.tick line').attr('stroke', '#e5e7eb'); });
   g.append('g').attr('class', 'grid')
     .call(d3.axisLeft(yScale).ticks(5).tickSize(-W).tickFormat(() => ''))
     .call(ax => { ax.select('.domain').remove(); ax.selectAll('.tick line').attr('stroke', '#f3f4f6').attr('stroke-dasharray', '3,3'); });
@@ -198,16 +202,17 @@ export function initSeasonalChart(svgSelector: string, rows: AvgTripTimeByMonthR
       .attr('stroke-width', 2).attr('opacity', 0).attr('d', lineGen);
   }
 
-  g.append('text').attr('x', W / 2).attr('y', H + 48).attr('text-anchor', 'middle').attr('fill', '#9ca3af').attr('font-size', 12).text('Month');
-  g.append('text').attr('transform', 'rotate(-90)').attr('x', -H / 2).attr('y', -58).attr('text-anchor', 'middle').attr('fill', '#9ca3af').attr('font-size', 12).text('Trips per month');
+  g.append('text').attr('x', W / 2).attr('y', H + 48).attr('text-anchor', 'middle').attr('fill', '#6b7280').attr('font-size', 14).text('Month');
+  g.append('text').attr('transform', 'rotate(-90)').attr('x', -H / 2).attr('y', -58).attr('text-anchor', 'middle').attr('fill', '#6b7280').attr('font-size', 14).text('Trips per month');
 
-  const legendG = g.append('g').attr('transform', `translate(${W - 68}, 8)`);
-  legendG.append('rect').attr('width', 64).attr('height', seasonYears.length * 20 + 12).attr('rx', 6)
+  const legendHeight = seasonYears.length * 20 + 16;
+  const legendG = g.append('g').attr('transform', `translate(4, 4)`);
+  legendG.append('rect').attr('width', 64).attr('height', legendHeight).attr('rx', 6)
     .attr('fill', 'rgba(249,250,251,0.92)').attr('stroke', '#e5e7eb');
   seasonYears.forEach((yr, i) => {
     const row = legendG.append('g').attr('class', `legend-year-${yr}`).attr('transform', `translate(8, ${12 + i * 20})`);
     row.append('line').attr('x1', 0).attr('x2', 18).attr('stroke', SEASON_PALETTE[i % SEASON_PALETTE.length]).attr('stroke-width', 2.5).attr('stroke-linecap', 'round');
-    row.append('text').attr('x', 22).attr('dy', '0.35em').attr('font-size', 11).attr('fill', '#374151').text(yr);
+    row.append('text').attr('x', 22).attr('dy', '0.35em').attr('font-size', 13).attr('fill', '#374151').text(yr);
   });
 
   // Tooltip div
@@ -222,7 +227,7 @@ export function initSeasonalChart(svgSelector: string, rows: AvgTripTimeByMonthR
 
   const svgEl = seasonSvg.node() as SVGSVGElement;
 
-  // Dot circles — one per data point, per year
+  // Dot circles, one per data point, per year
   for (const [i, yr] of seasonYears.entries()) {
     const yrRows = (seasonData.get(yr) ?? []).sort((a, b) => a.month - b.month);
     const color = SEASON_PALETTE[i % SEASON_PALETTE.length];
@@ -383,15 +388,15 @@ export async function initBalanceMap(containerId: string, stations: StationDatum
   // Color legend
   const legendEl = document.getElementById('balance-legend');
   if (legendEl) {
-    const svg = d3.select(legendEl).append('svg').attr('width', 210).attr('height', 36);
+    const svg = d3.select(legendEl).append('svg').attr('width', 260).attr('height', 46);
     const grad = svg.append('defs').append('linearGradient').attr('id', 'bal-grad').attr('x1', '0%').attr('x2', '100%');
     for (let i = 0; i <= 20; i++) {
       grad.append('stop').attr('offset', `${i * 5}%`).attr('stop-color', balanceColorFn(-absMax + (i / 20) * 2 * absMax));
     }
-    svg.append('rect').attr('x', 0).attr('y', 4).attr('width', 210).attr('height', 14).attr('rx', 3)
+    svg.append('rect').attr('x', 0).attr('y', 4).attr('width', 260).attr('height', 16).attr('rx', 3)
       .attr('fill', 'url(#bal-grad)').attr('stroke', '#e5e7eb');
-    svg.append('text').attr('x', 0).attr('y', 32).attr('font-size', 10).attr('fill', '#6b7280').text('← More arrivals');
-    svg.append('text').attr('x', 210).attr('y', 32).attr('font-size', 10).attr('fill', '#6b7280').attr('text-anchor', 'end').text('More departures →');
+    svg.append('text').attr('x', 0).attr('y', 42).attr('font-size', 13).attr('fill', '#1f2937').text('← More arrivals');
+    svg.append('text').attr('x', 260).attr('y', 42).attr('font-size', 13).attr('fill', '#1f2937').attr('text-anchor', 'end').text('More departures →');
   }
 }
 
@@ -555,13 +560,12 @@ export function updateRoutesMap(step: number): void {
       (it.line.getLatLngs() as Leaflet.LatLng[]).map(ll => [ll.lat, ll.lng] as [number, number])
     );
     if (pts.length > 0) routesMap.flyToBounds(pts, { padding: [48, 48], duration: 1.2 });
-  } else if (step === 2 && prevStep !== 2 && routesMap) {
-    const topItems = routeVizItems.slice(0, TOP_N);
-    const pts: [number, number][] = topItems.flatMap(it =>
+  } else if ((step === 1 || step === 2) && (prevStep < 1 || prevStep === 3) && routesMap) {
+    const pts: [number, number][] = routeVizItems.slice(0, TOP_N).flatMap(it =>
       (it.line.getLatLngs() as Leaflet.LatLng[]).map(ll => [ll.lat, ll.lng] as [number, number])
     );
     if (pts.length > 0) routesMap.flyToBounds(pts, { padding: [48, 48], duration: 1.2 });
-  } else if (step < 2 && prevStep >= 2 && routesMap) {
+  } else if (step === 0 && prevStep >= 1 && routesMap) {
     const allPts: [number, number][] = routeVizItems.flatMap(it =>
       (it.line.getLatLngs() as Leaflet.LatLng[]).map(ll => [ll.lat, ll.lng] as [number, number])
     );
