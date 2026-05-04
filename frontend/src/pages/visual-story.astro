@@ -128,8 +128,9 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
       z-index: 11;
       bottom: 1.75rem;
       right: 1.5rem;
-      width: min(22rem, calc(50vw - 1.25rem));
+      width: max-content;
       max-width: calc(100% - 3rem);
+      white-space: nowrap;
       padding: 0.85rem 1rem;
       border-radius: 10px;
       background: rgba(15, 23, 42, 0.55);
@@ -161,16 +162,30 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
       font-variant-numeric: tabular-nums;
       letter-spacing: 0.02em;
     }
-    #hero-flow-note .hero-flow-note-link a {
-      color: #fdba74;
-      font-weight: 600;
-      text-decoration: underline;
+    /* !important beats any global / reset stripping link underline */
+    #hero-flow-note a.hero-flow-note-link-a,
+    #hero-flow-note a.hero-flow-note-link-a:link,
+    #hero-flow-note a.hero-flow-note-link-a:visited,
+    #hero-flow-note a.hero-flow-note-link-a:hover,
+    #hero-flow-note a.hero-flow-note-link-a:active,
+    #hero-flow-note a.hero-flow-note-link-a:focus,
+    #hero-flow-note a.hero-flow-note-link-a:focus-visible {
+      text-decoration: underline !important;
+      text-decoration-line: underline !important;
+      text-decoration-style: solid !important;
       text-underline-offset: 3px;
+      text-decoration-thickness: 1.5px !important;
+      text-decoration-skip-ink: auto;
     }
-    #hero-flow-note .hero-flow-note-link a:hover {
-      color: #fed7aa;
+    #hero-flow-note a.hero-flow-note-link-a {
+      color: #7dd3fc;
+      font-weight: 500;
     }
-    #hero-flow-note .hero-flow-note-link a:focus-visible {
+    #hero-flow-note a.hero-flow-note-link-a:hover {
+      color: #bae6fd;
+    }
+    #hero-flow-note a.hero-flow-note-link-a:focus-visible {
+      color: #bae6fd;
       outline: 2px solid #f97316;
       outline-offset: 2px;
       border-radius: 2px;
@@ -189,6 +204,7 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
         left: 1rem;
         width: auto;
         max-width: none;
+        white-space: normal;
         bottom: 1.25rem;
         font-size: 0.68rem;
       }

@@ -366,7 +366,7 @@ export async function initHeroMap(
   setHeroFlowNoteVisible(true, [
     '<p class="hero-flow-note-lead">Straight lines connect <strong>delbydel</strong> (sub-district) centroids. Orange dots move along cross-area trips</p>',
     `<p class="hero-flow-note-data"><strong>Data</strong> · ${isoLine}, trip starts <strong>${escHtml(hourLabel)}</strong> (Oslo Bysykkel).</p>`,
-    `<p class="hero-flow-note-link"><a href="${REGION_FLOW_SANDBOX_URL}" target="_blank" rel="noopener noreferrer">Open the Region flow sandbox</a> to change day, hours, and filters.</p>`,
+    `<p class="hero-flow-note-link"><a class="hero-flow-note-link-a" href="${REGION_FLOW_SANDBOX_URL}" target="_blank" rel="noopener noreferrer">Open the Region flow sandbox to change day, hours, and filters.</a></p>`,
     '<p class="hero-flow-note-continue">The story continues below.</p>',
   ].join(''));
 }
