@@ -194,6 +194,36 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
       bottom: 2.75rem;
     }
 
+    /* Sits just right of Leaflet’s default top-left zoom (+/−); :global = buttons are created in charts.ts */
+    :global(.viz-map-reset) {
+      position: absolute;
+      top: 0.65rem;
+      left: 3.1rem;
+      z-index: 1200;
+      padding: 0.35rem 0.55rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      font-family: inherit;
+      line-height: 1.2;
+      color: #374151;
+      background: rgba(255, 255, 255, 0.97);
+      border: 1px solid #d1d5db;
+      border-radius: 0.45rem;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+      cursor: pointer;
+      transition: opacity 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+    :global(.viz-map-reset:hover:not(:disabled)) {
+      background: #fff;
+      border-color: #9ca3af;
+      color: #111827;
+    }
+    :global(.viz-map-reset:disabled) {
+      opacity: 0.55;
+      cursor: default;
+      box-shadow: none;
+    }
+
     /* Balance legend sits at bottom of sticky map */
     #balance-legend {
       position: absolute;

@@ -39,6 +39,118 @@ const DARK_TILE = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png
 const LIGHT_TILE = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
 const CARTO_ATTR = '&copy; <a href="https://carto.com/">CARTO</a>';
 
+const TOOLTIP_PAD = 8;
+
+interface MapHomeView {
+  lat: number;
+  lng: number;
+  zoom: number;
+}
+
+function captureMapHome(map: Leaflet.Map): MapHomeView {
+  const c = map.getCenter();
+  return { lat: c.lat, lng: c.lng, zoom: map.getZoom() };
+}
+
+function mapDiffersFromHome(map: Leaflet.Map, home: MapHomeView): boolean {
+  const c = map.getCenter();
+  const z = map.getZoom();
+  if (Math.abs(z - home.zoom) > 0.25) return true;
+  if (Math.abs(c.lat - home.lat) > 0.002 || Math.abs(c.lng - home.lng) > 0.002) return true;
+  return false;
+}
+
+/** Absolute `left`/`top` (px) relative to offsetParent — keep tooltip inside container. */
+function clampAbsoluteTooltipToContainer(el: HTMLElement, container: HTMLElement, pad = TOOLTIP_PAD): void {
+  for (let i = 0; i < 6; i++) {
+    const cr = container.getBoundingClientRect();
+    const wr = el.getBoundingClientRect();
+    let dx = 0;
+    let dy = 0;
+    if (wr.right > cr.right - pad) dx = cr.right - pad - wr.right;
+    if (wr.left + dx < cr.left + pad) dx = cr.left + pad - wr.left;
+    if (wr.bottom > cr.bottom - pad) dy = cr.bottom - pad - wr.bottom;
+    if (wr.top + dy < cr.top + pad) dy = cr.top + pad - wr.top;
+    if (dx === 0 && dy === 0) break;
+    const left = (parseFloat(el.style.left) || 0) + dx;
+    const top = (parseFloat(el.style.top) || 0) + dy;
+    el.style.left = `${left}px`;
+    el.style.top = `${top}px`;
+  }
+}
+
+/** Leaflet tooltip: nudge with margins so Leaflet’s own positioning is preserved. */
+function clampLeafletTooltipEl(el: HTMLElement, mapContainer: HTMLElement, pad = TOOLTIP_PAD): void {
+  el.style.marginLeft = el.style.marginLeft || '0px';
+  el.style.marginTop = el.style.marginTop || '0px';
+  for (let i = 0; i < 6; i++) {
+    const cr = mapContainer.getBoundingClientRect();
+    const wr = el.getBoundingClientRect();
+    let dx = 0;
+    let dy = 0;
+    if (wr.right > cr.right - pad) dx = cr.right - pad - wr.right;
+    if (wr.left + dx < cr.left + pad) dx = cr.left + pad - wr.left;
+    if (wr.bottom > cr.bottom - pad) dy = cr.bottom - pad - wr.bottom;
+    if (wr.top + dy < cr.top + pad) dy = cr.top + pad - wr.top;
+    if (dx === 0 && dy === 0) break;
+    const ml = (parseFloat(el.style.marginLeft) || 0) + dx;
+    const mt = (parseFloat(el.style.marginTop) || 0) + dy;
+    el.style.marginLeft = `${ml}px`;
+    el.style.marginTop = `${mt}px`;
+  }
+}
+
+function installMapTooltipClamp(map: Leaflet.Map): void {
+  let moveHandler: (() => void) | null = null;
+  const clearMove = () => {
+    if (moveHandler) {
+      map.off('mousemove', moveHandler);
+      moveHandler = null;
+    }
+  };
+
+  map.on('tooltipopen', (e: Leaflet.LeafletEvent) => {
+    clearMove();
+    const te = e as Leaflet.LeafletEvent & { tooltip: { getElement?: () => HTMLElement | undefined } };
+    const tip = te.tooltip.getElement?.();
+    if (!tip) return;
+    const mapEl = map.getContainer();
+    const clamp = () => {
+      clampLeafletTooltipEl(tip, mapEl);
+    };
+    requestAnimationFrame(() => requestAnimationFrame(clamp));
+    moveHandler = () => {
+      requestAnimationFrame(clamp);
+    };
+    map.on('mousemove', moveHandler);
+    map.once('tooltipclose', () => {
+      clearMove();
+      tip.style.marginLeft = '';
+      tip.style.marginTop = '';
+    });
+  });
+}
+
+/** Call with `programmatic` already true, immediately after starting flyTo / flyToBounds. */
+function attachHomeCaptureWhenMoveEnds(
+  map: Leaflet.Map,
+  setHome: (h: MapHomeView) => void,
+  clearProgrammatic: () => void,
+): void {
+  let settled = false;
+  const finish = () => {
+    if (settled) return;
+    settled = true;
+    map.off('moveend', finish);
+    setHome(captureMapHome(map));
+    clearProgrammatic();
+    updateBalanceResetVisibility();
+    updateRoutesResetVisibility();
+  };
+  map.once('moveend', finish);
+  window.setTimeout(finish, 1600);
+}
+
 // ── Hero map ──────────────────────────────────────────────────────────────────
 
 export async function initHeroMap(containerId: string, stations: StationDatum[]): Promise<void> {
@@ -258,6 +370,7 @@ export function initSeasonalChart(svgSelector: string, rows: AvgTripTimeByMonthR
           seasonTooltipEl.style.left = `${screen.x - cr.left + 12}px`;
           seasonTooltipEl.style.top = `${screen.y - cr.top - 40}px`;
           seasonTooltipEl.style.opacity = '1';
+          clampAbsoluteTooltipToContainer(seasonTooltipEl, container, TOOLTIP_PAD);
         }
       })
       .on('mouseout', function () {
@@ -326,6 +439,18 @@ let balanceRadii = new Map<string, number>();
 let topDepartHub: StationDatum | null = null;
 let topArriveHub: StationDatum | null = null;
 let balanceStep = -1;
+let balanceHome: MapHomeView | null = null;
+let balanceProgrammatic = false;
+let balanceResetBtn: HTMLButtonElement | null = null;
+
+function updateBalanceResetVisibility(): void {
+  if (!balanceMap || !balanceResetBtn || !balanceHome) return;
+  const away = !balanceProgrammatic && mapDiffersFromHome(balanceMap, balanceHome);
+  balanceResetBtn.disabled = !away;
+  balanceResetBtn.title = away
+    ? 'Restore zoom and pan to this story step’s map view'
+    : 'Zoom and pan match this step — use after you move the map';
+}
 
 function applyBalanceMarkerStyle(id: string): void {
   const s = balanceStations.find(st => st.id === id);
@@ -370,6 +495,41 @@ export async function initBalanceMap(containerId: string, stations: StationDatum
   L.tileLayer(LIGHT_TILE, { maxZoom: 19, attribution: CARTO_ATTR }).addTo(balanceMap);
   L.control.attribution({ position: 'bottomright', prefix: false }).addTo(balanceMap);
   balanceMap.setView([59.918, 10.745], 12);
+  balanceHome = captureMapHome(balanceMap);
+  installMapTooltipClamp(balanceMap);
+
+  balanceMap.on('moveend zoomend', () => {
+    if (balanceProgrammatic) return;
+    updateBalanceResetVisibility();
+  });
+
+  const wrap = el.parentElement;
+  if (wrap) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'viz-map-reset';
+    btn.textContent = 'Reset zoom & pan';
+    btn.addEventListener('click', () => {
+      if (!balanceMap || !balanceHome || balanceProgrammatic) return;
+      if (!mapDiffersFromHome(balanceMap, balanceHome)) return;
+      balanceProgrammatic = true;
+      updateBalanceResetVisibility();
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        balanceMap!.off('moveend', finish);
+        balanceHome = captureMapHome(balanceMap!);
+        balanceProgrammatic = false;
+        updateBalanceResetVisibility();
+      };
+      balanceMap.setView([balanceHome.lat, balanceHome.lng], balanceHome.zoom, { animate: true });
+      balanceMap.once('moveend', finish);
+      window.setTimeout(finish, 1100);
+    });
+    wrap.appendChild(btn);
+    balanceResetBtn = btn;
+  }
 
   for (const s of balanceStations) {
     const net = (s.trips_as_origin ?? 0) - (s.trips_as_dest ?? 0);
@@ -385,7 +545,7 @@ export async function initBalanceMap(containerId: string, stations: StationDatum
       `Departures: ${(s.trips_as_origin ?? 0).toLocaleString()}<br/>` +
       `Arrivals: ${(s.trips_as_dest ?? 0).toLocaleString()}<br/>` +
       `Net: <strong>${sign}${net.toLocaleString()}</strong>`,
-      { direction: 'top' }
+      { direction: 'auto' }
     );
     cm.addTo(balanceMap);
     balanceMarkers.set(s.id, cm);
@@ -445,15 +605,27 @@ export function updateBalanceMap(step: number): void {
   }
 
   if (step === 2 && topDepartHub) {
-    if (prevStep !== 2) balanceMap.flyTo([topDepartHub.lat, topDepartHub.lon], 14, { duration: 1.2 });
+    if (prevStep !== 2) {
+      balanceProgrammatic = true;
+      balanceMap.flyTo([topDepartHub.lat, topDepartHub.lon], 14, { duration: 1.2 });
+      attachHomeCaptureWhenMoveEnds(balanceMap, h => { balanceHome = h; }, () => { balanceProgrammatic = false; });
+    }
     balanceMarkers.get(topDepartHub.id)?.openTooltip();
   } else if (step === 3 && topArriveHub) {
-    if (prevStep !== 3) balanceMap.flyTo([topArriveHub.lat, topArriveHub.lon], 14, { duration: 1.2 });
+    if (prevStep !== 3) {
+      balanceProgrammatic = true;
+      balanceMap.flyTo([topArriveHub.lat, topArriveHub.lon], 14, { duration: 1.2 });
+      attachHomeCaptureWhenMoveEnds(balanceMap, h => { balanceHome = h; }, () => { balanceProgrammatic = false; });
+    }
     balanceMarkers.get(topArriveHub.id)?.openTooltip();
   } else if (step < 2 && prevStep >= 2) {
     const allLatLngs: [number, number][] = balanceStations.map(s => [s.lat, s.lon]);
+    balanceProgrammatic = true;
     balanceMap.flyToBounds(allLatLngs, { padding: [24, 24], duration: 1 });
+    attachHomeCaptureWhenMoveEnds(balanceMap, h => { balanceHome = h; }, () => { balanceProgrammatic = false; });
   }
+
+  updateBalanceResetVisibility();
 }
 
 // ── Chapter 4: Routes map ─────────────────────────────────────────────────────
@@ -465,6 +637,18 @@ interface RouteViz { line: Leaflet.Polyline; route: RouteData; distanceM: number
 let routesMap: Leaflet.Map | null = null;
 let routeVizItems: RouteViz[] = [];
 let routesStep = -1;
+let routesHome: MapHomeView | null = null;
+let routesProgrammatic = false;
+let routesResetBtn: HTMLButtonElement | null = null;
+
+function updateRoutesResetVisibility(): void {
+  if (!routesMap || !routesResetBtn || !routesHome) return;
+  const away = !routesProgrammatic && mapDiffersFromHome(routesMap, routesHome);
+  routesResetBtn.disabled = !away;
+  routesResetBtn.title = away
+    ? 'Restore zoom and pan to this story step’s map view'
+    : 'Zoom and pan match this step — use after you move the map';
+}
 
 export async function initRoutesMap(
   containerId: string,
@@ -482,6 +666,41 @@ export async function initRoutesMap(
   L.tileLayer(LIGHT_TILE, { maxZoom: 19, attribution: CARTO_ATTR }).addTo(routesMap);
   L.control.attribution({ position: 'bottomright', prefix: false }).addTo(routesMap);
   routesMap.setView([59.918, 10.745], 12);
+  routesHome = captureMapHome(routesMap);
+  installMapTooltipClamp(routesMap);
+
+  routesMap.on('moveend zoomend', () => {
+    if (routesProgrammatic) return;
+    updateRoutesResetVisibility();
+  });
+
+  const wrap = el.parentElement;
+  if (wrap) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'viz-map-reset';
+    btn.textContent = 'Reset zoom & pan';
+    btn.addEventListener('click', () => {
+      if (!routesMap || !routesHome || routesProgrammatic) return;
+      if (!mapDiffersFromHome(routesMap, routesHome)) return;
+      routesProgrammatic = true;
+      updateRoutesResetVisibility();
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        routesMap!.off('moveend', finish);
+        routesHome = captureMapHome(routesMap!);
+        routesProgrammatic = false;
+        updateRoutesResetVisibility();
+      };
+      routesMap.setView([routesHome.lat, routesHome.lng], routesHome.zoom, { animate: true });
+      routesMap.once('moveend', finish);
+      window.setTimeout(finish, 1100);
+    });
+    wrap.appendChild(btn);
+    routesResetBtn = btn;
+  }
 
   const validRoutes = routes.filter(r => r.encodedPolyline && r.distance_m != null);
   validRoutes.sort((a, b) => (a.distance_m ?? 9999) - (b.distance_m ?? 9999));
@@ -499,7 +718,7 @@ export async function initRoutesMap(
         })
           .on('mouseover', function () { this.setStyle({ fillColor: AMBER, fillOpacity: 1 }); this.setRadius(6); })
           .on('mouseout', function () { this.setStyle({ fillColor: '#374151', fillOpacity: 0.85 }); this.setRadius(4); })
-          .bindTooltip(s.name, { direction: 'top' })
+          .bindTooltip(s.name, { direction: 'auto' })
           .addTo(routesMap);
       }
     }
@@ -526,7 +745,7 @@ export async function initRoutesMap(
     line.bindTooltip(
       `${originName} → ${destName}<br/>${km} km · ~${min} min by bike` +
       (count > 0 ? `<br/>${count.toLocaleString()} trips · ${totalHoursStr} total` : ''),
-      { direction: 'top' }
+      { direction: 'auto', sticky: true }
     );
 
     let resting: { color: string; weight: number; opacity: number } | null = null;
@@ -576,16 +795,30 @@ export function updateRoutesMap(step: number): void {
     const pts: [number, number][] = [...topByTime].flatMap(it =>
       (it.line.getLatLngs() as Leaflet.LatLng[]).map(ll => [ll.lat, ll.lng] as [number, number])
     );
-    if (pts.length > 0) routesMap.flyToBounds(pts, { padding: [48, 48], duration: 1.2 });
+    if (pts.length > 0) {
+      routesProgrammatic = true;
+      routesMap.flyToBounds(pts, { padding: [48, 48], duration: 1.2 });
+      attachHomeCaptureWhenMoveEnds(routesMap, h => { routesHome = h; }, () => { routesProgrammatic = false; });
+    }
   } else if ((step === 1 || step === 2) && (prevStep < 1 || prevStep === 3) && routesMap) {
     const pts: [number, number][] = routeVizItems.slice(0, TOP_N).flatMap(it =>
       (it.line.getLatLngs() as Leaflet.LatLng[]).map(ll => [ll.lat, ll.lng] as [number, number])
     );
-    if (pts.length > 0) routesMap.flyToBounds(pts, { padding: [48, 48], duration: 1.2 });
+    if (pts.length > 0) {
+      routesProgrammatic = true;
+      routesMap.flyToBounds(pts, { padding: [48, 48], duration: 1.2 });
+      attachHomeCaptureWhenMoveEnds(routesMap, h => { routesHome = h; }, () => { routesProgrammatic = false; });
+    }
   } else if (step === 0 && prevStep >= 1 && routesMap) {
     const allPts: [number, number][] = routeVizItems.flatMap(it =>
       (it.line.getLatLngs() as Leaflet.LatLng[]).map(ll => [ll.lat, ll.lng] as [number, number])
     );
-    if (allPts.length > 0) routesMap.flyToBounds(allPts, { padding: [32, 32], duration: 1 });
+    if (allPts.length > 0) {
+      routesProgrammatic = true;
+      routesMap.flyToBounds(allPts, { padding: [32, 32], duration: 1 });
+      attachHomeCaptureWhenMoveEnds(routesMap, h => { routesHome = h; }, () => { routesProgrammatic = false; });
+    }
   }
+
+  updateRoutesResetVisibility();
 }
