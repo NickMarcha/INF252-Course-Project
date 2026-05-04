@@ -6,11 +6,13 @@ import type {
   CyclingDurationByContextData,
   CyclingHourlyRidingProfileData,
   EdaSummaryStats,
+  RouteBinnedRow,
   RoutesData,
   RoutePairCount,
   StationInOutLatestFullMonthData,
   WeatherOsloData,
 } from '../../data/prepared-data-types.js';
+import { buildDateIndex } from '../lib/centroid-flow-core.js';
 import {
   initHeroMap,
   initYearlyChart, updateYearlyChart,
@@ -22,6 +24,25 @@ import {
 } from './charts.js';
 
 const base = (import.meta as { env: { BASE_URL: string } }).env.BASE_URL ?? '/';
+
+const HERO_FLOW_YEAR = '2024';
+const HERO_FLOW_DAY_CANDIDATES = ['2024-06-05', '2024-06-12', '2024-06-03', '2024-06-19'];
+
+function pickHeroDayRows(idx: Map<string, RouteBinnedRow[]>): RouteBinnedRow[] | null {
+  for (const d of HERO_FLOW_DAY_CANDIDATES) {
+    const rows = idx.get(d);
+    if (rows?.length) return rows;
+  }
+  for (const k of [...idx.keys()].sort()) {
+    if (k.startsWith(`${HERO_FLOW_YEAR}-06`)) {
+      const rows = idx.get(k);
+      if (rows?.length) return rows;
+    }
+  }
+  const keys = [...idx.keys()].sort();
+  const first = keys[0];
+  return first && idx.get(first)?.length ? idx.get(first)! : null;
+}
 
 async function loadStations(): Promise<StationDatum[]> {
   const res = await fetch(`${base}prepared-data/stations.json`);
@@ -56,6 +77,7 @@ async function loadAllData() {
     hourlyRidingRes,
     stationInOutRes,
     weather,
+    heroDayRows,
   ] = await Promise.all([
     loadStations(),
     loadPreparedData<AvgTripTimeByMonthRow[]>('avg_trip_time_by_month.json'),
@@ -77,6 +99,9 @@ async function loadAllData() {
     })),
     loadPreparedData<StationInOutLatestFullMonthData>('stations/station_in_out_latest_full_month.json').catch(() => null),
     loadWeatherJson(),
+    loadParquetData<RouteBinnedRow>(`routes/route_by_day_${HERO_FLOW_YEAR}.parquet`)
+      .then(rows => pickHeroDayRows(buildDateIndex(rows)))
+      .catch(() => null as RouteBinnedRow[] | null),
   ]);
 
   const avgTime = avgTimeRes.data;
@@ -118,6 +143,7 @@ async function loadAllData() {
     hourlyRidingProfile,
     stationInOut,
     weather,
+    heroDayRows,
   };
 }
 
@@ -166,6 +192,7 @@ async function init() {
       hourlyRidingProfile,
       stationInOut,
       weather,
+      heroDayRows,
     } = await loadAllData();
 
     // Hero stats
@@ -175,7 +202,7 @@ async function init() {
     if (stationsEl) animateCounter(stationsEl, stations.length);
 
     // Init all visualizations
-    await initHeroMap('hero-map', stations);
+    await initHeroMap('hero-map', stations, heroDayRows);
     initYearlyChart('#viz-yearly', avgTime);
     initSeasonalChart('#viz-seasonal', avgTime);
     initWhenRiding({

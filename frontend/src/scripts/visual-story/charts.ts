@@ -5,12 +5,30 @@ import type {
   CyclingDailyNormPoint,
   CyclingDurationContextRow,
   CyclingHourlyRidingProfileData,
+  IsochroneStation,
+  RouteBinnedRow,
   RouteData,
   StationInOutDatum,
   StationInOutLatestFullMonthData,
   WeatherOsloData,
 } from '../../data/prepared-data-types.js';
 import type * as Leaflet from 'leaflet';
+import {
+  aggregateFlows,
+  buildStationRegionMaps,
+  centroidMaps,
+  computeUniformTripsPerDot,
+  countHoursInSpan,
+  cycleMsFromTripsPerHourAndDistance,
+  DOT_RADIUS_PX,
+  formatHourSpanLabel,
+  haversineKm,
+  MAX_BIKE_DOTS_PER_EDGE,
+  nDotsUniform,
+  startCentroidDotAnimation,
+  straightLatLngs,
+  type DotEdgeAnimSpec,
+} from '../lib/centroid-flow-core.js';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -23,6 +41,7 @@ export interface StationDatum {
   trips_as_origin: number;
   trips_as_dest: number;
   bydel?: string;
+  delbydel?: string;
   elevation_m?: number;
 }
 
@@ -163,11 +182,49 @@ function attachHomeCaptureWhenMoveEnds(
 
 // ── Hero map ──────────────────────────────────────────────────────────────────
 
-export async function initHeroMap(containerId: string, stations: StationDatum[]): Promise<void> {
-  const L = (await import('leaflet')).default;
-  const el = document.getElementById(containerId);
-  if (!el) return;
+/** Fixed camera for animated hero (delbydel flow); pan/zoom off so the page can scroll. */
+const HERO_MAP_CENTER: [number, number] = [59.92238, 10.7048];
+const HERO_MAP_ZOOM = 14;
 
+const REGION_FLOW_SANDBOX_URL =
+  'https://nickmarcha.github.io/INF252-Course-Project/region-flow/';
+
+function escHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function formatHeroCalendarDay(period: string): string {
+  const p = period.trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(p)) return p;
+  const [ys, ms, ds] = p.split('-');
+  const y = Number(ys);
+  const mo = Number(ms);
+  const da = Number(ds);
+  if (!Number.isFinite(y) || !Number.isFinite(mo) || !Number.isFinite(da)) return p;
+  const d = new Date(y, mo - 1, da);
+  return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function setHeroFlowNoteVisible(visible: boolean, html?: string): void {
+  const note = document.getElementById('hero-flow-note');
+  if (!note) return;
+  if (!visible) {
+    note.hidden = true;
+    note.innerHTML = '';
+    return;
+  }
+  if (html != null) note.innerHTML = html;
+  note.hidden = false;
+}
+
+type LeafletShim = Pick<typeof import('leaflet'), 'map' | 'tileLayer' | 'control' | 'circleMarker'>;
+
+async function initHeroMapStatic(L: LeafletShim, el: HTMLElement, stations: StationDatum[]): Promise<void> {
+  setHeroFlowNoteVisible(false);
   const map = L.map(el, { zoomControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false, attributionControl: false });
   L.tileLayer(DARK_TILE, { maxZoom: 19, attribution: CARTO_ATTR }).addTo(map);
   L.control.attribution({ position: 'bottomright', prefix: false }).addTo(map);
@@ -186,6 +243,132 @@ export async function initHeroMap(containerId: string, stations: StationDatum[])
       weight: 1,
     }).addTo(map);
   }
+}
+
+export async function initHeroMap(
+  containerId: string,
+  stations: StationDatum[],
+  heroDayRows?: RouteBinnedRow[] | null,
+): Promise<void> {
+  const L = (await import('leaflet')).default;
+  const el = document.getElementById(containerId);
+  if (!el) return;
+
+  if (!heroDayRows?.length) {
+    setHeroFlowNoteVisible(false);
+    await initHeroMapStatic(L, el, stations);
+    return;
+  }
+
+  const isoStations = stations as unknown as IsochroneStation[];
+  const { bydel: stationBydel, delbydel: stationDelbydel } = buildStationRegionMaps(isoStations);
+  const centroids = centroidMaps(isoStations);
+  const hourStart = 7;
+  const hourEnd = 18;
+  const hourLabel = formatHourSpanLabel(hourStart, hourEnd);
+  const edges = aggregateFlows(
+    heroDayRows,
+    hourStart,
+    hourEnd,
+    stationBydel,
+    stationDelbydel,
+    'delbydel',
+    true,
+    2,
+    48,
+  );
+
+  if (!edges.length) {
+    setHeroFlowNoteVisible(false);
+    await initHeroMapStatic(L, el, stations);
+    return;
+  }
+
+  const periodRaw = String(heroDayRows[0]?.period ?? '').trim();
+  const dayLabel = periodRaw ? formatHeroCalendarDay(periodRaw) : 'a sample day';
+
+  const map = L.map(el, {
+    zoomControl: false,
+    dragging: false,
+    scrollWheelZoom: false,
+    doubleClickZoom: false,
+    attributionControl: false,
+    touchZoom: false,
+    boxZoom: false,
+    keyboard: false,
+  });
+  L.tileLayer(DARK_TILE, { maxZoom: 19, attribution: CARTO_ATTR }).addTo(map);
+  L.control.attribution({ position: 'bottomright', prefix: false }).addTo(map);
+  map.setView(HERO_MAP_CENTER, HERO_MAP_ZOOM);
+
+  map.createPane('heroFlows');
+  map.getPane('heroFlows')!.style.zIndex = '450';
+  map.createPane('heroDots');
+  map.getPane('heroDots')!.style.zIndex = '460';
+
+  const flowLayer = L.layerGroup().addTo(map);
+  const dotLayer = L.layerGroup().addTo(map);
+
+  const cmap = centroids.delbydel;
+  const spanHours = Math.max(1, countHoursInSpan(hourStart, hourEnd));
+  const maxC = edges[0]?.count ?? 1;
+  const { K } = computeUniformTripsPerDot(edges, MAX_BIKE_DOTS_PER_EDGE, 'auto', 1);
+
+  const dotSpecs: DotEdgeAnimSpec[] = [];
+
+  for (const e of edges) {
+    const a = cmap.get(e.origin);
+    const b = cmap.get(e.dest);
+    if (!a || !b) continue;
+    const latlngs = straightLatLngs([a.lat, a.lon], [b.lat, b.lon]);
+    const weight = 1 + (3 * e.count) / maxC;
+    L.polyline(latlngs, {
+      color: AMBER,
+      weight,
+      opacity: 0.22,
+      pane: 'heroFlows',
+      interactive: false,
+    }).addTo(flowLayer);
+
+    const D_km = haversineKm(a.lat, a.lon, b.lat, b.lon);
+    const tph = e.count / spanHours;
+    const cycleMs = cycleMsFromTripsPerHourAndDistance(tph, D_km);
+    const nDots = nDotsUniform(e.count, K, MAX_BIKE_DOTS_PER_EDGE);
+    const markers: Leaflet.CircleMarker[] = [];
+    for (let i = 0; i < nDots; i++) {
+      const m = L.circleMarker([a.lat, a.lon], {
+        radius: DOT_RADIUS_PX,
+        fillColor: AMBER,
+        color: 'rgba(255,255,255,0.35)',
+        weight: 0.6,
+        fillOpacity: 0.88,
+        pane: 'heroDots',
+        interactive: false,
+      });
+      m.addTo(dotLayer);
+      markers.push(m);
+    }
+    dotSpecs.push({
+      lat1: a.lat,
+      lon1: a.lon,
+      lat2: b.lat,
+      lon2: b.lon,
+      cycleMs,
+      markers,
+    });
+  }
+
+  startCentroidDotAnimation(dotSpecs);
+
+  const isoLine = periodRaw
+    ? `<span class="hero-flow-note-mono">${escHtml(periodRaw)}</span> (${escHtml(dayLabel)})`
+    : escHtml(dayLabel);
+  setHeroFlowNoteVisible(true, [
+    '<p class="hero-flow-note-lead">Straight lines connect <strong>delbydel</strong> (sub-district) centroids. Orange dots move along cross-area trips</p>',
+    `<p class="hero-flow-note-data"><strong>Data</strong> · ${isoLine}, trip starts <strong>${escHtml(hourLabel)}</strong> (Oslo Bysykkel).</p>`,
+    `<p class="hero-flow-note-link"><a href="${REGION_FLOW_SANDBOX_URL}" target="_blank" rel="noopener noreferrer">Open the Region flow sandbox</a> to change day, hours, and filters.</p>`,
+    '<p class="hero-flow-note-continue">The story continues below.</p>',
+  ].join(''));
 }
 
 // ── Chapter 1: Yearly bar chart ───────────────────────────────────────────────
@@ -1096,6 +1279,9 @@ function paintWhenSplomPanel(
   legG.append('text').attr('x', 14).attr('y', 20).attr('font-size', 8).attr('fill', '#6b7280').text('Overlap reads darker');
 }
 
+/** Weekend stroke in the hourly-by-hour panel (weekday stays `CTX_COLORS[0]` blue). */
+const HOURLY_WEEKEND_STROKE = CTX_COLORS[3];
+
 function paintWhenHourlySection(
   prepared: WhenRidingPrepared,
   hourlyDims: { w: number; h: number },
@@ -1166,14 +1352,14 @@ function paintWhenHourlySection(
     gh.append('path').datum(p.weekday_duration_min_avg_daily).attr('fill', 'none')
       .attr('stroke', CTX_COLORS[0]).attr('stroke-width', 2.2).attr('d', lineWdDur);
     gh.append('path').datum(p.weekend_duration_min_avg_daily).attr('fill', 'none')
-      .attr('stroke', CTX_COLORS[2]).attr('stroke-width', 2.2).attr('d', lineWeDur);
+      .attr('stroke', HOURLY_WEEKEND_STROKE).attr('stroke-width', 2.2).attr('d', lineWeDur);
 
     const tripDash = '6 4';
     gh.append('path').datum(p.weekday_trips_avg_daily).attr('fill', 'none')
       .attr('stroke', CTX_COLORS[0]).attr('stroke-opacity', 0.88).attr('stroke-width', 1.9)
       .attr('stroke-dasharray', tripDash).attr('d', lineWdTrip);
     gh.append('path').datum(p.weekend_trips_avg_daily).attr('fill', 'none')
-      .attr('stroke', CTX_COLORS[2]).attr('stroke-opacity', 0.88).attr('stroke-width', 1.9)
+      .attr('stroke', HOURLY_WEEKEND_STROKE).attr('stroke-opacity', 0.88).attr('stroke-width', 1.9)
       .attr('stroke-dasharray', tripDash).attr('d', lineWeTrip);
 
     gh.append('g').attr('class', 'y-axis').call(
@@ -1202,11 +1388,11 @@ function paintWhenHourlySection(
     const legDual = gh.append('g').attr('transform', `translate(${Math.max(4, innerWh - 132)}, 2)`);
     legDual.append('line').attr('x1', 0).attr('x2', 14).attr('y1', 0).attr('y2', 0).attr('stroke', CTX_COLORS[0]).attr('stroke-width', 2);
     legDual.append('text').attr('x', 18).attr('y', 3).attr('font-size', 8).attr('fill', '#374151').text('Weekday time');
-    legDual.append('line').attr('x1', 0).attr('x2', 14).attr('y1', 10).attr('y2', 10).attr('stroke', CTX_COLORS[2]).attr('stroke-width', 2);
+    legDual.append('line').attr('x1', 0).attr('x2', 14).attr('y1', 10).attr('y2', 10).attr('stroke', HOURLY_WEEKEND_STROKE).attr('stroke-width', 2);
     legDual.append('text').attr('x', 18).attr('y', 13).attr('font-size', 8).attr('fill', '#374151').text('Weekend time');
     legDual.append('line').attr('x1', 72).attr('x2', 86).attr('y1', 0).attr('y2', 0).attr('stroke', CTX_COLORS[0]).attr('stroke-opacity', 0.88).attr('stroke-dasharray', tripDash).attr('stroke-width', 1.9);
     legDual.append('text').attr('x', 90).attr('y', 3).attr('font-size', 8).attr('fill', '#64748b').text('Weekday trips');
-    legDual.append('line').attr('x1', 72).attr('x2', 86).attr('y1', 10).attr('y2', 10).attr('stroke', CTX_COLORS[2]).attr('stroke-opacity', 0.88).attr('stroke-dasharray', tripDash).attr('stroke-width', 1.9);
+    legDual.append('line').attr('x1', 72).attr('x2', 86).attr('y1', 10).attr('y2', 10).attr('stroke', HOURLY_WEEKEND_STROKE).attr('stroke-opacity', 0.88).attr('stroke-dasharray', tripDash).attr('stroke-width', 1.9);
     legDual.append('text').attr('x', 90).attr('y', 13).attr('font-size', 8).attr('fill', '#64748b').text('Weekend trips');
   } else {
     const maxH = Math.max(d3.max(hourlyWdDepartures) ?? 0, d3.max(hourlyWeDepartures) ?? 0, 1e-6);
@@ -1223,7 +1409,7 @@ function paintWhenHourlySection(
     if (hourlyWdDepartures.length === 24 && hourlyWeDepartures.length === 24) {
       gh.append('path').datum(hourlyWdDepartures).attr('fill', 'none').attr('stroke', CTX_COLORS[0]).attr('stroke-width', 2.2)
         .attr('d', lineWd);
-      gh.append('path').datum(hourlyWeDepartures).attr('fill', 'none').attr('stroke', CTX_COLORS[2]).attr('stroke-width', 2.2)
+      gh.append('path').datum(hourlyWeDepartures).attr('fill', 'none').attr('stroke', HOURLY_WEEKEND_STROKE).attr('stroke-width', 2.2)
         .attr('d', lineWe);
     } else {
       gh.append('text').attr('x', innerWh / 2).attr('y', innerHh / 2).attr('text-anchor', 'middle')
@@ -1241,7 +1427,7 @@ function paintWhenHourlySection(
     const legH = gh.append('g').attr('transform', `translate(${Math.max(4, innerWh - 120)}, 4)`);
     legH.append('line').attr('x1', 0).attr('x2', 18).attr('y1', 0).attr('y2', 0).attr('stroke', CTX_COLORS[0]).attr('stroke-width', 2);
     legH.append('text').attr('x', 22).attr('y', 4).attr('font-size', 9).attr('fill', '#374151').text('Weekday');
-    legH.append('line').attr('x1', 0).attr('x2', 18).attr('y1', 14).attr('y2', 14).attr('stroke', CTX_COLORS[2]).attr('stroke-width', 2);
+    legH.append('line').attr('x1', 0).attr('x2', 18).attr('y1', 14).attr('y2', 14).attr('stroke', HOURLY_WEEKEND_STROKE).attr('stroke-width', 2);
     legH.append('text').attr('x', 22).attr('y', 18).attr('font-size', 9).attr('fill', '#374151').text('Weekend');
   }
 

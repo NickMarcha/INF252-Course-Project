@@ -122,6 +122,78 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
       50% { transform: translateY(6px); }
     }
 
+    /* Hero: map caption (lower right); pointer-events so link works over non-interactive map */
+    #hero-flow-note {
+      position: absolute;
+      z-index: 11;
+      bottom: 1.75rem;
+      right: 1.5rem;
+      width: min(22rem, calc(50vw - 1.25rem));
+      max-width: calc(100% - 3rem);
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      font-size: 0.72rem;
+      line-height: 1.55;
+      color: rgba(248, 250, 252, 0.92);
+      pointer-events: auto;
+      text-align: left;
+    }
+    #hero-flow-note[hidden] {
+      display: none !important;
+    }
+    #hero-flow-note p {
+      margin: 0 0 0.55rem 0;
+    }
+    #hero-flow-note p:last-child {
+      margin-bottom: 0;
+    }
+    #hero-flow-note .hero-flow-note-lead {
+      color: rgba(248, 250, 252, 0.95);
+    }
+    #hero-flow-note .hero-flow-note-data {
+      color: rgba(226, 232, 240, 0.9);
+    }
+    #hero-flow-note .hero-flow-note-mono {
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
+    }
+    #hero-flow-note .hero-flow-note-link a {
+      color: #fdba74;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    #hero-flow-note .hero-flow-note-link a:hover {
+      color: #fed7aa;
+    }
+    #hero-flow-note .hero-flow-note-link a:focus-visible {
+      outline: 2px solid #f97316;
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    #hero-flow-note .hero-flow-note-continue {
+      margin-top: 0.35rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(251, 191, 36, 0.85);
+      font-weight: 600;
+    }
+    @media (max-width: 768px) {
+      #hero-flow-note {
+        right: 1rem;
+        left: 1rem;
+        width: auto;
+        max-width: none;
+        bottom: 1.25rem;
+        font-size: 0.68rem;
+      }
+    }
+
     /* ── Chapter layout ───────────────────────────────────────────────────── */
     .vs-chapter {
       position: relative;
@@ -606,6 +678,7 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
       </div>
       <div class="scroll-hint">Scroll to explore ↓</div>
     </div>
+    <div id="hero-flow-note" hidden aria-live="polite"></div>
   </section>
 
   <!-- ── Chapter 1: Yearly trends ── -->
@@ -685,7 +758,7 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
       <div class="vs-step" data-chapter="seasonal" data-step="3">
         <div class="vs-card">
           <h3>Six years, one shape</h3>
-          <p>With all years overlaid, the consistency is striking. What changes year to year is only the scale; the shape barely moves. Oslo's cycling rhythm is deeply tied to its seasons.</p>
+          <p>With all years overlaid, the consistency is striking. What changes year to year is only the scale; the shape barely changes. Oslo's cycling rhythm is deeply tied to its seasons.</p>
         </div>
       </div>
 
@@ -778,7 +851,7 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
       <div class="vs-step" data-chapter="balance" data-step="2">
         <div class="vs-card">
           <h3>The biggest departure hub</h3>
-          <p>The highlighted station is Oslo's largest net departure point: far more bikes leave than arrive. It likely sits near a residential area where commuters start their morning rides.</p>
+          <p>The highlighted station is Oslo's largest net departure point: far more bikes leave than arrive. It sits near a residential area where commuters start their morning rides.</p>
           <p>Hover over it to see the numbers.</p>
         </div>
       </div>
@@ -786,7 +859,7 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
       <div class="vs-step" data-chapter="balance" data-step="3">
         <div class="vs-card">
           <h3>The biggest arrival hub</h3>
-          <p>Conversely, this station absorbs far more bikes than it releases. It's likely near a transit node or workplace where journeys end; bikes pile up here each morning.</p>
+          <p>Conversely, this station absorbs far more bikes than it releases. It's near a transit node or workplace where journeys end; bikes pile up here each morning.</p>
         </div>
       </div>
 
