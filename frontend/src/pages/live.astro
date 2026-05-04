@@ -1,0 +1,396 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+	<div class="p-6 max-w-5xl mx-auto space-y-6">
+		<header class="space-y-2">
+			<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">
+				Live – Oslo Bysykkel system status
+			</h1>
+			<p class="text-slate-600 dark:text-slate-400 text-sm max-w-3xl">
+				Real-time data from the Oslo Bysykkel
+				<a
+					href="https://oslobysykkel.no/en/open-data/realtime"
+					class="underline hover:text-slate-900 dark:hover:text-slate-100"
+					target="_blank"
+					rel="noopener noreferrer">GBFS feeds</a
+				> (<code>station_information</code> + <code>station_status</code>). Polled every 10 seconds.
+				Data licensed under
+				<a
+					href="https://data.norge.no/nlod/en/2.0/"
+					class="underline hover:text-slate-900 dark:hover:text-slate-100"
+					target="_blank"
+					rel="noopener noreferrer">NLOD 2.0</a
+				>.
+			</p>
+		</header>
+
+		<p
+			id="status-line"
+			class="text-xs text-slate-500 dark:text-slate-400"
+		>
+			Loading…
+		</p>
+
+		<p
+			id="error-banner"
+			class="hidden text-sm text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-md px-3 py-2"
+		>
+		</p>
+
+		<section
+			class="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 p-6"
+		>
+			<div class="flex flex-col items-start gap-1">
+				<div class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+					Slots not accounted for
+				</div>
+				<div
+					id="hero-number"
+					class="text-6xl font-bold tabular-nums text-slate-900 dark:text-slate-100"
+				>
+					–
+				</div>
+				<div class="text-sm text-slate-600 dark:text-slate-400 max-w-2xl">
+					= Σ capacity − Σ bikes available − Σ docks available. Best read as an
+					<strong>upper bound</strong> on bikes currently in transit; in practice mostly
+					reflects disabled / out-of-service docks (see methodology below).
+				</div>
+			</div>
+		</section>
+
+		<section class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+			<div
+				class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/40 p-4"
+			>
+				<div class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+					Bikes available
+				</div>
+				<div
+					id="kpi-bikes"
+					class="text-2xl font-semibold tabular-nums text-slate-900 dark:text-slate-100"
+				>
+					–
+				</div>
+				<div class="text-xs text-slate-500 dark:text-slate-400">at stations, ready to rent</div>
+			</div>
+			<div
+				class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/40 p-4"
+			>
+				<div class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+					Free docks
+				</div>
+				<div
+					id="kpi-docks"
+					class="text-2xl font-semibold tabular-nums text-slate-900 dark:text-slate-100"
+				>
+					–
+				</div>
+				<div class="text-xs text-slate-500 dark:text-slate-400">empty, ready to receive</div>
+			</div>
+			<div
+				class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/40 p-4"
+			>
+				<div class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+					Total capacity
+				</div>
+				<div
+					id="kpi-capacity"
+					class="text-2xl font-semibold tabular-nums text-slate-900 dark:text-slate-100"
+				>
+					–
+				</div>
+				<div class="text-xs text-slate-500 dark:text-slate-400">Σ docks across all stations</div>
+			</div>
+			<div
+				class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/40 p-4"
+			>
+				<div class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+					Stations renting
+				</div>
+				<div
+					id="kpi-stations"
+					class="text-2xl font-semibold tabular-nums text-slate-900 dark:text-slate-100"
+				>
+					–
+				</div>
+				<div class="text-xs text-slate-500 dark:text-slate-400">is_renting = true / total</div>
+			</div>
+		</section>
+
+		<details
+			class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/40 p-4 text-sm text-slate-600 dark:text-slate-400"
+		>
+			<summary class="cursor-pointer font-medium text-slate-800 dark:text-slate-200">
+				How is the headline number estimated?
+			</summary>
+			<div class="mt-3 space-y-2">
+				<p>
+					GBFS exposes per-station <code>capacity</code>, <code>num_bikes_available</code>, and <code
+						>num_docks_available</code
+					>. Per spec, <code>num_docks_available</code> counts empty <em>functional</em> docks, so:
+				</p>
+				<pre
+					class="text-xs bg-slate-100 dark:bg-slate-900 p-3 rounded overflow-x-auto"><code>Σ capacity − Σ num_bikes_available − Σ num_docks_available
+  = dock slots that are neither holding a bike
+    nor reporting as a free dock
+  ≈ broken / out-of-service docks
+    (upper bound on bikes currently in transit)</code></pre>
+				<p>
+					A precise "bikes in use" count would need the system's total fleet size, which the three
+					public feeds (<code>system_information</code>, <code>station_information</code>,
+					<code>station_status</code>) do not expose. The four KPIs above are exact; only the
+					headline number is fuzzy.
+				</p>
+			</div>
+		</details>
+
+		<section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+			<div>
+				<h2 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+					Top 10 fullest stations (most bikes)
+				</h2>
+				<ol
+					id="list-fullest"
+					class="space-y-1 text-sm text-slate-700 dark:text-slate-300"
+				></ol>
+			</div>
+			<div>
+				<h2 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+					Top 10 emptiest stations (most free docks)
+				</h2>
+				<ol
+					id="list-emptiest"
+					class="space-y-1 text-sm text-slate-700 dark:text-slate-300"
+				></ol>
+			</div>
+		</section>
+	</div>
+</Layout>
+
+<script>
+	import {
+		aggregateLive,
+		fetchGbfs,
+		type GbfsStationInfo,
+		type GbfsStationStatus,
+		type LiveAggregate,
+	} from '../data/gbfs';
+
+	const STATUS_INTERVAL_MS = 10_000;
+	const INFO_INTERVAL_MS = 5 * 60_000;
+	const TICK_INTERVAL_MS = 1_000;
+
+	type StationInfoPayload = { stations: GbfsStationInfo[] };
+	type StationStatusPayload = { stations: GbfsStationStatus[] };
+
+	const state: {
+		stationInfo: StationInfoPayload | null;
+		stationStatus: StationStatusPayload | null;
+		infoLastUpdated: number;
+		statusLastUpdated: number;
+		errorMsg: string | null;
+		statusTimer: number | null;
+		infoTimer: number | null;
+		tickTimer: number | null;
+	} = {
+		stationInfo: null,
+		stationStatus: null,
+		infoLastUpdated: 0,
+		statusLastUpdated: 0,
+		errorMsg: null,
+		statusTimer: null,
+		infoTimer: null,
+		tickTimer: null,
+	};
+
+	function setText(id: string, text: string) {
+		const el = document.getElementById(id);
+		if (el) el.textContent = text;
+	}
+
+	function fmtInt(n: number): string {
+		return Number.isFinite(n) ? Math.round(n).toLocaleString('en-US') : '–';
+	}
+
+	function ageSeconds(): number {
+		const newest = Math.max(state.infoLastUpdated, state.statusLastUpdated);
+		if (!newest) return Number.NaN;
+		return Math.max(0, Math.floor(Date.now() / 1000 - newest));
+	}
+
+	function renderStatusLine() {
+		const age = ageSeconds();
+		const errorEl = document.getElementById('error-banner');
+		if (state.errorMsg) {
+			if (errorEl) {
+				errorEl.classList.remove('hidden');
+				errorEl.textContent = state.errorMsg;
+			}
+		} else if (errorEl) {
+			errorEl.classList.add('hidden');
+			errorEl.textContent = '';
+		}
+
+		if (!state.stationInfo || !state.stationStatus) {
+			setText('status-line', state.errorMsg ? 'Could not load live data.' : 'Loading…');
+			return;
+		}
+		const ageStr = Number.isFinite(age) ? `${age}s ago` : 'unknown';
+		const stale = Number.isFinite(age) && age > 30 ? ' · stale' : '';
+		setText(
+			'status-line',
+			`Live · last feed update ${ageStr}${stale} · refresh every ${STATUS_INTERVAL_MS / 1000}s`
+		);
+	}
+
+	function renderAggregate(agg: LiveAggregate) {
+		setText('hero-number', fmtInt(agg.slotsUnaccountedFor));
+		setText('kpi-bikes', fmtInt(agg.totalBikesAvailable));
+		setText('kpi-docks', fmtInt(agg.totalDocksAvailable));
+		setText('kpi-capacity', fmtInt(agg.totalCapacity));
+		setText(
+			'kpi-stations',
+			`${fmtInt(agg.activeStationsRenting)} / ${fmtInt(agg.totalStations)}`
+		);
+	}
+
+	function renderTopLists() {
+		if (!state.stationInfo || !state.stationStatus) return;
+		const nameById = new Map(
+			state.stationInfo.stations.map((s) => [String(s.station_id), s.name])
+		);
+		const rows = state.stationStatus.stations.map((s) => ({
+			id: String(s.station_id),
+			name: nameById.get(String(s.station_id)) ?? `Station ${s.station_id}`,
+			bikes: Number(s.num_bikes_available) || 0,
+			docks: Number(s.num_docks_available) || 0,
+		}));
+
+		const fullest = [...rows].sort((a, b) => b.bikes - a.bikes).slice(0, 10);
+		const emptiest = [...rows].sort((a, b) => b.docks - a.docks).slice(0, 10);
+
+		const renderList = (
+			elId: string,
+			items: typeof rows,
+			metric: 'bikes' | 'docks'
+		) => {
+			const ol = document.getElementById(elId);
+			if (!ol) return;
+			ol.innerHTML = '';
+			items.forEach((it, i) => {
+				const li = document.createElement('li');
+				li.className =
+					'flex justify-between gap-3 border-b border-slate-100 dark:border-slate-800 py-1';
+				const left = document.createElement('span');
+				left.className = 'truncate';
+				left.textContent = `${i + 1}. ${it.name}`;
+				const right = document.createElement('span');
+				right.className = 'tabular-nums font-medium text-slate-900 dark:text-slate-100';
+				right.textContent = String(it[metric]);
+				li.appendChild(left);
+				li.appendChild(right);
+				ol.appendChild(li);
+			});
+		};
+
+		renderList('list-fullest', fullest, 'bikes');
+		renderList('list-emptiest', emptiest, 'docks');
+	}
+
+	function rerender() {
+		if (state.stationInfo && state.stationStatus) {
+			const agg = aggregateLive(
+				state.stationInfo,
+				state.stationStatus,
+				state.infoLastUpdated,
+				state.statusLastUpdated
+			);
+			renderAggregate(agg);
+			renderTopLists();
+		}
+		renderStatusLine();
+	}
+
+	async function refreshStatus() {
+		try {
+			const res = await fetchGbfs<StationStatusPayload>('station_status');
+			state.stationStatus = res.data;
+			state.statusLastUpdated = res.lastUpdated;
+			state.errorMsg = null;
+		} catch (e: unknown) {
+			state.errorMsg = `station_status: ${e instanceof Error ? e.message : String(e)}`;
+		}
+		rerender();
+	}
+
+	async function refreshInfo() {
+		try {
+			const res = await fetchGbfs<StationInfoPayload>('station_information');
+			state.stationInfo = res.data;
+			state.infoLastUpdated = res.lastUpdated;
+			state.errorMsg = null;
+		} catch (e: unknown) {
+			state.errorMsg = `station_information: ${e instanceof Error ? e.message : String(e)}`;
+		}
+		rerender();
+	}
+
+	function startPolling() {
+		if (state.statusTimer == null) {
+			state.statusTimer = window.setInterval(refreshStatus, STATUS_INTERVAL_MS);
+		}
+		if (state.infoTimer == null) {
+			state.infoTimer = window.setInterval(refreshInfo, INFO_INTERVAL_MS);
+		}
+		if (state.tickTimer == null) {
+			state.tickTimer = window.setInterval(renderStatusLine, TICK_INTERVAL_MS);
+		}
+	}
+
+	function stopPolling() {
+		if (state.statusTimer != null) {
+			window.clearInterval(state.statusTimer);
+			state.statusTimer = null;
+		}
+		if (state.infoTimer != null) {
+			window.clearInterval(state.infoTimer);
+			state.infoTimer = null;
+		}
+		if (state.tickTimer != null) {
+			window.clearInterval(state.tickTimer);
+			state.tickTimer = null;
+		}
+	}
+
+	function onVisibilityChange() {
+		if (document.hidden) {
+			stopPolling();
+		} else {
+			void refreshStatus();
+			startPolling();
+		}
+	}
+
+	async function init() {
+		try {
+			const [infoRes, statusRes] = await Promise.all([
+				fetchGbfs<StationInfoPayload>('station_information'),
+				fetchGbfs<StationStatusPayload>('station_status'),
+			]);
+			state.stationInfo = infoRes.data;
+			state.infoLastUpdated = infoRes.lastUpdated;
+			state.stationStatus = statusRes.data;
+			state.statusLastUpdated = statusRes.lastUpdated;
+			state.errorMsg = null;
+		} catch (e: unknown) {
+			state.errorMsg = `Initial load failed: ${e instanceof Error ? e.message : String(e)}`;
+		}
+		rerender();
+		startPolling();
+		document.addEventListener('visibilitychange', onVisibilityChange);
+	}
+
+	void init();
+</script>
