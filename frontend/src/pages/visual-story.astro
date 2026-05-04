@@ -1,5 +1,8 @@
 ---
 import 'leaflet/dist/leaflet.css';
+
+const base = import.meta.env.BASE_URL;
+const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
 ---
 
 <!DOCTYPE html>
@@ -9,6 +12,7 @@ import 'leaflet/dist/leaflet.css';
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Oslo on Two Wheels: an interactive data story about Oslo Bysykkel city bikes." />
   <title>Oslo on Two Wheels</title>
+  <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700;9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -295,6 +299,34 @@ import 'leaflet/dist/leaflet.css';
       transition: background 0.18s ease;
     }
     .cta-btn:hover { background: #ea6b0c; }
+    .cta-btn--secondary {
+      background: #fff;
+      color: #374151;
+      border: 2px solid #e5e7eb;
+    }
+    .cta-btn--secondary:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+      color: #111827;
+    }
+    .outro-cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 0.75rem 1rem;
+      margin-top: 0.5rem;
+    }
+    .outro-home-link {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #f97316;
+      text-decoration: none;
+    }
+    .outro-home-link:hover {
+      text-decoration: underline;
+      color: #ea580c;
+    }
 
     /* ── Tooltip ──────────────────────────────────────────────────────────── */
     #vs-tooltip {
@@ -540,9 +572,13 @@ import 'leaflet/dist/leaflet.css';
         <span class="outro-stat-label">winter bikes with spiked tires</span>
       </div>
     </div>
-    <a href="https://oslobysykkel.no" target="_blank" rel="noopener noreferrer" class="cta-btn">
-      Find a bike near you →
-    </a>
+    <div class="outro-cta-row">
+      <a href={base} class="outro-home-link">Home</a>
+      <a href={repoUrl} target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn--secondary">View on GitHub</a>
+      <a href="https://oslobysykkel.no" target="_blank" rel="noopener noreferrer" class="cta-btn">
+        Find a bike near you →
+      </a>
+    </div>
     <p style="margin-top:3rem; font-size:0.75rem; color:#4b5563;">
       Data: Oslo Bysykkel open trip data 2019–2025 · Visualisation: INF252 Course Project
     </p>
