@@ -370,14 +370,23 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
     }
     .vs-card em { color: #f97316; font-style: normal; font-weight: 600; }
 
-    /* When chapter: copy column switches side by step (see data-when-copy-side on #ch-when) */
+    /* When chapter: copy column switches side by step (see data-when-copy-side on #ch-when).
+       Use explicit `left` for both sides so it can transition (left/right `auto` does not interpolate). */
+    #ch-when .vs-steps {
+      right: auto;
+      width: 34%;
+      transition: left 0.55s cubic-bezier(0.33, 1, 0.68, 1);
+    }
     #ch-when[data-when-copy-side="right"] .vs-steps {
-      left: auto;
-      right: 2rem;
+      left: calc(100% - 34% - 2rem);
     }
     #ch-when[data-when-copy-side="left"] .vs-steps {
-      right: auto;
       left: 2rem;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #ch-when .vs-steps {
+        transition: none;
+      }
     }
 
     /* ── Divider ──────────────────────────────────────────────────────────── */
@@ -560,6 +569,12 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
       .vs-sticky { position: relative; height: 65vw; min-height: 300px; }
       .vs-steps { position: static; width: 100%; padding: 0 1rem 2rem; }
       .vs-step { min-height: unset; padding: 0.5rem 0; }
+      #ch-when .vs-steps {
+        left: auto;
+        right: auto;
+        width: 100%;
+        transition: none;
+      }
     }
   </style>
 </head>
@@ -702,33 +717,32 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
 
       <div class="vs-step" data-chapter="when" data-step="0">
         <div class="vs-card">
-          <h3>The commute signature</h3>
-          <p>On <strong>weekdays that are not public holidays</strong>, trips cluster in classic rush windows: a strong <em>morning commute</em> bump, a broad <em>midday</em> plateau, and a second peak in the <em>afternoon commute</em>. The <strong>bar chart on the left</strong> groups trips by <strong>Oslo start-time bucket</strong>; each bar shows <strong>average total riding time per calendar day</strong> from trips that start in that bucket (sum of durations ÷ days in that weekday/weekend/holiday slice).</p>
-     
+          <h3>Morning and afternoon peaks</h3>
+          <p>On ordinary weekdays (Mon–Fri, not a public holiday), the tallest bars sit in the morning commute, midday, and afternoon commute buckets. The left chart splits starts into Oslo time buckets; each bar is total riding time from trips that start in that bucket, averaged per calendar day in that weekday, weekend, or holiday slice.</p>
         </div>
       </div>
 
       <div class="vs-step" data-chapter="when" data-step="1">
         <div class="vs-card">
-          <h3>Weekends and red-letter days</h3>
-          <p>Still on the <strong>bar chart (left)</strong>: <strong>weekends</strong> flatten the twin peaks — more midday and evening leisure, fewer sharp spikes. <strong>Norwegian public holidays</strong> (even on a weekday) behave more like a Sunday than a Monday: the commute bars shrink while off-peak buckets hold up.</p>
-          <p>Compare the four bar colours: weekday vs weekend, with holidays called out — still in <strong>minutes of riding per day</strong>, not raw trip counts.</p>
+          <h3>Weekends and public holidays</h3>
+          <p>Saturday and Sunday smooth the two rush spikes: more riding in the middle of the day and in the evening, less in narrow peaks. A weekday that is a Norwegian public holiday reads closer to a Saturday than to a normal Monday: the commute-shaped bars shrink and the rest of the day carries more of the total.</p>
+          <p>The four bar colours split weekday vs weekend and holiday vs not. Minutes and Trips only change the vertical scale.</p>
         </div>
       </div>
 
       <div class="vs-step" data-chapter="when" data-step="2">
         <div class="vs-card">
-          <h3>Rain and trip length</h3>
-          <p>Turn to the <strong>scatter matrix on the right</strong>: a <strong>4×4 grid</strong> of pairwise plots for the same calendar days — <strong>precipitation</strong> and <strong>temperature</strong> (Oslo Blindern), <strong>trip count</strong>, and <strong>average trip duration</strong> (minutes: total riding time ÷ trips). Diagonal cells name each axis; off-diagonal cells use <strong>semi-transparent dots</strong> (overlap reads darker). <strong>Click</strong> any off-diagonal panel to <strong>expand it</strong> to full size; use <strong>Back</strong> or <strong>Esc</strong> to return. <strong>Hover</strong> for the <strong>nearest day</strong> (date, weather, trips, avg trip, weekday context).</p>
-          <p>This is <strong>same-day, network-wide</strong> view — not “trips that started in the rain,” which we cannot read from this aggregate. It shows <em>association</em> only: wet days can coincide with shorter or longer typical trips for many reasons (fewer casual riders, season, or chance).</p>
+          <h3>Weather and same-day riding</h3>
+          <p>The right chart is a 4×4 matrix of the same calendar days: rain and temperature at Blindern, trip count, and mean trip length in minutes. Off-diagonal cells plot two measures against each other; the diagonal names the axis. One dot is one day; stacked dots read darker.</p>
+          <p>Everything is network-wide for that date, not “rides that began in the rain.” A wet day can line up with shorter or longer typical trips for many overlapping reasons.</p>
         </div>
       </div>
 
       <div class="vs-step" data-chapter="when" data-step="3">
         <div class="vs-card">
-          <h3>The shape of a day</h3>
-          <p>The bottom chart uses <strong>trip-level data</strong> by clock hour (Oslo start). <span style="color:#2563eb;font-weight:600;">Blue</span> and <span style="color:#0d9488;font-weight:600;">teal</span> <strong>solid</strong> lines are average <strong>riding minutes per day</strong> from trips starting in that hour (weekday Mon–Fri vs weekend Sat–Sun). <strong>Dashed</strong> lines in the same colours show <strong>average trips per day</strong> by start hour (shared dash pattern, right-hand scale) so you can compare the <em>shape</em> of demand with the <em>shape</em> of time in the saddle.</p>
-          <p>Because hours partition trip <em>starts</em>, very long rides count only at their start hour; sums across hours can sit below whole-network minutes per day (see footnote).</p>
+          <h3>Starts through the day</h3>
+          <p>The strip below is trip starts by clock hour in Oslo. Solid blue and solid teal lines are average riding minutes per day from trips that start in that hour (weekday Mon–Fri vs weekend Sat–Sun). Dashed lines in the same colours use the right-hand scale: average trips per day by start hour, so you can line up how often people leave with how many minutes those hours add.</p>
+          <p>Each trip is counted in its start hour only, so very long rides do not spread across the hours they span; hourly sums can fall short of whole-network minutes for the day (see footnote).</p>
         </div>
       </div>
 

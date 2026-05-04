@@ -1339,9 +1339,10 @@ function paintWhenRidingCharts(prepared: WhenRidingPrepared, dims: WhenRidingPan
 
   whenBarsYDomainHigh = maxBar * 1.06;
 
+  const whenBarLegendApproxW = 218;
   const leg = gb.append('g')
     .attr('class', 'when-bar-legend')
-    .attr('transform', `translate(${Math.max(4, innerW - 218)}, -36)`);
+    .attr('transform', `translate(${Math.max(0, (innerW - whenBarLegendApproxW) / 2)}, -36)`);
   CTX_LABELS.forEach((lab, i) => {
     const row = leg.append('g').attr('transform', `translate(${i % 2 === 0 ? 0 : 118}, ${Math.floor(i / 2) * 14})`);
     row.append('rect').attr('width', 10).attr('height', 10).attr('rx', 2).attr('fill', CTX_COLORS[i]);
