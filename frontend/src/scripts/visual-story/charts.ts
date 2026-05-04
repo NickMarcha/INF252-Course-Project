@@ -251,7 +251,9 @@ export function initSeasonalChart(svgSelector: string, rows: AvgTripTimeByMonthR
         const screen = svgPt.matrixTransform(svgEl.getScreenCTM()!);
         const cr = container.getBoundingClientRect();
         if (seasonTooltipEl) {
-          seasonTooltipEl.textContent = `${monthAbbr[d.month - 1]} ${d.year}: ${d.trip_count.toLocaleString()} trips`;
+          const avgMin = Math.round(d.avg_trip_seconds / 60);
+          seasonTooltipEl.textContent =
+            `${monthAbbr[d.month - 1]} ${d.year}: ${d.trip_count.toLocaleString()} trips · ~${avgMin} min avg`;
           seasonTooltipEl.style.color = color;
           seasonTooltipEl.style.left = `${screen.x - cr.left + 12}px`;
           seasonTooltipEl.style.top = `${screen.y - cr.top - 40}px`;
@@ -263,6 +265,21 @@ export function initSeasonalChart(svgSelector: string, rows: AvgTripTimeByMonthR
         if (seasonTooltipEl) seasonTooltipEl.style.opacity = '0';
       });
   }
+
+  const yAt50k = yScale(50_000);
+  const yHint = Math.min(Math.max(yAt50k, H * 0.35), H - 14);
+  g.append('text')
+    .attr('class', 'season-hover-hint')
+    .attr('x', W / 2)
+    .attr('y', yHint)
+    .attr('dy', '-0.35em')
+    .attr('text-anchor', 'middle')
+    .attr('fill', '#94a3b8')
+    .attr('font-size', 12)
+    .attr('font-weight', 700)
+    .attr('font-family', "Inter, system-ui, sans-serif")
+    .attr('pointer-events', 'none')
+    .text('Hover a point for trips and average ride time');
 }
 
 export function updateSeasonalChart(step: number): void {

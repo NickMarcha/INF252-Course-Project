@@ -168,6 +168,32 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
       inset: 0;
     }
 
+    .viz-map-hint {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 750;
+      pointer-events: none;
+      margin: 0;
+      padding: 0.45rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #94a3b8;
+      text-align: center;
+      line-height: 1.35;
+      max-width: min(22rem, calc(100% - 2rem));
+      background: rgba(255, 255, 255, 0.94);
+      border-radius: 0.5rem;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+    #viz-balance-hint {
+      bottom: 5rem;
+    }
+    #viz-routes-hint {
+      bottom: 2.75rem;
+    }
+
     /* Balance legend sits at bottom of sticky map */
     #balance-legend {
       position: absolute;
@@ -461,7 +487,6 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
         <div class="vs-card">
           <h3>Six years, one shape</h3>
           <p>With all years overlaid, the consistency is striking. What changes year to year is only the scale; the shape barely moves. Oslo's cycling rhythm is deeply tied to its seasons.</p>
-          <p>Hover any point to see the exact monthly trip count.</p>
         </div>
       </div>
 
@@ -473,6 +498,7 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
     <div class="vs-sticky map-bg">
       <div class="map-wrap">
         <div id="viz-balance-map"></div>
+        <p id="viz-balance-hint" class="viz-map-hint">Hover a station for departures, arrivals, and net flow.</p>
         <div id="balance-legend"></div>
       </div>
     </div>
@@ -516,6 +542,7 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
     <div class="vs-sticky map-bg">
       <div class="map-wrap">
         <div id="viz-routes-map"></div>
+        <p id="viz-routes-hint" class="viz-map-hint">Hover a route for distance, time, and trip counts; hover a station for its name.</p>
       </div>
     </div>
     <div class="vs-steps">
