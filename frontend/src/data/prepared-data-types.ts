@@ -155,10 +155,32 @@ export interface CyclingDurationContextRow {
   mean_sec: number;
   median_sec: number;
   count: number;
+  /** Distinct calendar days in this (weekend × holiday) slice; from cycling_regression.py trip filter. */
+  n_days?: number;
+}
+
+export interface CyclingCalendarDaysContextRow {
+  is_weekend: boolean;
+  is_public_holiday: boolean;
+  n_days: number;
 }
 
 export interface CyclingDurationByContextData {
   duration_by_context: CyclingDurationContextRow[];
+  calendar_days_by_context?: CyclingCalendarDaysContextRow[];
+}
+
+/** From cycling_hourly_riding_profile.py — avg daily minutes / trips by start hour. */
+export interface CyclingHourlyRidingProfileData {
+  norm_definition: string;
+  duration_quantile_cap?: number;
+  min_duration_sec?: number;
+  n_weekday_days: number;
+  n_weekend_days: number;
+  weekday_duration_min_avg_daily: number[];
+  weekend_duration_min_avg_daily: number[];
+  weekday_trips_avg_daily: number[];
+  weekend_trips_avg_daily: number[];
 }
 
 /** One day from cycling_daily_norm_series.json */

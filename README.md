@@ -57,7 +57,7 @@ Historical weather for Oslo (Blindern) is fetched from [Frost API](https://frost
    - `FROST_API_CLIENT_ID` – from [frost.met.no/auth/requestCredentials.html](https://frost.met.no/auth/requestCredentials.html)
    - `FROST_USER_AGENT=INF252-Course-Project/1.0 (your.email@example.com)` – use your real email (MET requires contact info)
 2. Open `data-pipeline/notebooks/frost_weather_fetch.ipynb`, run Setup then the fetch cells. Cache is stored in `weather-cache/` (one JSON file per month). Set `FORCE_WEATHER_FETCH=1` to bypass cache.
-3. Run `npm run prepare:data` to export weather to prepared-data; the **Weather** page in the frontend shows temperature and precipitation over time for Oslo Blindern.
+3. Run `npm run prepare:data` to export weather to `prepared-data/` (when cache exists) and sync it to the frontend. The **Weather** page and the **Visual story** “when people ride” chapter use this series alongside trip aggregates.
 
 See [docs/Weather.md](docs/Weather.md) for details.
 
@@ -67,7 +67,7 @@ See [docs/Weather.md](docs/Weather.md) for details.
 |---------|--------------|
 | `npm run conda:create` | Create conda env from `data-pipeline/environment.yml` |
 | `npm run conda:update` | Update conda env after changes to environment.yml |
-| `npm run prepare:data` | Export routes + weather, then sync prepared-data to frontend (run after pipeline) |
+| `npm run prepare:data` | Export weather (if `weather-cache/` exists), routes from cache, then sync `prepared-data/` to the frontend |
 | `npm run download` | Download Oslo Bysykkel trip data |
 | `npm run dev` | Start frontend dev server |
 | `npm run build` | Build frontend for production |

@@ -186,6 +186,27 @@ def run_regression(
     )
     duration_by_context = grp.to_dict(orient="records")
 
+    day_counts = (
+        df.groupby(["is_weekend", "is_public_holiday"], observed=True)["local_date"]
+        .nunique()
+        .reset_index(name="n_days")
+    )
+    calendar_days_by_context = [
+        {
+            "is_weekend": bool(r["is_weekend"]),
+            "is_public_holiday": bool(r["is_public_holiday"]),
+            "n_days": int(r["n_days"]),
+        }
+        for _, r in day_counts.iterrows()
+    ]
+    n_lookup: dict[tuple[bool, bool], int] = {
+        (bool(r["is_weekend"]), bool(r["is_public_holiday"])): int(r["n_days"])
+        for _, r in day_counts.iterrows()
+    }
+    for row in duration_by_context:
+        key = (bool(row["is_weekend"]), bool(row["is_public_holiday"]))
+        row["n_days"] = n_lookup[key]
+
     out = {
         "model": "Ridge on log(duration_sec)",
         "ridge_alpha": ridge_alpha,
@@ -214,7 +235,10 @@ def run_regression(
 
     write_with_execution_metadata(
         out_dir / DURATION_BY_CONTEXT_JSON,
-        {"duration_by_context": duration_by_context},
+        {
+            "duration_by_context": duration_by_context,
+            "calendar_days_by_context": calendar_days_by_context,
+        },
         t0,
     )
 

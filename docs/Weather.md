@@ -66,7 +66,7 @@ Downstream code can read these files and join weather to trip data by date (e.g.
 
 ### Frontend (Weather page)
 
-After running the Frost notebook, `npm run prepare:data` exports the weather cache to `prepared-data/weather_oslo.json` and syncs it to the frontend. The **Weather** page shows a time-series chart of temperature and precipitation for Oslo Blindern (SN18700).
+After running the Frost notebook, `npm run prepare:data` runs `scripts/export-weather-to-prepared.js` (no-op if `weather-cache/` is missing), then syncs `prepared-data/weather_oslo.json` to the frontend. The **Weather** page shows a time-series chart of temperature and precipitation for Oslo Blindern (SN18700).
 
 ## Notes
 

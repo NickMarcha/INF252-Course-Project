@@ -1,12 +1,12 @@
 {
   "last_execution": {
-    "timestamp": "2026-04-21T05:33:16.952642",
+    "timestamp": "2026-05-04T20:51:38.809535",
     "os": "Windows-11-10.0.26200-SP0",
     "cpu_count": 32,
     "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
     "ram_gb": 31.1,
-    "ram_used_pct": 79.1,
-    "duration_seconds": 14
+    "ram_used_pct": 79.5,
+    "duration_seconds": 19
   },
   "data": {
     "model": "Ridge on log(duration_sec)",

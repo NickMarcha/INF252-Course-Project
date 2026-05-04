@@ -158,6 +158,89 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
       font-family: inherit;
     }
 
+    /* When-riding chapter: linked bars + scatter + optional hourly */
+    .chart-wrap.viz-when-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex: 1 1 auto;
+      min-height: 0;
+      /* Allow scroll when hourly row opens so panels need not shrink (avoids bar/scatter resize + full D3 repaint). */
+      overflow-x: hidden;
+      overflow-y: auto;
+      /* Reserve space so absolute hint does not cover charts */
+      padding-top: 2.85rem;
+    }
+    .viz-when-hint-top {
+      position: absolute;
+      top: 0.55rem;
+      bottom: auto;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 800;
+      max-width: min(40rem, calc(100% - 2rem));
+    }
+    .viz-when-panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: minmax(280px, 1fr);
+      gap: 0.75rem;
+      flex: 1 1 auto;
+      flex-shrink: 0;
+      min-height: min(52vh, 580px);
+      align-content: stretch;
+    }
+    @media (max-width: 960px) {
+      .viz-when-panels {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(240px, 38vh) minmax(260px, 38vh);
+        min-height: min(72vh, 720px);
+      }
+    }
+    .viz-when-panel {
+      position: relative;
+      min-height: 240px;
+      height: 100%;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      background: #fafafa;
+      overflow: hidden;
+    }
+    /* Main two charts: reserve vertical space in layout even though SVG is absolutely positioned */
+    #ch-when .viz-when-panels > .viz-when-panel {
+      min-height: max(280px, 36vh);
+    }
+    /* Fill panel: percentage height on SVG breaks under flex; use inset instead */
+    .viz-when-panel > svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .viz-when-hourly-row {
+      flex: 0 0 auto;
+      min-height: 0;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.45s ease, opacity 0.35s ease;
+    }
+    .viz-when-hourly-row.is-visible {
+      max-height: 200px;
+      min-height: 140px;
+      opacity: 1;
+    }
+    .vs-when-footnote {
+      font-size: 0.72rem;
+      color: #64748b;
+      text-align: center;
+      padding: 0.15rem 0.75rem 0.35rem;
+      margin: 0;
+      line-height: 1.35;
+      font-weight: 500;
+    }
+
     .map-wrap {
       flex: 1;
       position: relative;
@@ -287,6 +370,16 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
     }
     .vs-card em { color: #f97316; font-style: normal; font-weight: 600; }
 
+    /* When chapter: copy column switches side by step (see data-when-copy-side on #ch-when) */
+    #ch-when[data-when-copy-side="right"] .vs-steps {
+      left: auto;
+      right: 2rem;
+    }
+    #ch-when[data-when-copy-side="left"] .vs-steps {
+      right: auto;
+      left: 2rem;
+    }
+
     /* ── Divider ──────────────────────────────────────────────────────────── */
     .section-intro {
       padding: 4rem 2rem 2rem;
@@ -343,43 +436,104 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
     .outro-stat-value { display: block; font-family: 'Fraunces', Georgia, serif; font-size: 2rem; font-weight: 700; color: #f97316; }
     .outro-stat-label { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; }
     .cta-btn {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      min-height: 3.125rem;
       margin-top: 0.5rem;
       background: #f97316;
       color: #fff;
       font-weight: 600;
       font-size: 1rem;
-      padding: 0.85rem 2rem;
+      padding: 0.75rem 1.75rem;
       border-radius: 0.5rem;
+      border: 2px solid #f97316;
       text-decoration: none;
-      transition: background 0.18s ease;
+      transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
     }
-    .cta-btn:hover { background: #ea6b0c; }
+    .cta-btn:hover {
+      background: #ea6b0c;
+      border-color: #ea6b0c;
+    }
     .cta-btn--secondary {
       background: #fff;
       color: #374151;
-      border: 2px solid #e5e7eb;
+      border-color: #e5e7eb;
     }
     .cta-btn--secondary:hover {
       background: #f9fafb;
       border-color: #d1d5db;
       color: #111827;
     }
+    .cta-btn--outline {
+      background: transparent;
+      color: #f97316;
+      border-color: #f97316;
+    }
+    .cta-btn--outline:hover {
+      background: rgba(249, 115, 22, 0.12);
+      color: #fb923c;
+      border-color: #fb923c;
+    }
     .outro-cta-row {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      align-items: center;
+      align-items: stretch;
       gap: 0.75rem 1rem;
       margin-top: 0.5rem;
     }
-    .outro-home-link {
+    .outro-cta-row .cta-btn {
+      margin-top: 0;
+    }
+
+    .outro-data {
+      margin-top: 3rem;
+      max-width: 36rem;
+      width: 100%;
+      text-align: left;
+      align-self: center;
+    }
+    .outro-data h3 {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 0.75rem;
       font-weight: 600;
-      font-size: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #9ca3af;
+      margin-bottom: 0.65rem;
+    }
+    .outro-data-intro {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      margin: 0 0 1rem;
+      line-height: 1.5;
+    }
+    .outro-data dl {
+      margin: 0;
+    }
+    .outro-data dt {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #e5e7eb;
+      margin-top: 0.85rem;
+    }
+    .outro-data dl dt:first-of-type {
+      margin-top: 0;
+    }
+    .outro-data dd {
+      margin: 0.3rem 0 0 0;
+      font-size: 0.85rem;
+      color: #9ca3af;
+      line-height: 1.45;
+    }
+    .outro-data a {
       color: #f97316;
+      font-weight: 600;
       text-decoration: none;
     }
-    .outro-home-link:hover {
+    .outro-data a:hover {
       text-decoration: underline;
       color: #ea580c;
     }
@@ -523,6 +677,64 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
     </div>
   </section>
 
+  <!-- ── Chapter 2b: When people ride ── -->
+  <section class="vs-chapter ch-4step" id="ch-when" data-when-copy-side="right">
+    <div class="vs-sticky">
+      <div class="chart-wrap viz-when-wrap">
+        <p id="viz-when-hint" class="viz-map-hint viz-when-hint-top">Left: Minutes / Trips toggle (top-left), then hover bars. Right: 4×4 scatter matrix — hover a cell; click to enlarge — Back or Esc returns.</p>
+        <div class="viz-when-panels">
+          <div class="viz-when-panel" aria-label="Time-of-day bucket chart: toggle Minutes or Trips per calendar day, four calendar contexts">
+            <svg id="viz-when-bars"></svg>
+          </div>
+          <div class="viz-when-panel" aria-label="Scatter matrix: daily precipitation, temperature, trip count, and average trip time; click a panel to expand">
+            <svg id="viz-when-scatter"></svg>
+          </div>
+        </div>
+        <div class="viz-when-hourly-row" id="viz-when-hourly-row">
+          <div class="viz-when-panel" style="min-height:120px;max-height:160px;" aria-label="Trip starts by hour: riding time and trip counts">
+            <svg id="viz-when-hourly"></svg>
+          </div>
+          <p id="viz-when-footnote" class="vs-when-footnote" style="display:none;"></p>
+        </div>
+      </div>
+    </div>
+    <div class="vs-steps">
+
+      <div class="vs-step" data-chapter="when" data-step="0">
+        <div class="vs-card">
+          <h3>The commute signature</h3>
+          <p>On <strong>weekdays that are not public holidays</strong>, trips cluster in classic rush windows: a strong <em>morning commute</em> bump, a broad <em>midday</em> plateau, and a second peak in the <em>afternoon commute</em>. The <strong>bar chart on the left</strong> groups trips by <strong>Oslo start-time bucket</strong>; each bar shows <strong>average total riding time per calendar day</strong> from trips that start in that bucket (sum of durations ÷ days in that weekday/weekend/holiday slice).</p>
+     
+        </div>
+      </div>
+
+      <div class="vs-step" data-chapter="when" data-step="1">
+        <div class="vs-card">
+          <h3>Weekends and red-letter days</h3>
+          <p>Still on the <strong>bar chart (left)</strong>: <strong>weekends</strong> flatten the twin peaks — more midday and evening leisure, fewer sharp spikes. <strong>Norwegian public holidays</strong> (even on a weekday) behave more like a Sunday than a Monday: the commute bars shrink while off-peak buckets hold up.</p>
+          <p>Compare the four bar colours: weekday vs weekend, with holidays called out — still in <strong>minutes of riding per day</strong>, not raw trip counts.</p>
+        </div>
+      </div>
+
+      <div class="vs-step" data-chapter="when" data-step="2">
+        <div class="vs-card">
+          <h3>Rain and trip length</h3>
+          <p>Turn to the <strong>scatter matrix on the right</strong>: a <strong>4×4 grid</strong> of pairwise plots for the same calendar days — <strong>precipitation</strong> and <strong>temperature</strong> (Oslo Blindern), <strong>trip count</strong>, and <strong>average trip duration</strong> (minutes: total riding time ÷ trips). Diagonal cells name each axis; off-diagonal cells use <strong>semi-transparent dots</strong> (overlap reads darker). <strong>Click</strong> any off-diagonal panel to <strong>expand it</strong> to full size; use <strong>Back</strong> or <strong>Esc</strong> to return. <strong>Hover</strong> for the <strong>nearest day</strong> (date, weather, trips, avg trip, weekday context).</p>
+          <p>This is <strong>same-day, network-wide</strong> view — not “trips that started in the rain,” which we cannot read from this aggregate. It shows <em>association</em> only: wet days can coincide with shorter or longer typical trips for many reasons (fewer casual riders, season, or chance).</p>
+        </div>
+      </div>
+
+      <div class="vs-step" data-chapter="when" data-step="3">
+        <div class="vs-card">
+          <h3>The shape of a day</h3>
+          <p>The bottom chart uses <strong>trip-level data</strong> by clock hour (Oslo start). <span style="color:#2563eb;font-weight:600;">Blue</span> and <span style="color:#0d9488;font-weight:600;">teal</span> <strong>solid</strong> lines are average <strong>riding minutes per day</strong> from trips starting in that hour (weekday Mon–Fri vs weekend Sat–Sun). <strong>Dashed</strong> lines in the same colours show <strong>average trips per day</strong> by start hour (shared dash pattern, right-hand scale) so you can compare the <em>shape</em> of demand with the <em>shape</em> of time in the saddle.</p>
+          <p>Because hours partition trip <em>starts</em>, very long rides count only at their start hour; sums across hours can sit below whole-network minutes per day (see footnote).</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
   <!-- ── Chapter 3: Station balance map ── -->
   <section class="vs-chapter ch-4step" id="ch-balance">
     <div class="vs-sticky map-bg">
@@ -630,15 +842,43 @@ const repoUrl = 'https://github.com/NickMarcha/INF252-Course-Project';
       </div>
     </div>
     <div class="outro-cta-row">
-      <a href={base} class="outro-home-link">Home</a>
+      <a href={base} class="cta-btn cta-btn--outline">Project Home</a>
       <a href={repoUrl} target="_blank" rel="noopener noreferrer" class="cta-btn cta-btn--secondary">View on GitHub</a>
       <a href="https://oslobysykkel.no" target="_blank" rel="noopener noreferrer" class="cta-btn">
         Find a bike near you →
       </a>
     </div>
-    <p style="margin-top:3rem; font-size:0.75rem; color:#4b5563;">
-      Data: Oslo Bysykkel open trip data 2019–2025 · Visualisation: INF252 Course Project
-    </p>
+    <div class="outro-data">
+      <h3>Data sources</h3>
+      <p class="outro-data-intro">
+        Aggregates and map layers are built from open data spanning roughly <strong>April&nbsp;2019–January&nbsp;2026</strong> (trips and daily weather aligned by date).
+      </p>
+      <dl>
+        <dt>Historical bike trips and station activity</dt>
+        <dd>
+          <a href="https://oslobysykkel.no/en/open-data/historical" target="_blank" rel="noopener noreferrer">Oslo Bysykkel — historical open data</a>
+          (Urban Sharing · <span style="white-space:nowrap;">data.urbansharing.com</span>)
+        </dd>
+        <dt>Daily weather (Oslo Blindern)</dt>
+        <dd>
+          <a href="https://frost.met.no/" target="_blank" rel="noopener noreferrer">MET Norway — Frost API</a>
+          <span aria-hidden="true"> · </span>
+          Station SN18700; daily aggregates for temperature and related fields
+        </dd>
+        <dt>Bicycle route geometry between stations</dt>
+        <dd>
+          <a href="https://developers.google.com/maps/documentation/routes" target="_blank" rel="noopener noreferrer">Google Routes API</a>
+          <span aria-hidden="true"> · </span>
+          Bicycle travel mode polylines used for corridor lines on the map
+        </dd>
+        <dt>Map basemap</dt>
+        <dd>
+          <a href="https://carto.com/" target="_blank" rel="noopener noreferrer">CARTO</a>
+          raster tiles;
+          <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a>
+        </dd>
+      </dl>
+    </div>
   </section>
 </body>
 

@@ -1,12 +1,12 @@
 {
   "last_execution": {
-    "timestamp": "2026-04-21T05:33:16.983232",
+    "timestamp": "2026-05-04T20:51:38.842267",
     "os": "Windows-11-10.0.26200-SP0",
     "cpu_count": 32,
     "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
     "ram_gb": 31.1,
-    "ram_used_pct": 79.1,
-    "duration_seconds": 14
+    "ram_used_pct": 79.5,
+    "duration_seconds": 19
   },
   "data": {
     "duration_by_context": [
@@ -16,7 +16,8 @@
         "is_public_holiday": false,
         "mean_sec": 707.0478859618374,
         "median_sec": 554.0,
-        "count": 2781525
+        "count": 2781525,
+        "n_days": 1654
       },
       {
         "time_of_day_bucket": "afternoon_commute",
@@ -24,7 +25,8 @@
         "is_public_holiday": true,
         "mean_sec": 950.5769065650061,
         "median_sec": 681.0,
-        "count": 58233
+        "count": 58233,
+        "n_days": 57
       },
       {
         "time_of_day_bucket": "afternoon_commute",
@@ -32,7 +34,8 @@
         "is_public_holiday": false,
         "mean_sec": 849.4359127877315,
         "median_sec": 619.0,
-        "count": 666420
+        "count": 666420,
+        "n_days": 661
       },
       {
         "time_of_day_bucket": "afternoon_commute",
@@ -40,7 +43,8 @@
         "is_public_holiday": true,
         "mean_sec": 976.2139172795873,
         "median_sec": 695.0,
-        "count": 20938
+        "count": 20938,
+        "n_days": 24
       },
       {
         "time_of_day_bucket": "evening",
@@ -48,7 +52,8 @@
         "is_public_holiday": false,
         "mean_sec": 717.6545574383559,
         "median_sec": 550.0,
-        "count": 1330583
+        "count": 1330583,
+        "n_days": 1654
       },
       {
         "time_of_day_bucket": "evening",
@@ -56,7 +61,8 @@
         "is_public_holiday": true,
         "mean_sec": 808.541881877386,
         "median_sec": 583.0,
-        "count": 35624
+        "count": 35624,
+        "n_days": 57
       },
       {
         "time_of_day_bucket": "evening",
@@ -64,7 +70,8 @@
         "is_public_holiday": false,
         "mean_sec": 774.190784284041,
         "median_sec": 577.0,
-        "count": 376509
+        "count": 376509,
+        "n_days": 661
       },
       {
         "time_of_day_bucket": "evening",
@@ -72,7 +79,8 @@
         "is_public_holiday": true,
         "mean_sec": 835.3471566731141,
         "median_sec": 602.0,
-        "count": 12925
+        "count": 12925,
+        "n_days": 24
       },
       {
         "time_of_day_bucket": "midday",
@@ -80,7 +88,8 @@
         "is_public_holiday": false,
         "mean_sec": 747.615043936871,
         "median_sec": 543.0,
-        "count": 1508528
+        "count": 1508528,
+        "n_days": 1654
       },
       {
         "time_of_day_bucket": "midday",
@@ -88,7 +97,8 @@
         "is_public_holiday": true,
         "mean_sec": 990.4225380105337,
         "median_sec": 688.0,
-        "count": 50315
+        "count": 50315,
+        "n_days": 57
       },
       {
         "time_of_day_bucket": "midday",
@@ -96,7 +106,8 @@
         "is_public_holiday": false,
         "mean_sec": 879.2998384190809,
         "median_sec": 619.0,
-        "count": 699340
+        "count": 699340,
+        "n_days": 661
       },
       {
         "time_of_day_bucket": "midday",
@@ -104,7 +115,8 @@
         "is_public_holiday": true,
         "mean_sec": 1022.9202299314239,
         "median_sec": 701.0,
-        "count": 19832
+        "count": 19832,
+        "n_days": 24
       },
       {
         "time_of_day_bucket": "morning_commute",
@@ -112,7 +124,8 @@
         "is_public_holiday": false,
         "mean_sec": 569.8189859125116,
         "median_sec": 485.0,
-        "count": 1681847
+        "count": 1681847,
+        "n_days": 1654
       },
       {
         "time_of_day_bucket": "morning_commute",
@@ -120,7 +133,8 @@
         "is_public_holiday": true,
         "mean_sec": 655.9916317991632,
         "median_sec": 490.0,
-        "count": 9082
+        "count": 9082,
+        "n_days": 57
       },
       {
         "time_of_day_bucket": "morning_commute",
@@ -128,7 +142,8 @@
         "is_public_holiday": false,
         "mean_sec": 661.4041090716821,
         "median_sec": 493.0,
-        "count": 119151
+        "count": 119151,
+        "n_days": 661
       },
       {
         "time_of_day_bucket": "morning_commute",
@@ -136,7 +151,8 @@
         "is_public_holiday": true,
         "mean_sec": 730.8214051214708,
         "median_sec": 541.0,
-        "count": 3046
+        "count": 3046,
+        "n_days": 24
       },
       {
         "time_of_day_bucket": "night",
@@ -144,7 +160,8 @@
         "is_public_holiday": false,
         "mean_sec": 597.8067282873011,
         "median_sec": 475.0,
-        "count": 454826
+        "count": 454826,
+        "n_days": 1654
       },
       {
         "time_of_day_bucket": "night",
@@ -152,7 +169,8 @@
         "is_public_holiday": true,
         "mean_sec": 666.4893279668253,
         "median_sec": 507.0,
-        "count": 8199
+        "count": 8199,
+        "n_days": 57
       },
       {
         "time_of_day_bucket": "night",
@@ -160,7 +178,8 @@
         "is_public_holiday": false,
         "mean_sec": 692.8694056457364,
         "median_sec": 544.0,
-        "count": 143046
+        "count": 143046,
+        "n_days": 661
       },
       {
         "time_of_day_bucket": "night",
@@ -168,7 +187,30 @@
         "is_public_holiday": true,
         "mean_sec": 725.9552315170121,
         "median_sec": 551.0,
-        "count": 3909
+        "count": 3909,
+        "n_days": 24
+      }
+    ],
+    "calendar_days_by_context": [
+      {
+        "is_weekend": false,
+        "is_public_holiday": false,
+        "n_days": 1654
+      },
+      {
+        "is_weekend": false,
+        "is_public_holiday": true,
+        "n_days": 57
+      },
+      {
+        "is_weekend": true,
+        "is_public_holiday": false,
+        "n_days": 661
+      },
+      {
+        "is_weekend": true,
+        "is_public_holiday": true,
+        "n_days": 24
       }
     ]
   }

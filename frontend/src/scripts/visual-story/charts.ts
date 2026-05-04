@@ -1,5 +1,15 @@
 import * as d3 from 'd3';
-import type { AvgTripTimeByMonthRow, RouteData } from '../../data/prepared-data-types.js';
+import type {
+  AvgTripTimeByMonthRow,
+  CyclingCalendarDaysContextRow,
+  CyclingDailyNormPoint,
+  CyclingDurationContextRow,
+  CyclingHourlyRidingProfileData,
+  RouteData,
+  StationInOutDatum,
+  StationInOutLatestFullMonthData,
+  WeatherOsloData,
+} from '../../data/prepared-data-types.js';
 import type * as Leaflet from 'leaflet';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -427,6 +437,1339 @@ export function updateSeasonalChart(step: number): void {
     const op = allYears ? 0.9 : visibleYears.has(yr) ? (yr === activeYear ? 1 : 0.45) : 0.12;
     seasonSvg.select<SVGGElement>(`.legend-year-${yr}`).transition().duration(500).attr('opacity', op);
   }
+}
+
+// ── Chapter 2b: When people ride (bars + scatter + hourly) ─────────────────
+
+const BUCKET_ORDER = ['night', 'morning_commute', 'midday', 'afternoon_commute', 'evening'] as const;
+
+function bucketDisplayName(key: string): string {
+  const map: Record<string, string> = {
+    night: 'Night',
+    morning_commute: 'Morning commute',
+    midday: 'Midday',
+    afternoon_commute: 'Afternoon commute',
+    evening: 'Evening',
+  };
+  return map[key] ?? key.replace(/_/g, ' ');
+}
+
+/** Oslo trip-start hours per `data-pipeline/cycling_trip_table.py` BUCKET_DEFS. */
+function bucketHourSpanLabel(key: string): string {
+  const map: Record<string, string> = {
+    night: '23–06',
+    morning_commute: '07–09',
+    midday: '10–14',
+    afternoon_commute: '15–18',
+    evening: '19–22',
+  };
+  return map[key] ?? '';
+}
+
+function dayContextIndex(isWeekend: boolean, anyHoliday: boolean): number {
+  if (isWeekend && anyHoliday) return 3;
+  if (isWeekend) return 2;
+  if (anyHoliday) return 1;
+  return 0;
+}
+
+const CTX_LABELS = ['Weekday', 'Weekday (holiday)', 'Weekend', 'Weekend + holiday'] as const;
+const CTX_COLORS = ['#2563eb', '#7c3aed', '#0d9488', '#ea580c'] as const;
+
+export interface WhenRidingInitOptions {
+  barsSvg: string;
+  scatterSvg: string;
+  hourlySvg: string;
+  hourlyRow: string;
+  footnoteEl: string;
+  hintEl: string;
+  durationByContext: CyclingDurationContextRow[];
+  /** Fallback if rows predate per-row `n_days` (matches cycling_regression calendar slice). */
+  calendarDaysByContext?: CyclingCalendarDaysContextRow[];
+  hourlyRidingProfile: CyclingHourlyRidingProfileData | null;
+  dailySeries: CyclingDailyNormPoint[];
+  weather: WeatherOsloData | null;
+  stationInOut: StationInOutLatestFullMonthData | null;
+}
+
+type SplomMetricKey = 'avgTripMin' | 'tripCount' | 'precipMm' | 'tempC';
+
+interface ScatterDayPoint {
+  date: string;
+  /** Daily precipitation sum (mm), Blindern. */
+  precipMm: number;
+  /** Daily mean temperature (°C), Blindern. */
+  tempC: number;
+  /** Total trips that calendar day. */
+  tripCount: number;
+  /** Network mean trip length that calendar day (minutes). */
+  avgTripMin: number;
+  ctx: number;
+}
+
+let whenBarsSvg: d3.Selection<SVGSVGElement, unknown, HTMLElement, unknown> | null = null;
+let whenScatterSvg: d3.Selection<SVGSVGElement, unknown, HTMLElement, unknown> | null = null;
+/** Per-dot fill-opacity base for expanded SPLOM cell (from n); `updateWhenRiding` scales it by step. */
+let whenScatterDotFillBase = 0.22;
+/** Matrix small-multiple dots (from n); scaled in `updateWhenRiding`. */
+let whenSplomMatrixDotFillBase = 0.14;
+/** null = 4×4 matrix; otherwise one pair fills the panel. */
+let splomExpanded: { row: number; col: number } | null = null;
+let whenRidingLastOpts: WhenRidingInitOptions | null = null;
+let splomBackBtn: HTMLButtonElement | null = null;
+let splomKeydownBound = false;
+let whenHourlySvg: d3.Selection<SVGSVGElement, unknown, HTMLElement, unknown> | null = null;
+let whenHourlyRowEl: HTMLElement | null = null;
+let whenFootnoteEl: HTMLElement | null = null;
+let whenHintEl: HTMLElement | null = null;
+let whenScatterTooltip: HTMLDivElement | null = null;
+let whenBarTooltip: HTMLDivElement | null = null;
+
+type WhenBarsMetricMode = 'minutes' | 'trips';
+let whenBarsMetricMode: WhenBarsMetricMode = 'minutes';
+/** Upper end of bar y-scale domain `[0, high]` after last full paint or metric transition (for smooth toggles). */
+let whenBarsYDomainHigh = 1;
+let whenBarsToggleMinutesBtn: HTMLButtonElement | null = null;
+let whenBarsToggleTripsBtn: HTMLButtonElement | null = null;
+
+const WHEN_BARS_METRIC_MS = 450;
+
+function styleWhenBarsYAxis(ax: d3.Selection<SVGGElement, unknown, HTMLElement | null, unknown>): void {
+  ax.selectAll('text').attr('font-size', 11).attr('fill', '#4b5563');
+  ax.select('.domain').remove();
+  ax.selectAll('.tick line').attr('stroke', '#e5e7eb');
+}
+
+function styleWhenBarsGrid(ax: d3.Selection<SVGGElement, unknown, HTMLElement | null, unknown>): void {
+  ax.select('.domain').remove();
+  ax.selectAll('.tick line').attr('stroke', '#f3f4f6').attr('stroke-dasharray', '3,3');
+}
+
+/** Animate bar heights and y-axis when switching Minutes / Trips without full SVG tear-down. */
+function transitionWhenBarsMetric(from: WhenBarsMetricMode): void {
+  const prepared = whenRidingPrepared;
+  const dom = whenRidingDom;
+  if (!prepared || !dom || !whenBarsSvg) {
+    scheduleWhenRidingPaint();
+    return;
+  }
+  const gbSel = whenBarsSvg.select<SVGGElement>('g.when-bars-g');
+  if (gbSel.empty()) {
+    scheduleWhenRidingPaint();
+    return;
+  }
+  gbSel.interrupt();
+
+  const to = whenBarsMetricMode;
+  const { pivot, maxBarMinutes, maxBarTrips } = prepared;
+  const { barsEl } = dom;
+  const marginBars = { top: 48, right: 12, bottom: 68, left: 56 };
+  const dims = readPanelRect(barsEl, WHEN_PANEL_MIN, WHEN_PANEL_MIN);
+  const bw = dims.w;
+  const bh = dims.h;
+  const innerW = Math.max(80, bw - marginBars.left - marginBars.right);
+  const innerH = Math.max(80, bh - marginBars.top - marginBars.bottom);
+
+  const maxStart = Math.max(whenBarsYDomainHigh, 1e-6);
+  const maxEnd = Math.max((to === 'minutes' ? maxBarMinutes : maxBarTrips) * 1.06, 1e-6);
+  const ybStart = d3.scaleLinear().domain([0, maxStart]).range([innerH, 0]);
+  const ybEnd = d3.scaleLinear().domain([0, maxEnd]).range([innerH, 0]);
+  const iHi = d3.interpolate(maxStart, maxEnd);
+
+  const yTickFmtTo = (v: number): string =>
+    to === 'minutes' ? fmtMinAxis(v) : fmtTripAxis(v);
+
+  gbSel
+    .transition()
+    .duration(WHEN_BARS_METRIC_MS)
+    .ease(d3.easeCubicInOut)
+    .tween('whenBarsMetric', () => (u: number) => {
+      const hi = iHi(u);
+      const ybAxis = d3.scaleLinear().domain([0, hi]).range([innerH, 0]);
+      gbSel
+        .select<SVGGElement>('g.y-axis')
+        .call(
+          d3.axisLeft(ybAxis).ticks(5).tickFormat(d => (typeof d === 'number' && Number.isFinite(d) ? yTickFmtTo(d) : '')),
+        )
+        .call(styleWhenBarsYAxis);
+      gbSel
+        .select<SVGGElement>('g.grid')
+        .call(d3.axisLeft(ybAxis).ticks(5).tickSize(-innerW).tickFormat(() => ''))
+        .call(styleWhenBarsGrid);
+
+      gbSel.selectAll<SVGGElement, (typeof pivot)[0]>('g.bucket').each(function (row) {
+        const g = d3.select(this);
+        for (let ctx = 0; ctx < 4; ctx++) {
+          const vFrom = from === 'minutes' ? row.minutes[ctx] : row.tripsPerDay[ctx];
+          const vTo = to === 'minutes' ? row.minutes[ctx] : row.tripsPerDay[ctx];
+          const y0 = ybStart(vFrom);
+          const h0 = innerH - y0;
+          const y1 = ybEnd(vTo);
+          const h1 = innerH - y1;
+          const y = y0 + (y1 - y0) * u;
+          const h = h0 + (h1 - h0) * u;
+          g.select<SVGRectElement>(`rect.ctx-${ctx}`).attr('y', y).attr('height', h);
+        }
+      });
+    })
+    .on('end', () => {
+      whenBarsYDomainHigh = maxEnd;
+      const yb = d3.scaleLinear().domain([0, maxEnd]).range([innerH, 0]);
+      const yTickFmt = to === 'minutes' ? fmtMinAxis : fmtTripAxis;
+      gbSel
+        .select<SVGGElement>('g.y-axis')
+        .call(d3.axisLeft(yb).ticks(5).tickFormat(d => (typeof d === 'number' && Number.isFinite(d) ? yTickFmt(d) : '')))
+        .call(styleWhenBarsYAxis);
+      gbSel
+        .select<SVGGElement>('g.grid')
+        .call(d3.axisLeft(yb).ticks(5).tickSize(-innerW).tickFormat(() => ''))
+        .call(styleWhenBarsGrid);
+
+      gbSel.selectAll<SVGGElement, (typeof pivot)[0]>('g.bucket').each(function (row) {
+        const arr = to === 'minutes' ? row.minutes : row.tripsPerDay;
+        d3.select(this)
+          .selectAll<SVGRectElement, { value: number; ctx: number; bucket: string }>('rect.ctx-bar')
+          .data(
+            arr.map((v, i) => ({ value: v, ctx: i, bucket: row.bucket })),
+            d => `${d.bucket}-${d.ctx}`,
+          )
+          .attr('y', d => yb(d.value))
+          .attr('height', d => innerH - yb(d.value));
+      });
+
+      gbSel
+        .select<SVGTextElement>('text.when-bars-y-label')
+        .text(to === 'minutes' ? 'Avg riding minutes / day in bucket' : 'Trips / day in bucket');
+    });
+}
+
+function syncWhenBarsToggleUi(): void {
+  if (!whenBarsToggleMinutesBtn || !whenBarsToggleTripsBtn) return;
+  const m = whenBarsMetricMode === 'minutes';
+  whenBarsToggleMinutesBtn.setAttribute('aria-pressed', m ? 'true' : 'false');
+  whenBarsToggleTripsBtn.setAttribute('aria-pressed', m ? 'false' : 'true');
+  whenBarsToggleMinutesBtn.style.fontWeight = m ? '700' : '500';
+  whenBarsToggleTripsBtn.style.fontWeight = m ? '500' : '700';
+  whenBarsToggleMinutesBtn.style.background = m ? '#e0e7ff' : '#ffffff';
+  whenBarsToggleTripsBtn.style.background = m ? '#ffffff' : '#e0e7ff';
+}
+
+function aggregateHourlyDepartures(
+  stations: StationInOutDatum[],
+  key: 'hourly_weekday_departures' | 'hourly_weekend_departures',
+): number[] {
+  const acc = Array.from({ length: 24 }, () => 0);
+  for (const s of stations) {
+    const arr = s[key];
+    if (!arr?.length) continue;
+    for (let h = 0; h < 24; h++) acc[h] += Number(arr[h]) || 0;
+  }
+  return acc;
+}
+
+/** Avoid += string concat if count is ever deserialized as string (breaks d3.max / y-scale). */
+function ctxIndexRowSafe(r: CyclingDurationContextRow): number {
+  const wk = r.is_weekend === true || (r as unknown as { is_weekend?: number }).is_weekend === 1;
+  const hol = r.is_public_holiday === true || (r as unknown as { is_public_holiday?: number }).is_public_holiday === 1;
+  if (wk) return hol ? 3 : 2;
+  return hol ? 1 : 0;
+}
+
+function nDaysForDurationRow(
+  r: CyclingDurationContextRow,
+  calendar?: CyclingCalendarDaysContextRow[],
+): number {
+  const n = r.n_days;
+  if (n != null && n > 0) return n;
+  const wk = r.is_weekend === true || (r as unknown as { is_weekend?: number }).is_weekend === 1;
+  const hol = r.is_public_holiday === true || (r as unknown as { is_public_holiday?: number }).is_public_holiday === 1;
+  const hit = calendar?.find(c => !!c.is_weekend === wk && !!c.is_public_holiday === hol);
+  if (hit && hit.n_days > 0) return hit.n_days;
+  return 1;
+}
+
+const fmtTripAxis = d3.format('~s');
+const fmtMinAxis = d3.format('~s');
+
+interface WhenRidingPrepared {
+  buckets: string[];
+  /** Per context: avg minutes of riding per calendar day from trips starting in that bucket. */
+  pivot: { bucket: string; minutes: number[]; tripsPerDay: number[] }[];
+  maxBarMinutes: number;
+  maxBarTrips: number;
+  scatterData: ScatterDayPoint[];
+  /** Station snapshot departures (fallback when trip hourly profile missing). */
+  hourlyWdDepartures: number[];
+  hourlyWeDepartures: number[];
+  hourlyTripProfile: CyclingHourlyRidingProfileData | null;
+}
+
+interface WhenRidingPanelDims {
+  bars: { w: number; h: number };
+  scatter: { w: number; h: number };
+  hourly: { w: number; h: number };
+}
+
+let whenRidingPrepared: WhenRidingPrepared | null = null;
+let whenRidingDom: {
+  barsEl: HTMLElement;
+  scatterEl: HTMLElement;
+  hourlyEl: HTMLElement;
+} | null = null;
+let whenRidingResizeObserver: ResizeObserver | null = null;
+let whenRidingResizeDebounce: ReturnType<typeof setTimeout> | null = null;
+/** After a full when-riding paint, used to skip bar/scatter rebuild when only the hourly panel resizes. */
+let whenRidingLastBarsScatterDims: { bars: { w: number; h: number }; scatter: { w: number; h: number } } | null = null;
+
+const WHEN_PANEL_MIN = 120;
+const WHEN_HOURLY_MIN_H = 72;
+const WHEN_RESIZE_DEBOUNCE_MS = 100;
+
+function readPanelRect(el: HTMLElement, minW: number, minH: number): { w: number; h: number } {
+  const r = el.getBoundingClientRect();
+  return {
+    w: Math.max(minW, Math.round(r.width)),
+    h: Math.max(minH, Math.round(r.height)),
+  };
+}
+
+function whenPanelBoxDimsApproxEqual(
+  a: { w: number; h: number },
+  b: { w: number; h: number },
+  tol = 2,
+): boolean {
+  return Math.abs(a.w - b.w) <= tol && Math.abs(a.h - b.h) <= tol;
+}
+
+function prepareWhenRidingData(opts: WhenRidingInitOptions): WhenRidingPrepared {
+  const rows = opts.durationByContext ?? [];
+  const cal = opts.calendarDaysByContext;
+  let buckets = BUCKET_ORDER.filter(b => rows.some(r => r.time_of_day_bucket === b));
+  if (buckets.length === 0) {
+    const rest = [...new Set(rows.map(r => r.time_of_day_bucket))].sort(
+      (a, b) => BUCKET_ORDER.indexOf(a as (typeof BUCKET_ORDER)[number]) - BUCKET_ORDER.indexOf(b as (typeof BUCKET_ORDER)[number]),
+    );
+    buckets = rest;
+  }
+
+  const pivot = buckets.map(bucket => {
+    const minutes = [0, 0, 0, 0] as number[];
+    const tripsPerDay = [0, 0, 0, 0] as number[];
+    for (const r of rows) {
+      if (r.time_of_day_bucket !== bucket) continue;
+      const idx = ctxIndexRowSafe(r);
+      const nDays = nDaysForDurationRow(r, cal);
+      const totalMin = ((Number(r.count) || 0) * (Number(r.mean_sec) || 0)) / 60;
+      minutes[idx] += totalMin / nDays;
+      tripsPerDay[idx] += (Number(r.count) || 0) / nDays;
+    }
+    return { bucket, minutes, tripsPerDay };
+  });
+
+  const maxBarMinutes = Math.max(1, d3.max(pivot, d => d3.max(d.minutes)) ?? 1);
+  const maxBarTrips = Math.max(1, d3.max(pivot, d => d3.max(d.tripsPerDay)) ?? 1);
+
+  const weatherByDate = new Map<string, { precipMm: number; tempC: number }>();
+  if (opts.weather?.data?.length) {
+    for (const w of opts.weather.data) {
+      if (w.date == null || w.date === '') continue;
+      if (w.precipitation == null || w.temperature == null) continue;
+      weatherByDate.set(w.date, { precipMm: Number(w.precipitation), tempC: Number(w.temperature) });
+    }
+  }
+
+  const scatterData: ScatterDayPoint[] = [];
+  for (const s of opts.dailySeries ?? []) {
+    const wx = weatherByDate.get(s.date);
+    if (!wx) continue;
+    const trips = Number(s.trip_count) || 0;
+    if (trips <= 0) continue;
+    const totalMin = Number(s.total_duration_min) || 0;
+    scatterData.push({
+      date: s.date,
+      precipMm: wx.precipMm,
+      tempC: wx.tempC,
+      tripCount: trips,
+      avgTripMin: totalMin / trips,
+      ctx: dayContextIndex(
+        s.is_weekend === true || (s as unknown as { is_weekend?: number }).is_weekend === 1,
+        s.any_holiday === true || (s as unknown as { any_holiday?: number }).any_holiday === 1,
+      ),
+    });
+  }
+
+  const stationsHourly = opts.stationInOut?.stations ?? [];
+  const hourlyWdDepartures = stationsHourly.length ? aggregateHourlyDepartures(stationsHourly, 'hourly_weekday_departures') : [];
+  const hourlyWeDepartures = stationsHourly.length ? aggregateHourlyDepartures(stationsHourly, 'hourly_weekend_departures') : [];
+
+  const profile = opts.hourlyRidingProfile;
+  const hourlyTripProfile =
+    profile &&
+    profile.weekday_duration_min_avg_daily.length === 24 &&
+    profile.weekend_duration_min_avg_daily.length === 24 &&
+    profile.weekday_trips_avg_daily.length === 24 &&
+    profile.weekend_trips_avg_daily.length === 24
+      ? profile
+      : null;
+
+  return {
+    buckets,
+    pivot,
+    maxBarMinutes,
+    maxBarTrips,
+    scatterData,
+    hourlyWdDepartures,
+    hourlyWeDepartures,
+    hourlyTripProfile,
+  };
+}
+
+const SPLOM_METRICS: readonly { key: SplomMetricKey; label: string; short: string }[] = [
+  { key: 'avgTripMin', label: 'Avg trip time (min)', short: 'Avg trip' },
+  { key: 'tripCount', label: 'Trips', short: 'Trips' },
+  { key: 'precipMm', label: 'Precipitation (mm)', short: 'Precip' },
+  { key: 'tempC', label: 'Temperature (°C)', short: 'Temp' },
+] as const;
+
+function splomValue(d: ScatterDayPoint, key: SplomMetricKey): number {
+  switch (key) {
+    case 'avgTripMin': return d.avgTripMin;
+    case 'tripCount': return d.tripCount;
+    case 'precipMm': return d.precipMm;
+    case 'tempC': return d.tempC;
+  }
+}
+
+function splomDomainForMetric(key: SplomMetricKey, data: ScatterDayPoint[]): [number, number] {
+  switch (key) {
+    case 'precipMm': {
+      const ex = d3.extent(data, dd => dd.precipMm) as [number | undefined, number | undefined];
+      const lo = Math.min(0, ex[0] ?? 0);
+      const hi = Math.max(ex[1] ?? 0, lo + 1e-3);
+      return [lo, hi];
+    }
+    case 'tempC': {
+      const lo = d3.min(data, dd => dd.tempC) ?? 0;
+      const hi = d3.max(data, dd => dd.tempC) ?? 0;
+      if (hi <= lo) return [lo - 1, hi + 1];
+      const pad = (hi - lo) * 0.06;
+      return [lo - pad, hi + pad];
+    }
+    case 'tripCount': {
+      const hi = Math.max(d3.max(data, dd => dd.tripCount) ?? 1, 1);
+      return [0, hi];
+    }
+    case 'avgTripMin': {
+      const hi = Math.max(d3.max(data, dd => dd.avgTripMin) ?? 1, 1e-3);
+      return [0, hi * 1.06];
+    }
+  }
+}
+
+function splomTickFormat(key: SplomMetricKey): (n: number | { valueOf(): number }) => string {
+  return (n) => {
+    const v = typeof n === 'number' ? n : Number(n);
+    if (!Number.isFinite(v)) return '';
+    if (key === 'tripCount') return fmtTripAxis(v);
+    if (key === 'avgTripMin') return fmtMinAxis(v);
+    return d3.format('~g')(v);
+  };
+}
+
+function splomTooltipText(d: ScatterDayPoint): string {
+  return `${d.date}: ${d.precipMm.toFixed(1)} mm precip · ${d.tempC.toFixed(1)} °C · ${fmtTripAxis(d.tripCount)} trips · ${d.avgTripMin.toFixed(1)} min avg trip · ${CTX_LABELS[d.ctx as 0 | 1 | 2 | 3]}`;
+}
+
+function paintWhenSplomPanel(
+  gs: d3.Selection<SVGGElement, unknown, HTMLElement, unknown>,
+  sw: number,
+  sh: number,
+  scatterData: ScatterDayPoint[],
+  scatterEl: HTMLElement,
+): void {
+  const marginSc = { top: 28, right: 18, bottom: 48, left: 56 };
+  const innerWs = Math.max(80, sw - marginSc.left - marginSc.right);
+  const innerHs = Math.max(80, sh - marginSc.top - marginSc.bottom);
+  const defs = gs.append('defs');
+  const n = scatterData.length;
+
+  if (n === 0) {
+    gs.append('text')
+      .attr('x', innerWs / 2)
+      .attr('y', innerHs / 2)
+      .attr('text-anchor', 'middle')
+      .attr('fill', '#9ca3af')
+      .attr('font-size', 12)
+      .text('No weather overlap — run export-weather and prepare:data');
+    return;
+  }
+
+  whenScatterDotFillBase = Math.min(0.4, Math.max(0.1, 52 / Math.sqrt(n)));
+  const expandedDotR = Math.max(1.5, Math.min(3.2, 150 / Math.sqrt(n)));
+
+  const ex = splomExpanded;
+  if (ex && ex.row >= 0 && ex.row < 4 && ex.col >= 0 && ex.col < 4 && ex.row !== ex.col) {
+    const xKey = SPLOM_METRICS[ex.col].key;
+    const yKey = SPLOM_METRICS[ex.row].key;
+    const xDom = splomDomainForMetric(xKey, scatterData);
+    const yDom = splomDomainForMetric(yKey, scatterData);
+    const xS = d3.scaleLinear().domain(xDom).nice().range([0, innerWs]);
+    const yS = d3.scaleLinear().domain(yDom).nice().range([innerHs, 0]);
+    const clipId = 'when-splom-expanded-clip';
+    defs.append('clipPath').attr('id', clipId).append('rect').attr('width', innerWs).attr('height', innerHs);
+
+    gs.append('g').attr('class', 'grid')
+      .call(d3.axisLeft(yS).ticks(5).tickSize(-innerWs).tickFormat(() => ''))
+      .call(ax => {
+        ax.select('.domain').remove();
+        ax.selectAll('.tick line').attr('stroke', '#f3f4f6').attr('stroke-dasharray', '3,3');
+      });
+
+    const plotClip = gs.append('g').attr('class', 'when-splom-expanded-plot').attr('clip-path', `url(#${clipId})`);
+    plotClip.selectAll<SVGCircleElement, ScatterDayPoint>('circle.when-splom-full-dot')
+      .data(scatterData)
+      .join('circle')
+      .attr('class', 'when-splom-full-dot')
+      .attr('cx', d => xS(splomValue(d, xKey)))
+      .attr('cy', d => yS(splomValue(d, yKey)))
+      .attr('r', expandedDotR)
+      .attr('fill', '#1d4ed8')
+      .attr('fill-opacity', whenScatterDotFillBase)
+      .attr('stroke', 'none')
+      .style('pointer-events', 'none');
+
+    const tree = d3.quadtree<ScatterDayPoint>()
+      .x(d => xS(splomValue(d, xKey)))
+      .y(d => yS(splomValue(d, yKey)))
+      .addAll(scatterData);
+
+    plotClip.append('rect')
+      .attr('width', innerWs)
+      .attr('height', innerHs)
+      .attr('fill', 'transparent')
+      .style('cursor', 'crosshair')
+      .on('mousemove', function (ev) {
+        if (!whenScatterTooltip || !scatterEl) return;
+        const [mx, my] = d3.pointer(ev, this);
+        const hit = tree.find(mx, my, 22);
+        if (!hit) {
+          whenScatterTooltip.style.opacity = '0';
+          return;
+        }
+        whenScatterTooltip.textContent = splomTooltipText(hit);
+        whenScatterTooltip.style.opacity = '1';
+        const cr = scatterEl.getBoundingClientRect();
+        whenScatterTooltip.style.left = `${ev.clientX - cr.left + 10}px`;
+        whenScatterTooltip.style.top = `${ev.clientY - cr.top - 36}px`;
+        clampAbsoluteTooltipToContainer(whenScatterTooltip, scatterEl, TOOLTIP_PAD);
+      })
+      .on('mouseout', () => {
+        if (whenScatterTooltip) whenScatterTooltip.style.opacity = '0';
+      });
+
+    const xFmt = splomTickFormat(xKey);
+    const yFmt = splomTickFormat(yKey);
+    gs.append('g').attr('class', 'y-axis').call(
+      d3.axisLeft(yS).ticks(5).tickFormat(d => (typeof d === 'number' && Number.isFinite(d) ? yFmt(d) : '')),
+    ).call(ax => {
+      ax.selectAll('text').attr('font-size', 11).attr('fill', '#4b5563');
+      ax.select('.domain').remove();
+      ax.selectAll('.tick line').attr('stroke', '#e5e7eb');
+    });
+    gs.append('g').attr('class', 'x-axis').attr('transform', `translate(0,${innerHs})`)
+      .call(d3.axisBottom(xS).ticks(6).tickFormat(d => (typeof d === 'number' && Number.isFinite(d) ? xFmt(d) : '')))
+      .call(ax => {
+        ax.selectAll('text').attr('font-size', 11).attr('fill', '#4b5563');
+        ax.select('.domain').attr('stroke', '#d1d5db');
+      });
+    gs.append('text').attr('x', innerWs / 2).attr('y', innerHs + 40).attr('text-anchor', 'middle')
+      .attr('fill', '#6b7280').attr('font-size', 11).text(SPLOM_METRICS[ex.col].label);
+    gs.append('text').attr('transform', 'rotate(-90)').attr('x', -innerHs / 2).attr('y', -44).attr('text-anchor', 'middle')
+      .attr('fill', '#6b7280').attr('font-size', 11).text(SPLOM_METRICS[ex.row].label);
+    return;
+  }
+
+  const marginMx = { top: 2, right: 4, bottom: 20, left: 24 };
+  const mxOuterW = Math.max(40, innerWs - marginMx.left - marginMx.right);
+  const mxOuterH = Math.max(40, innerHs - marginMx.top - marginMx.bottom);
+  const cellW = mxOuterW / 4;
+  const cellH = mxOuterH / 4;
+  const matrixDotR = Math.max(0.45, Math.min(2.2, 0.065 * Math.min(cellW, cellH)));
+  whenSplomMatrixDotFillBase = Math.min(0.34, Math.max(0.06, 32 / Math.sqrt(n)));
+
+  const gmx = gs.append('g').attr('class', 'when-splom-matrix').attr('transform', `translate(${marginMx.left},${marginMx.top})`);
+
+  for (let r = 0; r < 4; r++) {
+    for (let c = 0; c < 4; c++) {
+      const cell = gmx.append('g').attr('class', `splom-cell splom-r${r}-c${c}`).attr('transform', `translate(${c * cellW},${r * cellH})`);
+      if (r === c) {
+        cell.append('text')
+          .attr('x', cellW / 2)
+          .attr('y', cellH / 2)
+          .attr('text-anchor', 'middle')
+          .attr('dominant-baseline', 'middle')
+          .attr('font-size', Math.max(7, Math.min(10, cellW * 0.09)))
+          .attr('fill', '#6b7280')
+          .attr('font-weight', '600')
+          .text(SPLOM_METRICS[r].short);
+        continue;
+      }
+      const xKey = SPLOM_METRICS[c].key;
+      const yKey = SPLOM_METRICS[r].key;
+      const xDom = splomDomainForMetric(xKey, scatterData);
+      const yDom = splomDomainForMetric(yKey, scatterData);
+      const xS = d3.scaleLinear().domain(xDom).nice().range([1.5, cellW - 1.5]);
+      const yS = d3.scaleLinear().domain(yDom).nice().range([cellH - 1.5, 1.5]);
+      const clipId = `splom-c-${r}-${c}`;
+      defs.append('clipPath').attr('id', clipId).append('rect').attr('width', cellW).attr('height', cellH);
+
+      const plotG = cell.append('g').attr('clip-path', `url(#${clipId})`);
+      plotG.selectAll<SVGCircleElement, ScatterDayPoint>('circle.when-splom-cell-dot')
+        .data(scatterData)
+        .join('circle')
+        .attr('class', 'when-splom-cell-dot')
+        .attr('cx', d => xS(splomValue(d, xKey)))
+        .attr('cy', d => yS(splomValue(d, yKey)))
+        .attr('r', matrixDotR)
+        .attr('fill', '#1d4ed8')
+        .attr('fill-opacity', whenSplomMatrixDotFillBase)
+        .attr('stroke', 'none')
+        .style('pointer-events', 'none');
+
+      const tree = d3.quadtree<ScatterDayPoint>()
+        .x(d => xS(splomValue(d, xKey)))
+        .y(d => yS(splomValue(d, yKey)))
+        .addAll(scatterData);
+
+      const hitSlop = Math.min(14, Math.max(6, matrixDotR * 4));
+      plotG.append('rect')
+        .attr('width', cellW)
+        .attr('height', cellH)
+        .attr('fill', 'transparent')
+        .style('cursor', 'zoom-in')
+        .on('mousemove', function (ev) {
+          if (!whenScatterTooltip || !scatterEl) return;
+          const [mx, my] = d3.pointer(ev, this);
+          const hit = tree.find(mx, my, hitSlop);
+          if (!hit) {
+            whenScatterTooltip.style.opacity = '0';
+            return;
+          }
+          whenScatterTooltip.textContent = splomTooltipText(hit);
+          whenScatterTooltip.style.opacity = '1';
+          const cr = scatterEl.getBoundingClientRect();
+          whenScatterTooltip.style.left = `${ev.clientX - cr.left + 10}px`;
+          whenScatterTooltip.style.top = `${ev.clientY - cr.top - 36}px`;
+          clampAbsoluteTooltipToContainer(whenScatterTooltip, scatterEl, TOOLTIP_PAD);
+        })
+        .on('mouseout', () => {
+          if (whenScatterTooltip) whenScatterTooltip.style.opacity = '0';
+        })
+        .on('click', (ev) => {
+          ev.stopPropagation();
+          splomExpanded = { row: r, col: c };
+          if (splomBackBtn) splomBackBtn.style.display = 'block';
+          scheduleWhenScatterSplomPaint({ fade: true });
+        });
+
+      cell.append('rect')
+        .attr('width', cellW)
+        .attr('height', cellH)
+        .attr('fill', 'none')
+        .attr('stroke', '#e5e7eb')
+        .attr('stroke-width', 0.6)
+        .style('pointer-events', 'none');
+    }
+  }
+
+  gs.append('text')
+    .attr('x', innerWs / 2)
+    .attr('y', innerHs + 32)
+    .attr('text-anchor', 'middle')
+    .attr('fill', '#9ca3af')
+    .attr('font-size', 9)
+    .text('Click a panel to enlarge · Esc or Back returns');
+
+  const legG = gs.append('g').attr('class', 'when-scatter-legend').attr('transform', `translate(${innerWs - 118}, 2)`);
+  legG.append('circle').attr('cx', 5).attr('cy', 7).attr('r', 2.5).attr('fill', '#1d4ed8').attr('fill-opacity', 0.32);
+  legG.append('text').attr('x', 14).attr('y', 10).attr('font-size', 8).attr('fill', '#6b7280').text('One day = one dot');
+  legG.append('text').attr('x', 14).attr('y', 20).attr('font-size', 8).attr('fill', '#6b7280').text('Overlap reads darker');
+}
+
+function paintWhenHourlySection(
+  prepared: WhenRidingPrepared,
+  hourlyDims: { w: number; h: number },
+  opts: WhenRidingInitOptions,
+): void {
+  const { hourlyWdDepartures, hourlyWeDepartures, hourlyTripProfile } = prepared;
+  const useTripHourly = hourlyTripProfile != null;
+  const marginH = {
+    top: useTripHourly ? 22 : 10,
+    right: useTripHourly ? 48 : 12,
+    bottom: useTripHourly ? 44 : 36,
+    left: useTripHourly ? 46 : 40,
+  };
+  const hw = hourlyDims.w;
+  const hh = hourlyDims.h;
+  const innerWh = Math.max(120, hw - marginH.left - marginH.right);
+  const innerHh = Math.max(48, hh - marginH.top - marginH.bottom);
+
+  whenHourlySvg = d3.select(opts.hourlySvg)
+    .attr('viewBox', `0 0 ${hw} ${hh}`)
+    .attr('preserveAspectRatio', 'xMidYMid meet')
+    .attr('width', '100%')
+    .attr('height', '100%');
+  whenHourlySvg.selectAll('*').remove();
+  const gh = whenHourlySvg.append('g').attr('class', 'when-hourly-g').attr('transform', `translate(${marginH.left},${marginH.top})`);
+
+  const xh = d3.scaleLinear().domain([0, 23]).range([0, innerWh]);
+
+  if (useTripHourly && hourlyTripProfile) {
+    const p = hourlyTripProfile;
+    const maxDurH = Math.max(
+      d3.max(p.weekday_duration_min_avg_daily) ?? 0,
+      d3.max(p.weekend_duration_min_avg_daily) ?? 0,
+      1e-6,
+    );
+    const maxTripH = Math.max(
+      d3.max(p.weekday_trips_avg_daily) ?? 0,
+      d3.max(p.weekend_trips_avg_daily) ?? 0,
+      1e-6,
+    );
+    const yhL = d3.scaleLinear().domain([0, maxDurH * 1.08]).range([innerHh, 0]);
+    const yhR = d3.scaleLinear().domain([0, maxTripH * 1.08]).range([innerHh, 0]);
+
+    gh.append('g').attr('class', 'grid-hourly')
+      .call(d3.axisLeft(yhL).ticks(4).tickSize(-innerWh).tickFormat(() => ''))
+      .call(ax => {
+        ax.select('.domain').remove();
+        ax.selectAll('.tick line').attr('stroke', '#f3f4f6').attr('stroke-dasharray', '3,3');
+      });
+
+    const lineWdDur = d3.line<number>()
+      .x((_, i) => xh(i))
+      .y(d => yhL(d))
+      .curve(d3.curveMonotoneX);
+    const lineWeDur = d3.line<number>()
+      .x((_, i) => xh(i))
+      .y(d => yhL(d))
+      .curve(d3.curveMonotoneX);
+    const lineWdTrip = d3.line<number>()
+      .x((_, i) => xh(i))
+      .y(d => yhR(d))
+      .curve(d3.curveMonotoneX);
+    const lineWeTrip = d3.line<number>()
+      .x((_, i) => xh(i))
+      .y(d => yhR(d))
+      .curve(d3.curveMonotoneX);
+
+    gh.append('path').datum(p.weekday_duration_min_avg_daily).attr('fill', 'none')
+      .attr('stroke', CTX_COLORS[0]).attr('stroke-width', 2.2).attr('d', lineWdDur);
+    gh.append('path').datum(p.weekend_duration_min_avg_daily).attr('fill', 'none')
+      .attr('stroke', CTX_COLORS[2]).attr('stroke-width', 2.2).attr('d', lineWeDur);
+
+    const tripDash = '6 4';
+    gh.append('path').datum(p.weekday_trips_avg_daily).attr('fill', 'none')
+      .attr('stroke', CTX_COLORS[0]).attr('stroke-opacity', 0.88).attr('stroke-width', 1.9)
+      .attr('stroke-dasharray', tripDash).attr('d', lineWdTrip);
+    gh.append('path').datum(p.weekend_trips_avg_daily).attr('fill', 'none')
+      .attr('stroke', CTX_COLORS[2]).attr('stroke-opacity', 0.88).attr('stroke-width', 1.9)
+      .attr('stroke-dasharray', tripDash).attr('d', lineWeTrip);
+
+    gh.append('g').attr('class', 'y-axis').call(
+      d3.axisLeft(yhL).ticks(4).tickFormat(d => (typeof d === 'number' && Number.isFinite(d) ? fmtMinAxis(d) : '')),
+    ).call(ax => {
+      ax.selectAll('text').attr('font-size', 9).attr('fill', '#4b5563');
+      ax.select('.domain').remove();
+      ax.selectAll('.tick line').attr('stroke', '#e5e7eb');
+    });
+    gh.append('g').attr('class', 'y-axis-right').attr('transform', `translate(${innerWh},0)`)
+      .call(
+        d3.axisRight(yhR).ticks(3).tickFormat(d => (typeof d === 'number' && Number.isFinite(d) ? fmtTripAxis(d) : '')),
+      ).call(ax => {
+        ax.selectAll('text').attr('font-size', 9).attr('fill', '#64748b');
+        ax.select('.domain').remove();
+        ax.selectAll('.tick line').attr('stroke', '#e5e7eb');
+      });
+
+    gh.append('text').attr('transform', 'rotate(-90)').attr('x', -innerHh / 2).attr('y', -36).attr('text-anchor', 'middle')
+      .attr('fill', '#6b7280').attr('font-size', 9).text('Riding min / day');
+    gh.append('text')
+      .attr('transform', `translate(${innerWh + 30},${innerHh / 2}) rotate(90)`)
+      .attr('text-anchor', 'middle')
+      .attr('fill', '#64748b').attr('font-size', 9).text('Trips / day');
+
+    const legDual = gh.append('g').attr('transform', `translate(${Math.max(4, innerWh - 132)}, 2)`);
+    legDual.append('line').attr('x1', 0).attr('x2', 14).attr('y1', 0).attr('y2', 0).attr('stroke', CTX_COLORS[0]).attr('stroke-width', 2);
+    legDual.append('text').attr('x', 18).attr('y', 3).attr('font-size', 8).attr('fill', '#374151').text('Weekday time');
+    legDual.append('line').attr('x1', 0).attr('x2', 14).attr('y1', 10).attr('y2', 10).attr('stroke', CTX_COLORS[2]).attr('stroke-width', 2);
+    legDual.append('text').attr('x', 18).attr('y', 13).attr('font-size', 8).attr('fill', '#374151').text('Weekend time');
+    legDual.append('line').attr('x1', 72).attr('x2', 86).attr('y1', 0).attr('y2', 0).attr('stroke', CTX_COLORS[0]).attr('stroke-opacity', 0.88).attr('stroke-dasharray', tripDash).attr('stroke-width', 1.9);
+    legDual.append('text').attr('x', 90).attr('y', 3).attr('font-size', 8).attr('fill', '#64748b').text('Weekday trips');
+    legDual.append('line').attr('x1', 72).attr('x2', 86).attr('y1', 10).attr('y2', 10).attr('stroke', CTX_COLORS[2]).attr('stroke-opacity', 0.88).attr('stroke-dasharray', tripDash).attr('stroke-width', 1.9);
+    legDual.append('text').attr('x', 90).attr('y', 13).attr('font-size', 8).attr('fill', '#64748b').text('Weekend trips');
+  } else {
+    const maxH = Math.max(d3.max(hourlyWdDepartures) ?? 0, d3.max(hourlyWeDepartures) ?? 0, 1e-6);
+    const yh = d3.scaleLinear().domain([0, maxH * 1.08]).range([innerHh, 0]);
+    const lineWd = d3.line<number>()
+      .x((_, i) => xh(i))
+      .y(d => yh(d))
+      .curve(d3.curveMonotoneX);
+    const lineWe = d3.line<number>()
+      .x((_, i) => xh(i))
+      .y(d => yh(d))
+      .curve(d3.curveMonotoneX);
+
+    if (hourlyWdDepartures.length === 24 && hourlyWeDepartures.length === 24) {
+      gh.append('path').datum(hourlyWdDepartures).attr('fill', 'none').attr('stroke', CTX_COLORS[0]).attr('stroke-width', 2.2)
+        .attr('d', lineWd);
+      gh.append('path').datum(hourlyWeDepartures).attr('fill', 'none').attr('stroke', CTX_COLORS[2]).attr('stroke-width', 2.2)
+        .attr('d', lineWe);
+    } else {
+      gh.append('text').attr('x', innerWh / 2).attr('y', innerHh / 2).attr('text-anchor', 'middle')
+        .attr('fill', '#9ca3af').attr('font-size', 11).text('No hourly profile — run npm run prepare:cycling-hourly (or station export)');
+    }
+
+    gh.append('g').attr('class', 'y-axis').call(
+      d3.axisLeft(yh).ticks(3).tickFormat(d => (+d).toFixed(0)),
+    ).call(ax => {
+      ax.selectAll('text').attr('font-size', 10).attr('fill', '#4b5563');
+      ax.select('.domain').remove();
+      ax.selectAll('.tick line').attr('stroke', '#e5e7eb');
+    });
+
+    const legH = gh.append('g').attr('transform', `translate(${Math.max(4, innerWh - 120)}, 4)`);
+    legH.append('line').attr('x1', 0).attr('x2', 18).attr('y1', 0).attr('y2', 0).attr('stroke', CTX_COLORS[0]).attr('stroke-width', 2);
+    legH.append('text').attr('x', 22).attr('y', 4).attr('font-size', 9).attr('fill', '#374151').text('Weekday');
+    legH.append('line').attr('x1', 0).attr('x2', 18).attr('y1', 14).attr('y2', 14).attr('stroke', CTX_COLORS[2]).attr('stroke-width', 2);
+    legH.append('text').attr('x', 22).attr('y', 18).attr('font-size', 9).attr('fill', '#374151').text('Weekend');
+  }
+
+  gh.append('g').attr('class', 'x-axis').attr('transform', `translate(0,${innerHh})`)
+    .call(d3.axisBottom(xh).ticks(12).tickFormat(d3.format('d')))
+    .call(ax => {
+      ax.selectAll('text').attr('font-size', 10).attr('fill', '#4b5563');
+      ax.select('.domain').attr('stroke', '#d1d5db');
+    });
+
+  gh.append('text').attr('x', innerWh / 2).attr('y', innerHh + (useTripHourly ? 34 : 26)).attr('text-anchor', 'middle')
+    .attr('fill', '#6b7280').attr('font-size', 10).text(
+      useTripHourly
+        ? 'Hour of day (trip start, Oslo) · solid = riding min/day; dashed = trips/day (right scale)'
+        : 'Hour of day (start) · summed avg departures / station-day',
+    );
+}
+
+function paintWhenRidingCharts(prepared: WhenRidingPrepared, dims: WhenRidingPanelDims, opts: WhenRidingInitOptions): void {
+  const dom = whenRidingDom;
+  if (!dom) return;
+
+  const { buckets, pivot, maxBarMinutes, maxBarTrips, scatterData } = prepared;
+  const { barsEl, scatterEl } = dom;
+
+  const marginBars = { top: 48, right: 12, bottom: 68, left: 56 };
+  const bw = dims.bars.w;
+  const bh = dims.bars.h;
+  const innerW = Math.max(80, bw - marginBars.left - marginBars.right);
+  const innerH = Math.max(80, bh - marginBars.top - marginBars.bottom);
+
+  whenBarsSvg = d3.select(opts.barsSvg)
+    .attr('viewBox', `0 0 ${bw} ${bh}`)
+    .attr('preserveAspectRatio', 'xMidYMid meet')
+    .attr('width', '100%')
+    .attr('height', '100%');
+  whenBarsSvg.selectAll('*').remove();
+  const gb = whenBarsSvg.append('g').attr('class', 'when-bars-g').attr('transform', `translate(${marginBars.left},${marginBars.top})`);
+
+  const x0 = d3.scaleBand<string>().domain(buckets).range([0, innerW]).padding(0.22);
+  const x1 = d3.scaleBand<number>().domain([0, 1, 2, 3]).range([0, x0.bandwidth()]).padding(0.08);
+  const maxBar = whenBarsMetricMode === 'minutes' ? maxBarMinutes : maxBarTrips;
+  const yb = d3.scaleLinear().domain([0, maxBar * 1.06]).range([innerH, 0]);
+  const yTickFmt = (v: number): string =>
+    whenBarsMetricMode === 'minutes' ? fmtMinAxis(v) : fmtTripAxis(v);
+
+  gb.append('g').attr('class', 'y-axis').call(
+    d3.axisLeft(yb).ticks(5).tickFormat(d => (typeof d === 'number' && Number.isFinite(d) ? yTickFmt(d) : '')),
+  ).call(ax => {
+    ax.selectAll('text').attr('font-size', 11).attr('fill', '#4b5563');
+    ax.select('.domain').remove();
+    ax.selectAll('.tick line').attr('stroke', '#e5e7eb');
+  });
+  gb.append('g').attr('class', 'grid')
+    .call(d3.axisLeft(yb).ticks(5).tickSize(-innerW).tickFormat(() => ''))
+    .call(ax => {
+      ax.select('.domain').remove();
+      ax.selectAll('.tick line').attr('stroke', '#f3f4f6').attr('stroke-dasharray', '3,3');
+    });
+  const xAxisG = gb.append('g').attr('class', 'x-axis').attr('transform', `translate(0,${innerH})`)
+    .call(d3.axisBottom(x0).tickSizeOuter(0));
+  xAxisG.selectAll<SVGGElement, string>('.tick').attr('transform', d => {
+    const x = x0(d);
+    return `translate(${(x ?? 0) + x0.bandwidth() / 2},0)`;
+  });
+  xAxisG.selectAll('.tick text')
+    .attr('transform', null)
+    .attr('text-anchor', 'middle')
+    .each(function (d) {
+      const key = String(d);
+      const el = d3.select(this);
+      el.text(null);
+      el.append('tspan').attr('x', 0).attr('dy', '0.71em').attr('fill', '#374151').attr('font-size', 10)
+        .text(bucketDisplayName(key));
+      const span = bucketHourSpanLabel(key);
+      if (span) {
+        el.append('tspan').attr('x', 0).attr('dy', '1.15em').attr('fill', '#6b7280').attr('font-size', 9)
+          .text(span);
+      }
+    });
+  xAxisG.select('.domain').attr('stroke', '#d1d5db');
+  gb.append('text').attr('x', innerW / 2).attr('y', innerH + 54).attr('text-anchor', 'middle')
+    .attr('fill', '#6b7280').attr('font-size', 11).text('Time-of-day bucket (trip start, Oslo)');
+  gb.append('text')
+    .attr('class', 'when-bars-y-label')
+    .attr('transform', 'rotate(-90)')
+    .attr('x', -innerH / 2)
+    .attr('y', -44)
+    .attr('text-anchor', 'middle')
+    .attr('fill', '#6b7280')
+    .attr('font-size', 11)
+    .text(
+      whenBarsMetricMode === 'minutes' ? 'Avg riding minutes / day in bucket' : 'Trips / day in bucket',
+    );
+
+  whenBarsYDomainHigh = maxBar * 1.06;
+
+  const leg = gb.append('g')
+    .attr('class', 'when-bar-legend')
+    .attr('transform', `translate(${Math.max(4, innerW - 218)}, -36)`);
+  CTX_LABELS.forEach((lab, i) => {
+    const row = leg.append('g').attr('transform', `translate(${i % 2 === 0 ? 0 : 118}, ${Math.floor(i / 2) * 14})`);
+    row.append('rect').attr('width', 10).attr('height', 10).attr('rx', 2).attr('fill', CTX_COLORS[i]);
+    row.append('text').attr('x', 14).attr('y', 9).attr('font-size', 9).attr('fill', '#374151').text(lab);
+  });
+
+  const bucketGs = gb.selectAll<SVGGElement, typeof pivot[0]>('g.bucket')
+    .data(pivot)
+    .join('g')
+    .attr('class', 'bucket')
+    .attr('transform', d => `translate(${x0(d.bucket) ?? 0},0)`);
+
+  bucketGs.selectAll<SVGRectElement, { value: number; ctx: number; bucket: string }>('rect.ctx-bar')
+    .data(d => {
+      const arr = whenBarsMetricMode === 'minutes' ? d.minutes : d.tripsPerDay;
+      return arr.map((v, i) => ({ value: v, ctx: i, bucket: d.bucket }));
+    })
+    .join('rect')
+    .attr('class', d => `ctx-bar ctx-${d.ctx}`)
+    .attr('x', d => x1(d.ctx) ?? 0)
+    .attr('width', x1.bandwidth())
+    // Sync geometry: `updateWhenRiding()` animates opacity on the same rects and would interrupt bar tweens.
+    .attr('y', d => yb(d.value))
+    .attr('height', d => innerH - yb(d.value))
+    .attr('fill', d => CTX_COLORS[d.ctx] ?? '#94a3b8')
+    .attr('rx', 2)
+    .attr('stroke', 'none')
+    .style('cursor', 'crosshair')
+    .on('mouseover', function (_ev, d) {
+      d3.select(this).attr('stroke', '#111827').attr('stroke-width', 1.5);
+      if (whenBarTooltip) {
+        const v = d.value;
+        const label = whenBarsMetricMode === 'minutes'
+          ? (v >= 120 ? `${(v / 60).toFixed(1)} h/day` : `${v.toFixed(0)} min/day`)
+          : (v >= 1000 ? `${fmtTripAxis(v)} trips/day` : `${v.toFixed(0)} trips/day`);
+        whenBarTooltip.textContent = `${bucketDisplayName(d.bucket)} · ${CTX_LABELS[d.ctx as 0 | 1 | 2 | 3]}: ${label}`;
+        whenBarTooltip.style.opacity = '1';
+      }
+    })
+    .on('mousemove', function (ev) {
+      if (!whenBarTooltip || !barsEl) return;
+      const cr = barsEl.getBoundingClientRect();
+      whenBarTooltip.style.left = `${ev.clientX - cr.left + 12}px`;
+      whenBarTooltip.style.top = `${ev.clientY - cr.top - 28}px`;
+      clampAbsoluteTooltipToContainer(whenBarTooltip, barsEl, TOOLTIP_PAD);
+    })
+    .on('mouseout', function () {
+      d3.select(this).attr('stroke', 'none').attr('stroke-width', 0);
+      if (whenBarTooltip) whenBarTooltip.style.opacity = '0';
+    });
+
+  syncWhenBarsToggleUi();
+
+  // Scatter (SPLOM: precip, temp, trips, avg trip — matrix + expand)
+  const marginSc = { top: 28, right: 18, bottom: 48, left: 56 };
+  const sw = dims.scatter.w;
+  const sh = dims.scatter.h;
+
+  whenScatterSvg = d3.select(opts.scatterSvg)
+    .attr('viewBox', `0 0 ${sw} ${sh}`)
+    .attr('preserveAspectRatio', 'xMidYMid meet')
+    .attr('width', '100%')
+    .attr('height', '100%');
+  whenScatterSvg.selectAll('*').remove();
+  const scatterOuter = whenScatterSvg
+    .append('g')
+    .attr('class', 'when-scatter-g')
+    .attr('transform', `translate(${marginSc.left},${marginSc.top})`);
+  const splomInner = scatterOuter.append('g').attr('class', 'when-splom-inner').attr('opacity', 1);
+
+  paintWhenSplomPanel(splomInner, sw, sh, scatterData, scatterEl);
+
+  if (splomBackBtn) {
+    splomBackBtn.style.display = scatterData.length > 0 && splomExpanded ? 'block' : 'none';
+    splomBackBtn.setAttribute('aria-expanded', splomExpanded ? 'true' : 'false');
+  }
+
+  paintWhenHourlySection(prepared, dims.hourly, opts);
+}
+
+const SPL_FADE_OUT_MS = 140;
+const SPL_FADE_IN_MS = 220;
+
+function whenChapterActiveStep(): number {
+  const whenStepEl = document.querySelector<HTMLElement>('#ch-when .vs-step.is-active[data-chapter="when"]');
+  return whenStepEl ? Number(whenStepEl.dataset.step ?? 0) : 0;
+}
+
+/** Repaint only the scatter SPLOM (no bars / hourly). Optional crossfade on inner content. */
+function scheduleWhenScatterSplomPaint(opts: { fade: boolean }): void {
+  const prepared = whenRidingPrepared;
+  const dom = whenRidingDom;
+  const useOpts = whenRidingLastOpts;
+  if (!prepared || !dom || !useOpts) return;
+
+  const { scatterEl } = dom;
+  const scatterDims = readPanelRect(scatterEl, WHEN_PANEL_MIN, WHEN_PANEL_MIN);
+  const sw = scatterDims.w;
+  const sh = scatterDims.h;
+  const { scatterData } = prepared;
+
+  whenScatterSvg = d3.select(useOpts.scatterSvg);
+  const outer = whenScatterSvg.select<SVGGElement>('g.when-scatter-g');
+  const inner = outer.select<SVGGElement>('g.when-splom-inner');
+  if (outer.empty() || inner.empty()) {
+    scheduleWhenRidingPaint();
+    return;
+  }
+
+  whenScatterSvg
+    .attr('viewBox', `0 0 ${sw} ${sh}`)
+    .attr('preserveAspectRatio', 'xMidYMid meet')
+    .attr('width', '100%')
+    .attr('height', '100%');
+
+  const syncSplomBackBtn = (): void => {
+    if (splomBackBtn) {
+      splomBackBtn.style.display = scatterData.length > 0 && splomExpanded ? 'block' : 'none';
+      splomBackBtn.setAttribute('aria-expanded', splomExpanded ? 'true' : 'false');
+    }
+  };
+
+  const doPaint = (): void => {
+    inner.selectAll('*').remove();
+    paintWhenSplomPanel(inner, sw, sh, scatterData, scatterEl);
+    syncSplomBackBtn();
+  };
+
+  if (!opts.fade) {
+    doPaint();
+    updateWhenRiding(whenChapterActiveStep());
+    return;
+  }
+
+  inner.interrupt();
+  inner
+    .attr('opacity', 1)
+    .transition()
+    .duration(SPL_FADE_OUT_MS)
+    .attr('opacity', 0)
+    .on('end', () => {
+      doPaint();
+      inner.attr('opacity', 0);
+      inner
+        .transition()
+        .duration(SPL_FADE_IN_MS)
+        .ease(d3.easeCubicOut)
+        .attr('opacity', 1)
+        .on('end', () => {
+          updateWhenRiding(whenChapterActiveStep());
+        });
+    });
+}
+
+function scheduleWhenRidingPaint(opts?: WhenRidingInitOptions): void {
+  if (opts) whenRidingLastOpts = opts;
+  const useOpts = whenRidingLastOpts;
+  const prepared = whenRidingPrepared;
+  const dom = whenRidingDom;
+  if (!prepared || !dom || !useOpts) return;
+
+  const dims: WhenRidingPanelDims = {
+    bars: readPanelRect(dom.barsEl, WHEN_PANEL_MIN, WHEN_PANEL_MIN),
+    scatter: readPanelRect(dom.scatterEl, WHEN_PANEL_MIN, WHEN_PANEL_MIN),
+    hourly: readPanelRect(dom.hourlyEl, WHEN_PANEL_MIN, WHEN_HOURLY_MIN_H),
+  };
+  paintWhenRidingCharts(prepared, dims, useOpts);
+  whenRidingLastBarsScatterDims = { bars: dims.bars, scatter: dims.scatter };
+
+  updateWhenRiding(whenChapterActiveStep());
+}
+
+/** Debounced resize: full paint unless only the hourly panel changed size (e.g. step 3 reveals hourly row). */
+function scheduleWhenRidingResizePaint(): void {
+  const prepared = whenRidingPrepared;
+  const dom = whenRidingDom;
+  const useOpts = whenRidingLastOpts;
+  if (!prepared || !dom || !useOpts) return;
+
+  const dims: WhenRidingPanelDims = {
+    bars: readPanelRect(dom.barsEl, WHEN_PANEL_MIN, WHEN_PANEL_MIN),
+    scatter: readPanelRect(dom.scatterEl, WHEN_PANEL_MIN, WHEN_PANEL_MIN),
+    hourly: readPanelRect(dom.hourlyEl, WHEN_PANEL_MIN, WHEN_HOURLY_MIN_H),
+  };
+  const last = whenRidingLastBarsScatterDims;
+  if (
+    last &&
+    whenPanelBoxDimsApproxEqual(dims.bars, last.bars) &&
+    whenPanelBoxDimsApproxEqual(dims.scatter, last.scatter)
+  ) {
+    paintWhenHourlySection(prepared, dims.hourly, useOpts);
+    updateWhenRiding(whenChapterActiveStep());
+    return;
+  }
+  scheduleWhenRidingPaint();
+}
+
+export function initWhenRiding(opts: WhenRidingInitOptions): void {
+  const barsEl = document.querySelector<HTMLElement>(opts.barsSvg)?.parentElement;
+  const scatterEl = document.querySelector<HTMLElement>(opts.scatterSvg)?.parentElement;
+  const hourlyEl = document.querySelector<HTMLElement>(opts.hourlySvg)?.parentElement;
+  whenHourlyRowEl = document.querySelector(opts.hourlyRow);
+  whenFootnoteEl = document.querySelector(opts.footnoteEl);
+  whenHintEl = document.querySelector(opts.hintEl);
+
+  if (!barsEl || !scatterEl || !hourlyEl) return;
+
+  whenBarsMetricMode = 'minutes';
+  splomExpanded = null;
+  if (splomBackBtn) splomBackBtn.style.display = 'none';
+
+  if (whenRidingResizeObserver) {
+    whenRidingResizeObserver.disconnect();
+    whenRidingResizeObserver = null;
+  }
+  if (whenRidingResizeDebounce) {
+    clearTimeout(whenRidingResizeDebounce);
+    whenRidingResizeDebounce = null;
+  }
+  whenRidingLastBarsScatterDims = null;
+
+  whenRidingLastOpts = opts;
+  whenRidingPrepared = prepareWhenRidingData(opts);
+  whenRidingDom = { barsEl, scatterEl, hourlyEl };
+
+  if (whenFootnoteEl) {
+    if (opts.hourlyRidingProfile?.norm_definition) {
+      whenFootnoteEl.textContent = opts.hourlyRidingProfile.norm_definition;
+    } else if (opts.stationInOut?.month_label) {
+      whenFootnoteEl.textContent = `Hourly chart: all stations summed · calendar month ${opts.stationInOut.month_label} (avg departures per day in that month).`;
+    } else {
+      whenFootnoteEl.textContent =
+        'Hourly chart: run npm run prepare:cycling-hourly after trips_with_context.parquet exists, or export_station_in_out_month.py for station-only fallback.';
+    }
+  }
+
+  barsEl.style.position = 'relative';
+  scatterEl.style.position = 'relative';
+
+  if (whenBarTooltip?.parentElement === barsEl) {
+    whenBarTooltip.remove();
+  }
+  whenBarTooltip = document.createElement('div');
+  Object.assign(whenBarTooltip.style, {
+    position: 'absolute', pointerEvents: 'none', opacity: '0', zIndex: '20',
+    background: 'rgba(255,255,255,0.97)', border: '1px solid #e5e7eb', borderRadius: '6px',
+    padding: '4px 8px', fontSize: '11px', fontWeight: '600', color: '#111827', boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+  });
+  barsEl.appendChild(whenBarTooltip);
+
+  barsEl.querySelector('.when-bars-metric-toggle')?.remove();
+  whenBarsToggleMinutesBtn = null;
+  whenBarsToggleTripsBtn = null;
+
+  {
+    const wrap = document.createElement('div');
+    wrap.className = 'when-bars-metric-toggle';
+    wrap.setAttribute('role', 'group');
+    wrap.setAttribute('aria-label', 'Bar chart: riding minutes or trips per calendar day in each start-time bucket');
+    Object.assign(wrap.style, {
+      position: 'absolute',
+      top: '6px',
+      left: '6px',
+      zIndex: '25',
+      display: 'flex',
+      border: '1px solid #e5e7eb',
+      borderRadius: '6px',
+      overflow: 'hidden',
+      background: 'rgba(255,255,255,0.97)',
+      boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+    });
+    const btnStyle: Partial<CSSStyleDeclaration> = {
+      fontSize: '11px',
+      fontWeight: '600',
+      padding: '4px 10px',
+      border: 'none',
+      cursor: 'pointer',
+      color: '#1e293b',
+      background: '#ffffff',
+      fontFamily: 'inherit',
+    };
+    whenBarsToggleMinutesBtn = document.createElement('button');
+    whenBarsToggleMinutesBtn.type = 'button';
+    whenBarsToggleMinutesBtn.textContent = 'Minutes';
+    Object.assign(whenBarsToggleMinutesBtn.style, btnStyle, { borderRight: '1px solid #e5e7eb' });
+    whenBarsToggleMinutesBtn.addEventListener('click', () => {
+      if (whenBarsMetricMode === 'minutes') return;
+      const from = whenBarsMetricMode;
+      whenBarsMetricMode = 'minutes';
+      syncWhenBarsToggleUi();
+      transitionWhenBarsMetric(from);
+    });
+    whenBarsToggleTripsBtn = document.createElement('button');
+    whenBarsToggleTripsBtn.type = 'button';
+    whenBarsToggleTripsBtn.textContent = 'Trips';
+    Object.assign(whenBarsToggleTripsBtn.style, btnStyle);
+    whenBarsToggleTripsBtn.addEventListener('click', () => {
+      if (whenBarsMetricMode === 'trips') return;
+      const from = whenBarsMetricMode;
+      whenBarsMetricMode = 'trips';
+      syncWhenBarsToggleUi();
+      transitionWhenBarsMetric(from);
+    });
+    wrap.appendChild(whenBarsToggleMinutesBtn);
+    wrap.appendChild(whenBarsToggleTripsBtn);
+    barsEl.appendChild(wrap);
+  }
+  syncWhenBarsToggleUi();
+
+  if (whenScatterTooltip?.parentElement === scatterEl) {
+    whenScatterTooltip.remove();
+  }
+  whenScatterTooltip = document.createElement('div');
+  Object.assign(whenScatterTooltip.style, {
+    position: 'absolute', pointerEvents: 'none', opacity: '0', zIndex: '20',
+    background: 'rgba(255,255,255,0.97)', border: '1px solid #e5e7eb', borderRadius: '6px',
+    padding: '4px 8px', fontSize: '11px', fontWeight: '600', color: '#111827', maxWidth: '280px', lineHeight: '1.35',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+  });
+  scatterEl.appendChild(whenScatterTooltip);
+
+  if (!splomBackBtn) {
+    splomBackBtn = document.createElement('button');
+    splomBackBtn.type = 'button';
+    splomBackBtn.className = 'when-splom-back-btn';
+    splomBackBtn.textContent = 'Back to matrix';
+    splomBackBtn.setAttribute('aria-label', 'Back to scatter matrix');
+    Object.assign(splomBackBtn.style, {
+      position: 'absolute',
+      top: '6px',
+      right: '8px',
+      zIndex: '25',
+      display: 'none',
+      fontSize: '11px',
+      fontWeight: '600',
+      padding: '4px 10px',
+      borderRadius: '6px',
+      border: '1px solid #e5e7eb',
+      background: 'rgba(255,255,255,0.98)',
+      color: '#1e293b',
+      cursor: 'pointer',
+      boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+    });
+    splomBackBtn.addEventListener('click', () => {
+      splomExpanded = null;
+      if (splomBackBtn) splomBackBtn.style.display = 'none';
+      scheduleWhenScatterSplomPaint({ fade: true });
+    });
+    scatterEl.appendChild(splomBackBtn);
+  }
+
+  if (!splomKeydownBound) {
+    splomKeydownBound = true;
+    document.addEventListener('keydown', (ev: KeyboardEvent) => {
+      if (ev.key !== 'Escape' || !splomExpanded) return;
+      splomExpanded = null;
+      if (splomBackBtn) splomBackBtn.style.display = 'none';
+      scheduleWhenScatterSplomPaint({ fade: true });
+    });
+  }
+
+  const runPaint = () => scheduleWhenRidingPaint();
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(runPaint);
+  });
+
+  whenRidingResizeObserver = new ResizeObserver(() => {
+    if (whenRidingResizeDebounce) clearTimeout(whenRidingResizeDebounce);
+    whenRidingResizeDebounce = setTimeout(() => scheduleWhenRidingResizePaint(), WHEN_RESIZE_DEBOUNCE_MS);
+  });
+  whenRidingResizeObserver.observe(barsEl);
+  whenRidingResizeObserver.observe(scatterEl);
+  whenRidingResizeObserver.observe(hourlyEl);
+}
+
+export function updateWhenRiding(step: number): void {
+  if (whenBarTooltip) whenBarTooltip.style.opacity = '0';
+  if (whenScatterTooltip) whenScatterTooltip.style.opacity = '0';
+
+  if (whenHourlyRowEl) {
+    whenHourlyRowEl.classList.toggle('is-visible', step === 3);
+  }
+  if (whenFootnoteEl) {
+    whenFootnoteEl.style.display = step === 3 ? 'block' : 'none';
+  }
+
+  if (whenHintEl) {
+    const hints = [
+      'Left chart: use Minutes / Trips (top-left) to switch bar height. Hover bars for details. Right: 4×4 scatter matrix; hover a cell; click to enlarge.',
+      'Compare the four bar colours: weekday vs weekend, with Norwegian public holidays called out.',
+      'Right panel: matrix of daily pairs — each dot is one day; click a panel to expand; Esc or Back returns. Hover shows nearest day (same-day network stats; association, not causation).',
+      'Bottom: trip starts by hour — solid lines = riding min/day; dashed lines = trips/day (same dash, right-hand scale).',
+    ];
+    whenHintEl.textContent = hints[Math.min(step, hints.length - 1)] ?? hints[0];
+  }
+
+  if (!whenBarsSvg) return;
+
+  // Bar opacities by context
+  const barOpacityForCtx = (ctx: number): number => {
+    if (step === 0) return ctx === 0 ? 1 : 0.34;
+    if (step === 1) return 1;
+    if (step === 2) return 0.55;
+    return 0.42;
+  };
+
+  whenBarsSvg.selectAll<SVGRectElement, { value: number; ctx: number; bucket: string }>('rect.ctx-bar')
+    .transition()
+    .duration(450)
+    .attr('opacity', d => barOpacityForCtx(d.ctx));
+
+  whenBarsSvg.select('.when-bar-legend').transition().duration(400).attr('opacity', step === 0 ? 1 : 0.88);
+
+  const scatterPanelOp = step <= 1 ? 0.28 : step === 2 ? 1 : 0.48;
+  whenScatterSvg?.select('.when-scatter-g').transition().duration(450).attr('opacity', scatterPanelOp);
+
+  const dotFillMul = step <= 1 ? 0.58 : step === 2 ? 1.12 : 0.78;
+  whenScatterSvg?.selectAll<SVGCircleElement, unknown>('circle.when-splom-cell-dot')
+    .transition()
+    .duration(450)
+    .attr('fill-opacity', Math.min(0.5, whenSplomMatrixDotFillBase * dotFillMul));
+  whenScatterSvg?.selectAll<SVGCircleElement, unknown>('circle.when-splom-full-dot')
+    .transition()
+    .duration(450)
+    .attr('fill-opacity', Math.min(0.55, whenScatterDotFillBase * dotFillMul));
+
+  whenHourlySvg?.select('.when-hourly-g').transition().duration(400).attr('opacity', step === 3 ? 1 : 0.35);
 }
 
 // ── Chapter 3: Station balance map ────────────────────────────────────────────
