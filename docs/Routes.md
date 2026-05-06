@@ -1,8 +1,8 @@
-# Routes Implementation
+# routes implementation
 
 This document describes how bicycle routes between Oslo Bysykkel stations are fetched, cached, exported, and displayed.
 
-## Overview
+## overview
 
 ```mermaid
 flowchart LR
@@ -33,29 +33,32 @@ flowchart LR
 
 
 
-## Data Flow
+## data flow
 
-1. **Stations** – `stations_prepare.ipynb` extracts unique stations with lat/lon and trip summaries → `prepared-data/stations.json`
-2. **Fetch** – `google_routes_test.ipynb` calls `routes_fetch.fetch_route()` to get bicycle routes from the Google Routes API
-3. **Cache** – Full API responses are stored in `routes-cache/single/{origin_id}_{dest_id}.json` (committed; source of truth)
-4. **Export** – `export-routes-to-prepared.js` reads the cache and writes `prepared-data/routes.json` (slim format)
-5. **Sync** – `npm run prepare:data` copies prepared-data to the frontend
-6. **Display** – `/route-test/` loads routes and stations, renders the map with Leaflet
+1. `stations_prepare.ipynb` extracts unique stations with lat/lon and trip summaries and writes `prepared-data/stations.json`.
+2. `google_routes_test.ipynb` calls `routes_fetch.fetch_route()` to request bicycle routes from Google Routes.
+3. Full API responses are stored in `routes-cache/single/{origin_id}_{dest_id}.json` (committed cache).
+4. `export-routes-to-prepared.js` reads cache files and writes slim data to `prepared-data/routes.json`.
+5. `npm run prepare:data` copies `prepared-data` into the frontend.
+6. `/route-test/` loads stations and routes and renders them with Leaflet.
 
-## Components
+## components
 
 ### routes_fetch.py
 
 Location: `data-pipeline/routes_fetch.py`
 
-- **Purpose:** Fetch bicycle routes via Google Routes API REST, with cache-before-fetch and force-fetch support
-- **API:** `fetch_route(origin_id, dest_id, stations, api_key, cache_dir, force_fetch=False)` for a single route; `fetch_routes_batch(route_pairs, stations, api_key, cache_dir, force_fetch=False)` for multiple
-- **API model:** Uses **Compute Routes** (one origin → one destination per request), not Compute Route Matrix. Each route pair = one API request. Batch fetches loop over pairs and make one request per pair; there is no batch API that fetches many pairs in a single call.
-- **Cache:** Checks `routes-cache/single/{origin_id}_{dest_id}.json` before each API call. Batch fetches only call the API for pairs not yet cached
-- **Force fetch:** Set `force_fetch=True` or `FORCE_ROUTES_FETCH=1` to bypass cache
-- **Field mask:** Minimal for slim format and cost: `routes.duration`, `routes.distanceMeters`, `routes.polyline`. Viewport, legs, and travelAdvisory are omitted to reduce API processing and response size.
+This module fetches bicycle routes through Google Routes API REST. It checks cache files first, and it supports forced refetch through `force_fetch=True` or `FORCE_ROUTES_FETCH=1`.
 
-### Cache Format (routes-cache/)
+Available functions:
+- `fetch_route(origin_id, dest_id, stations, api_key, cache_dir, force_fetch=False)`
+- `fetch_routes_batch(route_pairs, stations, api_key, cache_dir, force_fetch=False)`
+
+The code uses Compute Routes (one origin and one destination per request), not Compute Route Matrix. Batch fetch loops over route pairs and still sends one request per pair.
+
+The field mask is limited to `routes.duration`, `routes.distanceMeters`, and `routes.polyline` to keep response size low.
+
+### cache format (`routes-cache/`)
 
 Each cached file contains:
 
@@ -70,17 +73,15 @@ Each cached file contains:
 
 With the minimal field mask, the cached response contains only duration, distanceMeters, and polyline. Size: ~1–3 KB per route (vs ~12 KB with full fields).
 
-### Export Script (export-routes-to-prepared.js)
+### export script (`export-routes-to-prepared.js`)
 
 Location: `scripts/export-routes-to-prepared.js`
 
-- **Purpose:** Convert full cache to slim format for the frontend. Reads all cached routes (single and batch) and outputs `routes.json`; the frontend cannot tell how each route was fetched
-- **Input:** `routes-cache/single/*.json`
-- **Output:** `prepared-data/routes.json`
-- **Slim format per route:** `origin_id`, `dest_id`, `duration_sec`, `distance_m`, `encodedPolyline`
-- **Size:** ~400 bytes/route (vs ~1–3 KB in cache with minimal field mask)
+The script reads `routes-cache/single/*.json` and writes `prepared-data/routes.json`.
+Each route in output has `origin_id`, `dest_id`, `duration_sec`, `distance_m`, and `encodedPolyline`.
+Output size is around 400 bytes per route, compared to 1 to 3 KB in cache with the minimal mask.
 
-### Prepared Routes Format
+### prepared routes format
 
 ```json
 {
@@ -99,18 +100,16 @@ Location: `scripts/export-routes-to-prepared.js`
 }
 ```
 
-### Route Test Page
+### route test page
 
 Location: `frontend/src/pages/route-test.astro`
 
-- **URL:** `/route-test/`
-- **Data:** Loads `stations.json` (or `isochrones.json`) and `routes.json`
-- **Map:** Leaflet with OpenStreetMap tiles, station markers, route polyline with directional arrows, origin/destination markers
-- **Interaction:** Dropdown to select a route; map fits bounds to the selected route and shows trip info (duration, distance)
+The page is available at `/route-test/`. It loads `stations.json` (or `isochrones.json`) and `routes.json`, then draws markers and route lines with Leaflet.
+A route dropdown controls the selected route, and the map fits bounds for that route.
 
-## Fetch Options and Results
+## fetch options and results
 
-### Request Options We Use
+### request options we use
 
 The fetch sends a minimal request body:
 
@@ -123,49 +122,49 @@ The fetch sends a minimal request body:
 | `units`       | `"METRIC"`                                          | Distance in metres                     |
 
 
-We do **not** send: `routingPreference`, `departureTime`, `routeModifiers`, `computeAlternativeRoutes`, etc.
+The request does not send `routingPreference`, `departureTime`, `routeModifiers`, or `computeAlternativeRoutes`.
 
-### Expected Results
+### expected results
 
-- **Primary route** – One route per request (no alternatives)
-- **duration** – Estimated travel time in seconds (e.g. `"184s"`)
-- **distanceMeters** – Route length in metres
-- **polyline** – Encoded polyline for the route geometry
-- **legs** – Not requested (omitted for cost; route-level polyline suffices for slim format)
+- One route per request (no alternatives).
+- Duration in seconds (for example `"184s"`).
+- Distance in meters.
+- Encoded route polyline.
+- Route legs are not requested.
 
-### Limitations
+### limitations
 
-**No shortest-distance option.** The API returns the fastest/most efficient route for bicycles, not the shortest distance. It optimizes for cycling infrastructure (bike lanes, paths) and typical cycling speed. A shorter but busier road may be avoided in favour of a slightly longer but safer/faster path.
+No shortest-distance option: the API returns the route it considers best for bicycle travel, not strictly shortest distance.
 
-There is no parameter to request “shortest distance” for BICYCLE mode.
+There is no parameter for "shortest distance" in BICYCLE mode.
 
-**Not time-dependent.** Bicycle routes are static. The `routingPreference` options (`TRAFFIC_UNAWARE`, `TRAFFIC_AWARE`, `TRAFFIC_AWARE_OPTIMAL`) apply only to `DRIVE` and `TWO_WHEELER`. For BICYCLE, traffic is irrelevant, so the route and duration do not vary by time of day.
+Not time-dependent: bicycle routes are static. `routingPreference` options apply to `DRIVE` and `TWO_WHEELER`, not BICYCLE.
 
-**No historical routes.** Past departure times are only supported for `TRANSIT` (up to 7 days in the past). For BICYCLE, the API always returns the current best route based on the current road network and cycling data.
+No historical bicycle routes: past departure times are supported for `TRANSIT`, not BICYCLE.
 
-## Size Considerations
+## size considerations
 
 | Format               | Per route  | 85k routes (full matrix) |
 | -------------------- | ---------- | ------------------------ |
 | Cache (minimal mask) | ~1–3 KB    | ~85–255 MB               |
 | Slim (routes.json)  | ~400 bytes | ~25 MB                   |
 
-- **routes-cache/** is committed and is the source of truth for routes; no refetch on clone
-- **prepared-data/routes.json** is a build artifact (derived from cache by export script); not committed
+- `routes-cache/` is committed and used as source data for routes.
+- `prepared-data/routes.json` is generated from cache and is not committed.
 
-## Cost Optimization
+## cost optimization
 
 The field mask is trimmed to the minimum required for slim format (`routes.duration`, `routes.distanceMeters`, `routes.polyline`). Omitting `viewport`, `legs`, and `travelAdvisory` reduces server processing and response size, which can lower per-request cost. The main cost lever remains the number of requests; consider fetching only observed station pairs from trip data instead of the full matrix.
 
-## Deprecated: Medium Format
+## deprecated: medium format
 
 A **medium format** (`routes_medium.json`) was briefly implemented and then removed. It stored per-leg data (route origin + legs with `end_lat`, `end_lon`, `distance_m`, `duration_sec`, `encodedPolyline` per leg) to support multi-leg routes.
 
-**Why it was removed:** All station-to-station bicycle routes return exactly **one leg** (origin → destination, no waypoints). The medium format added ~20% size and complexity for no benefit. For multi-leg routes we would need intermediate waypoints, which we do not use.
+Why it was removed: station-to-station bicycle routes in this project return one leg (origin to destination, no waypoints). The medium format added file size and maintenance work with no gain.
 
-**Do not reintroduce.** Legs are no longer requested in the API field mask, so multi-leg detection is not available.
+Do not reintroduce it unless request requirements change. The current field mask does not request legs.
 
-## Commands
+## commands
 
 
 | Command                  | Description                                    |
@@ -175,13 +174,25 @@ A **medium format** (`routes_medium.json`) was briefly implemented and then remo
 | `npm run build`          | Runs prepare:data, then builds the frontend    |
 
 
-## Environment
+## environment
 
 - **GOOGLE_ROUTES_API_KEY** – Required for fetching; set in `.env` (see `.env.example`)
 - **FORCE_ROUTES_FETCH** – Set to `1` to bypass cache during development
 
-## Notebooks
+## troubleshooting
 
-- **stations_prepare.ipynb** – Builds `stations.json` with id, name, lat, lon, trip counts
-- **google_routes_test.ipynb** – Tests single-route fetch and batch fetch. Batch fetches the top 50 stations (by total_trips), top 20 connections per station from trip data, both directions, capped at ~1000. Only pairs not in cache trigger API calls.
+- If routes are missing in the frontend, run `npm run prepare:data` and check `prepared-data/routes.json`.
+- If route fetch fails in notebooks, check `GOOGLE_ROUTES_API_KEY` in `.env`.
+- If cache data is stale, set `FORCE_ROUTES_FETCH=1` and rerun fetch for target pairs.
 
+## notebooks
+
+- `stations_prepare.ipynb` builds `stations.json` with station id, name, lat, lon, and trip counts.
+- `google_routes_test.ipynb` tests single and batch route fetch. The batch workflow uses top stations and top connections, and only uncached pairs trigger API requests.
+
+## see also
+
+- [`README.md`](../README.md)
+- [`Weather.md`](./Weather.md)
+- [`DEPLOYMENT.md`](../DEPLOYMENT.md)
+- [`README.md` in docs](./README.md)
